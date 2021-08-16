@@ -1,0 +1,57 @@
+Inside Manifest Json
+
+ "permissions":[  /*to declare which page to access */
+        "activeTab",  /* for active tabs*/
+        "tabs",  /* For inactive tabs*/
+        "storage",   /* Local Storage */
+         "scripting"  /* Injects css and JavaScripts in users page*/
+    ],
+
+      "host_permissions":[   /* Permission to work specifically to host*/
+        "https://www.google.com",
+
+
+        "<all_urls>", // both the same for all urls
+        "*://*/*"
+    ]
+
+
+
+
+    Inside Background js
+
+    chrome.runtime.onInstalled.addListener(()=>{ }); // The Default State of Chrome Extension Back ground // runs only on install
+
+
+
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo,tab) =>{ // Creates Listener to know what user is doing
+    // console.log(tabId);
+    // console.log(changeInfo);
+    // console.log(tab);
+
+
+      chrome.scripting.executeScript({
+
+        target: {tabId: tabId},
+        files: ["./foreground.js"]      // Injecting scripts
+    })
+
+        .then(()=>{                 // New Template Promise for V3
+            console.log("Script Injected");
+        })
+        .catch(err=> console.log)
+
+         chrome.scripting.executeScript({
+
+        target: {tabId: tabId},
+        files: ["./foreground.js"]      // Injecting scripts
+    },() => {       //Old Format for V2 still usable in v3
+
+    });
+       
+       
+
+
+
+
+})

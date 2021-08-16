@@ -1,0 +1,31 @@
+{
+    "name": "Chrome Extension Manifest V3",
+    "description": "Building a chrome Extension MV3",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "icons":{
+        "128": "./images/Icon_128.png",
+        "19": "./images/Icon.png"
+
+    },
+    "background":{
+        "service_worker" : "./background.js"
+    },
+    "action":{
+        "default_popup": "./popup.html",
+        "default_icons":{
+            "128": "./images/Icon_128.png"
+        } 
+    },
+    "options_page": "./options.html",
+
+    "permissions":[
+        "activeTab",
+        "tabs",
+        "storage",
+         "scripting"  
+    ],
+    "host_permissions":[
+        "*://*/*"
+    ]
+}
