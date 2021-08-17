@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.storage.local.get(["name"], (data) => {});
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  console.log(tab);
+  // console.log(tab);
 
   if (changeInfo.status === "complete" && /^http/.test(tab.url)) {
     try {
