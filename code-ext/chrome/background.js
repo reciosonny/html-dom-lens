@@ -13,7 +13,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     try {
       const result = await chrome.scripting.executeScript({
         target: { tabId: tabId },
-        files: ["./foreground.js", "./anotherscript.js", "./bundle.js"],
+        files: ["./foreground.js", "./anotherscript.js", "../../react-client/dist/bundle.js"],
       }); //injects foreground script to webpage
 
       console.log("running async/await pattern");

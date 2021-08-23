@@ -1,16 +1,20 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import axios from 'axios';
-
 
 import App from './Components/App';
 import './style.scss';
 
-
-window.axios = axios;
+import { PRODUCTION_MODE } from './keys';
 
 if (module.hot) {
     console.log("hot module!");
+}
+
+if (PRODUCTION_MODE) {
+    const rootEl = document.createElement('div');
+    rootEl.id = 'root';
+
+    document.body.appendChild(rootEl);
 }
 
 
