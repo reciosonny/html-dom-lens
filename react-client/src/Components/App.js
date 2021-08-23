@@ -10,7 +10,8 @@ function App() {
 
   useEffect(() => {
     
-    axios.get('https://web.archive.org/web/20131014212210/http://stackoverflow.com/').then(res => {
+    // https://web.archive.org/web/20131014212210/http://stackoverflow.com/
+    axios.get('https://www.redfin.com/').then(res => {
       document.getElementById('samplePage').innerHTML = res.data;
 
       document.addEventListener('click', e => {
