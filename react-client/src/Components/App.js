@@ -6,6 +6,7 @@ import axios from 'axios';
 function App() {
 
   const [coordinates, setCoordinates] = useState({ top: 0, left: 0 });
+  const [domInfo, setDomInfo] = useState({ id: "", class: "" });
 
   useEffect(() => {
     
@@ -14,7 +15,7 @@ function App() {
 
       document.addEventListener('click', e => {
         setCoordinates({ top: e.pageY, left: e.pageX });
-        console.log(e);
+        setDomInfo({ ...domInfo, id: e.target.id, class: e.target.className });
       });
     });
 
@@ -25,56 +26,23 @@ function App() {
 
   return (
     <div>
-      
-      <div style={{ height: '250px', width: '350px', border: '3px solid green', borderRadius: '20px', position: 'absolute', top: `${coordinates.top}px`, left: `${coordinates.left}px` }}>
 
-        <h1>This is UI widget</h1>
+      <div id="samplePage"></div>
+      <div style={{ height: '250px', width: '350px', background: 'white', border: '3px solid green', borderRadius: '20px', position: 'absolute', top: `${coordinates.top}px`, left: `${coordinates.left}px` }}>
+
+        <h1>Element ID: {domInfo.id}</h1>
+        <h2>Class: {domInfo.class}</h2>
+
+        {/* TODO: add other HTML information such as:
+              - Its content(or text content)
+              - Its children(get ID and class)
+              - Its dom parent (get the parent ID and classes)
+        */}
       </div>
     </div>
   )
 }
 
 
-const DebugLib = function (Component) {
-  
-  return function Test() {
 
-    const [count, setCount] = React.useState(0);
-    React.useDebugValue('count');
-
-    const [anotherHook, setAnotherHook] = React.useState('')
-    React.useDebugValue('anotherHook');
-
-    console.log(this);
-    
-    React.useEffect(() => {
-      
-      console.log('React injected...');
-
-      // document.addEventListener('click', e => {
-      //   console.log(e);
-      // });
-
-      // for styling
-      // document.addEventListener('mouseover', e => e.target.style = 'border: 2px solid #000');
-      // document.addEventListener('mouseout', e => e.target.style = '');
-      // end
-
-      return () => {
-        
-      }
-    }, []);
-
-    return (
-      <div>
-        {/* <h2 onClick={() => setCount(count+1)}>Count: {count}</h2> */}
-        <Component />
-
-        <div id="samplePage"></div>
-      </div>
-    );
-  }
-}
-
-
-export default hot(module)(DebugLib(App));
+export default hot(module)(App);
