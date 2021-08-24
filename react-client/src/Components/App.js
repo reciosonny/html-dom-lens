@@ -28,12 +28,14 @@ function App() {
 
   const getPageContent = async (url) => {
 
-    const res = await axios.get(url)
+    if (!localStorage.getItem('webpage')) {
+      const res = await axios.get(url);
+      localStorage.setItem('webpage', res.data);  
+    }
 
-    document.getElementById('samplePage').innerHTML = res.data;
+    document.getElementById('samplePage').innerHTML = localStorage.getItem('webpage');
 
     document.addEventListener('click', e => {
-
       if (e.target.id !== 'divDevTools') {
         setCoordinates({ top: e.pageY, left: e.pageX });
         setDomInfo({ ...domInfo, id: e.target.id, class: e.target.className });        
@@ -51,6 +53,7 @@ function App() {
 
       {/* widget component... */}
       <div style={{ height: '250px', width: '350px', background: 'white', color: 'blue', fontWeight: '800 !important', zIndex: '999', border: '3px solid green', borderRadius: '20px', position: 'absolute', top: `${coordinates.top}px`, left: `${coordinates.left}px` }}>
+
         <h1>Element ID: {domInfo.id}</h1>
         <h2>Class: {domInfo.class}</h2>
 
