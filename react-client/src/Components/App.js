@@ -7,7 +7,9 @@ import { PRODUCTION_MODE } from '../keys';
 function App() {
 
   const [coordinates, setCoordinates] = useState({ top: 0, left: 0 });
-  const [domInfo, setDomInfo] = useState({ id: "", class: "" });
+  const [domInfo, setDomInfo] = useState({ id: "", class: "" ,childcount:"" ,sample: "",parentID: "", parentClass:""});
+  const [domChildID, setdomChildID] = useState([]);
+  const [domChildClass, setdomChildClass] = useState([]);
   const [txtFieldPageUrl, setTxtFieldPageUrl] = useState("");
 
 
@@ -18,13 +20,26 @@ function App() {
        * Note: swap the urls for testing different websites. Sample websites for testing:
        * https://web.archive.org/web/20131014212210/http://stackoverflow.com/
        */
-      getPageContent('https://www.redfin.com/');      
+      // getPageContent('https://www.redfin.com/');      
+
+      getPageContent('https://web.archive.org/web/20131014212210/http://stackoverflow.com/'); 
+      
     }
 
     return () => {
       
     }
   }, []);
+
+
+
+  const ClearChildArray = ()=>{
+   
+      setdomChildID(domChildID => [])
+      setdomChildClass(domChildClass => [])
+  
+  }
+
 
   const getPageContent = async (url) => {
 
@@ -37,11 +52,25 @@ function App() {
 
     document.addEventListener('click', e => {
       if (e.target.id !== 'divDevTools') {
+
+        setdomChildID(domChildID => [])
+        setdomChildClass(domChildClass => [])
+
         setCoordinates({ top: e.pageY, left: e.pageX });
-        setDomInfo({ ...domInfo, id: e.target.id, class: e.target.className });        
+        setDomInfo({ ...domInfo, id: e.target.id, class: e.target.className, childcount:e.target.childElementCount , parentID: e.target.parentElement.id, parentClass: e.target.parentElement.className });     
+        
+        
+        for (var i = 0; i < e.target.childElementCount; i++) {        
+          setdomChildID(domChildID => [...domChildID, e.target.children[i].id ])
+          setdomChildClass(domChildClass => [...domChildClass , e.target.children[i].className ])                  
+        }
+
+      
       }
+
+
     });
-  
+
   }
 
 
@@ -52,10 +81,33 @@ function App() {
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
       {/* widget component... */}
-      <div style={{ height: '250px', width: '350px', background: 'white', color: 'blue', fontWeight: '800 !important', zIndex: '999', border: '3px solid green', borderRadius: '20px', position: 'absolute', top: `${coordinates.top}px`, left: `${coordinates.left}px` }}>
+      <div style={{ height: '550px', width: '350px', background: 'white', color: 'blue', fontWeight: '800 !important', zIndex: '999', border: '3px solid green', borderRadius: '20px', position: 'absolute', top: `${coordinates.top}px`, left: `${coordinates.left}px` }}>
+
+     
 
         <h1>Element ID: {domInfo.id}</h1>
         <h2>Class: {domInfo.class}</h2>
+        <h2>Parent ID: {domInfo.parentID}</h2>
+        <h2>Parent Class: {domInfo.parentClass}</h2>
+        <h2># of Children Element: {domInfo.childcount}</h2>
+
+        
+        <p> id of Children Element:</p>
+       
+              <ul>
+               {domChildID.map((child) => (
+                <li>{child}</li>          
+              ))}       
+               </ul>
+
+        <p> Class of Children Element:</p>
+       
+            <ul>
+              {domChildClass.map((child) => (
+              <li>{child}</li>          
+            ))}       
+              </ul>      
+    
 
         {/* TODO: add other HTML information such as:
               - Its content(or text content)
