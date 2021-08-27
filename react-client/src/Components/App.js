@@ -102,7 +102,7 @@ function App() {
 
         <p> Class of Children Element:</p>
        
-              {/* BAD CODING. NOT FOLLOWING TAB SPACING */}
+              {/* WHAT IS THIS? FOLLOW TAB SPACING FORMAT */}
               <ul>
               {domChildClass.map((child) => (
               <li>{child}</li>          
