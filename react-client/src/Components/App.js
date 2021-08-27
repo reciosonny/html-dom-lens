@@ -49,9 +49,16 @@ function App() {
     }
 
     document.getElementById('samplePage').innerHTML = localStorage.getItem('webpage');
+    document.addEventListener('beforeunload',(event) =>{}); // not working in local host 
+
 
     document.addEventListener('click', e => {
+       e.preventDefault();
+      
+
       if (e.target.id !== 'divDevTools') {
+
+        // e.target.href = "javascript:void(0)"
 
         setdomChildID(domChildID => [])
         setdomChildClass(domChildClass => [])
@@ -63,17 +70,12 @@ function App() {
         for (var i = 0; i < e.target.childElementCount; i++) {        
           setdomChildID(domChildID => [...domChildID, e.target.children[i].id ])
           setdomChildClass(domChildClass => [...domChildClass , e.target.children[i].className ])                  
-        }
-
-      
+        }    
       }
-
 
     });
 
   }
-
-
   return (
     <div>
 
