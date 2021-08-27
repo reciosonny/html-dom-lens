@@ -61,10 +61,10 @@ function App() {
         
         
         for (var i = 0; i < e.target.childElementCount; i++) {        
+          // BAD CODING. STATE DATA NOT GROUPED PROPERLY
           setdomChildID(domChildID => [...domChildID, e.target.children[i].id ])
           setdomChildClass(domChildClass => [...domChildClass , e.target.children[i].className ])                  
         }
-
       
       }
 
@@ -80,7 +80,7 @@ function App() {
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
-      {/* widget component... */}
+      {/* BAD CODING. WIDGET NOT ISOLATED IN ANOTHER REACT COMPONENT */}
       <div style={{ height: '550px', width: '350px', background: 'white', color: 'blue', fontWeight: '800 !important', zIndex: '999', border: '3px solid green', borderRadius: '20px', position: 'absolute', top: `${coordinates.top}px`, left: `${coordinates.left}px` }}>
 
      
@@ -93,7 +93,7 @@ function App() {
 
         
         <p> id of Children Element:</p>
-       
+              {/* WHAT IS THIS? FOLLOW TAB SPACING FORMAT */}
               <ul>
                {domChildID.map((child) => (
                 <li>{child}</li>          
@@ -102,7 +102,8 @@ function App() {
 
         <p> Class of Children Element:</p>
        
-            <ul>
+              {/* BAD CODING. NOT FOLLOWING TAB SPACING */}
+              <ul>
               {domChildClass.map((child) => (
               <li>{child}</li>          
             ))}       
