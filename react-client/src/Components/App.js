@@ -24,6 +24,8 @@ function App() {
 
       getPageContent('https://web.archive.org/web/20131014212210/http://stackoverflow.com/'); 
       
+    } else {
+      injectDOMEventInBody();
     }
 
     return () => {
@@ -32,25 +34,10 @@ function App() {
   }, []);
 
 
-
-  const ClearChildArray = ()=>{
-   
-      setdomChildID(domChildID => [])
-      setdomChildClass(domChildClass => [])
-  
-  }
-
-
-  const getPageContent = async (url) => {
-
-    if (!localStorage.getItem('webpage')) {
-      const res = await axios.get(url);
-      localStorage.setItem('webpage', res.data);  
-    }
-
-    document.getElementById('samplePage').innerHTML = localStorage.getItem('webpage');
+  const injectDOMEventInBody = () => {
 
     document.addEventListener('click', e => {
+
       if (e.target.id !== 'divDevTools') {
 
         setdomChildID(domChildID => [])
@@ -68,9 +55,26 @@ function App() {
       
       }
 
-
     });
+  }
 
+  const ClearChildArray = ()=>{
+   
+      setdomChildID(domChildID => [])
+      setdomChildClass(domChildClass => [])
+  
+  }
+
+
+  const getPageContent = async (url) => {
+
+    if (!localStorage.getItem('webpage')) {
+      const res = await axios.get(url);
+      localStorage.setItem('webpage', res.data);  
+    }
+
+    document.getElementById('samplePage').innerHTML = localStorage.getItem('webpage');
+    injectDOMEventInBody();
   }
 
 

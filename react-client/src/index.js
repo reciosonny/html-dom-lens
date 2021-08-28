@@ -18,12 +18,10 @@ if (module.hot) {
     console.log("hot module!");
 }
 
-if (PRODUCTION_MODE) {
-    const rootEl = document.createElement('div');
-    rootEl.id = 'root';
+const rootEl = document.createElement('div');
+rootEl.id = 'htmlDomInfoRoot';
 
-    document.body.appendChild(rootEl);
-}
+document.body.appendChild(rootEl);
 
 
-ReactDOM.render(<App />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById("htmlDomInfoRoot"));
