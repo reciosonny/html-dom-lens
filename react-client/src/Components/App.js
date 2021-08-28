@@ -91,9 +91,7 @@ function App() {
         parentClass={domInfo.parentClass}
         count={domInfo.count}
         child={domInfo.child}
-        coordinates={domInfo.coordinates}
-        // domChildID={domChildID}
-        // domChildClass={domChildClass}
+        coordinates={domInfo.coordinates}       
       />
 
       {/* BAD CODING. WIDGET NOT ISOLATED IN ANOTHER REACT COMPONENT */}

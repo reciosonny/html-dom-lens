@@ -32,7 +32,7 @@ const Modal = ({
         <h2>Parent Class: {parentClass}</h2>
         <h2># of Children Element: {count}</h2>
         <p> id of Children Element:</p>
-        {/* WHAT IS THIS? FOLLOW TAB SPACING FORMAT */}
+        
         <ul>
           {child.id.map((val) => (
             <li>{val}</li>
@@ -40,7 +40,7 @@ const Modal = ({
         </ul>
 
         <p> Class of Children Element:</p>
-        {/* WHAT IS THIS? FOLLOW TAB SPACING FORMAT */}
+       
         <ul>
           {child.classes.map((val) => (
             <li>{val}</li>
