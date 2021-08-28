@@ -23,6 +23,12 @@ module.exports = (env, { mode, presets } = { mode: "development", presets: [] })
             //[chunkhash] - this is a large string of characters that uses hash. If vendor or javascript files were updated, webpack will automatically bundle the contents of the file then generate a different hash.
             filename: "[name].[hash].js"
         },
+        resolve: {
+            alias: {
+                'react': 'preact/compat',
+                'react-dom': 'preact/compat'
+            }
+        },
         mode: "development",
         module: {
             rules: [
