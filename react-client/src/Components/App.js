@@ -1,69 +1,63 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
+import DomInfoDialogBox from "./DomInfoDialogBox";
 
-import { PRODUCTION_MODE } from '../keys';
+import { PRODUCTION_MODE } from "../keys";
 
 function App() {
-
-  const [coordinates, setCoordinates] = useState({ top: 0, left: 0 });
-  const [domInfo, setDomInfo] = useState({ id: "", class: "" ,childcount:"" ,sample: "",parentID: "", parentClass:""});
-  const [domChildID, setdomChildID] = useState([]);
-  const [domChildClass, setdomChildClass] = useState([]);
-  const [txtFieldPageUrl, setTxtFieldPageUrl] = useState("");
-
+  // const [coordinates, setCoordinates] = useState({ top: 0, left: 0 });
+  const [domInfo, setDomInfo] = useState({
+    id: "",
+    class: "",
+    childcount: "",
+    sample: "",
+    parentID: "",
+    parentClass: "",
+    child: { ids: [], classes: [] },
+    coordinates: { top: 10, left: 10 },
+  });
 
   useEffect(() => {
-    
     if (!PRODUCTION_MODE) {
       /**
        * Note: swap the urls for testing different websites. Sample websites for testing:
        * https://web.archive.org/web/20131014212210/http://stackoverflow.com/
        */
-      // getPageContent('https://www.redfin.com/');      
-
+      // getPageContent('https://www.redfin.com/');
       getPageContent('https://web.archive.org/web/20131014212210/http://stackoverflow.com/'); 
       
     } else {
       injectDOMEventInBody();
     }
 
-    return () => {
-      
-    }
+    return () => {};
   }, []);
 
 
   const injectDOMEventInBody = async () => {
 
-    document.addEventListener('click', e => {
+    document.addEventListener("click", (e) => {
+      if (e.target.id !== "divDevTools") {
+        e.preventDefault();
 
-      if (e.target.id !== 'divDevTools') {
+        const reduceChild = [...e.target.children].reduce((init, curr) => {
+          init.ids.push(curr.id);
+          init.classes.push(curr.className);
+          return init;
+        },{ids:[],classes:[]});
 
-        setdomChildID(domChildID => [])
-        setdomChildClass(domChildClass => [])
-
-        setCoordinates({ top: e.pageY, left: e.pageX });
-        setDomInfo({ ...domInfo, id: e.target.id, class: e.target.className, childcount:e.target.childElementCount , parentID: e.target.parentElement.id, parentClass: e.target.parentElement.className });     
-        
-        
-        for (var i = 0; i < e.target.childElementCount; i++) {        
-          // BAD CODING. STATE DATA NOT GROUPED PROPERLY
-          setdomChildID(domChildID => [...domChildID, e.target.children[i].id ])
-          setdomChildClass(domChildClass => [...domChildClass , e.target.children[i].className ])                  
-        }
-      
+        setDomInfo({
+          ...domInfo,
+          id: e.target.id,
+          class: e.target.className,
+          child: reduceChild,
+          parentID: e.target.parentElement.id,
+          parentClass: e.target.parentElement.className,
+          coordinates: { top: e.pageY, left: e.pageX },
+        });
       }
-
     });
   }
-
-  const ClearChildArray = ()=>{
-   
-      setdomChildID(domChildID => [])
-      setdomChildClass(domChildClass => [])
-  
-  }
-
 
   const getPageContent = async (url) => {
     
@@ -78,47 +72,20 @@ function App() {
     injectDOMEventInBody();
   }
 
-
   return (
     <div>
-
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
-      {/* BAD CODING. WIDGET NOT ISOLATED IN ANOTHER REACT COMPONENT */}
-      <div style={{ height: '550px', width: '350px', background: 'white', color: 'blue', fontWeight: '800 !important', zIndex: '999', border: '3px solid green', borderRadius: '20px', position: 'absolute', top: `${coordinates.top}px`, left: `${coordinates.left}px` }}>
-
-        <h1>Element ID: {domInfo.id}</h1>
-        <h2>Class: {domInfo.class}</h2>
-        <h2>Parent ID: {domInfo.parentID}</h2>
-        <h2>Parent Class: {domInfo.parentClass}</h2>
-        <h2># of Children Element: {domInfo.childcount}</h2>
-
-        
-        <p> id of Children Element:</p>
-              {/* WHAT IS THIS? FOLLOW TAB SPACING FORMAT */}
-              <ul>
-               {domChildID.map((child) => (
-                <li>{child}</li>          
-              ))}       
-               </ul>
-
-        <p> Class of Children Element:</p>
-       
-              {/* WHAT IS THIS? FOLLOW TAB SPACING FORMAT */}
-              <ul>
-              {domChildClass.map((child) => (
-              <li>{child}</li>          
-            ))}       
-              </ul>      
-    
-
-        {/* TODO: add other HTML information such as:
-              - Its content(or text content)
-              - Its children(get ID and class)
-              - Its dom parent (get the parent ID and classes)
-        */}
-      </div>
+      <DomInfoDialogBox
+        id={domInfo.id}
+        clsname={domInfo.clsname}
+        parentId={domInfo.parentID}
+        parentClass={domInfo.parentClass}
+        count={domInfo.count}
+        child={domInfo.child}
+        coordinates={domInfo.coordinates}       
+      />
 
       {/* 
       // TODO by Sonny: Build DevTools to change webpage inside localhost dynamically
@@ -130,8 +97,7 @@ function App() {
       </div> 
       */}
     </div>
-  )
+  );
 }
-
 
 export default hot(module)(App);
