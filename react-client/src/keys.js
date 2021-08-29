@@ -1,5 +1,5 @@
 
 module.exports = {
   // NOTE: set this to 'true' if we'll need to test this as google chrome extension
-  PRODUCTION_MODE: false
+  PRODUCTION_MODE: process.env.NODE_ENV === 'production'
 }

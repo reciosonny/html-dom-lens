@@ -1,11 +1,4 @@
 import { PRODUCTION_MODE } from './src/keys';
-import "preact/debug";    
-
-// TODO: need to figure out how to conditionally render "debug" scripts for preact so it won't be included in bundle size.
-// if (!PRODUCTION_MODE) {
-//     // Must be the first import
-//     import "preact/debug";    
-// }
 
 import ReactDOM from 'react-dom';
 import React from 'react';
@@ -24,4 +17,11 @@ rootEl.id = 'htmlDomInfoRoot';
 document.body.appendChild(rootEl);
 
 
-ReactDOM.render(<App />, document.getElementById("htmlDomInfoRoot"));
+if(!PRODUCTION_MODE) { //if not for production, load preact/debug tool
+    import("preact/debug").then(preactDebug => {
+        console.log('importing preact debug... ', preactDebug);
+        ReactDOM.render(<App />, document.getElementById("htmlDomInfoRoot"));
+    });
+} else {
+    ReactDOM.render(<App />, document.getElementById("htmlDomInfoRoot"));
+}

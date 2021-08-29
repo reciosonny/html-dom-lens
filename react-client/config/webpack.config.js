@@ -75,7 +75,7 @@ module.exports = (env, { mode, presets } = { mode: "", presets: [] }) => {
                 template: 'index.html'
             }), //this plugin is responsible for injecting the entry scripts of webpack (such as `bundle.js` and `vendor.js`) inside the html file without specifying them manually.        
             new webpack.DefinePlugin({
-                'process.env.NODE_ENV': JSON.stringify(mode) //we will set the correct variable for `process.env.NODE_ENV` variable inside the `scripts` property in `package.json`
+                'process.env.NODE_ENV': JSON.stringify(env.mode) //we will set the correct variable for `process.env.NODE_ENV` variable inside the `scripts` property in `package.json`
             }), //This adds windows-scoped variables that will be defined in bundle.js
             new MiniCssExtractPlugin({
                 // Options similar to the same options in webpackOptions.output
