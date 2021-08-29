@@ -13,7 +13,7 @@ function App() {
     sample: "",
     parentID: "",
     parentClass: "",
-    child: { ids: [], classes: [] },
+    child: { ids: [], classes: [], totalCount: 0 },
     coordinates: { top: 10, left: 10 },
   });
 
@@ -50,7 +50,7 @@ function App() {
           ...domInfo,
           id: e.target.id,
           class: e.target.className,
-          child: reduceChild,
+          child: {...reduceChild, totalCount: e.target.childElementCount},
           parentID: e.target.parentElement.id,
           parentClass: e.target.parentElement.className,
           coordinates: { top: e.pageY, left: e.pageX },

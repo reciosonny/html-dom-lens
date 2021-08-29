@@ -30,8 +30,8 @@ const DomInfoDialogBox = ({
         <h2>Class: {clsname}</h2>
         <h2>Parent ID: {parentId}</h2>
         <h2>Parent Class: {parentClass}</h2>
-        <h2># of Children Element: {count}</h2>
-        <p> id of Children Element:</p>
+        <h2># of Children Element: {child.totalCount}</h2>
+        <p>Child element ids:</p>
         
         <ul>
           {child.ids.map((val) => (
@@ -39,8 +39,7 @@ const DomInfoDialogBox = ({
           ))}
         </ul>
 
-        <p> Class of Children Element:</p>
-       
+        <p>Child element classes:</p>
         <ul>
           {child.classes.map((val) => (
             <li>{val}</li>
