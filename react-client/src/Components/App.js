@@ -87,8 +87,6 @@ function App() {
       {/* BAD CODING. WIDGET NOT ISOLATED IN ANOTHER REACT COMPONENT */}
       <div style={{ height: '550px', width: '350px', background: 'white', color: 'blue', fontWeight: '800 !important', zIndex: '999', border: '3px solid green', borderRadius: '20px', position: 'absolute', top: `${coordinates.top}px`, left: `${coordinates.left}px` }}>
 
-     
-
         <h1>Element ID: {domInfo.id}</h1>
         <h2>Class: {domInfo.class}</h2>
         <h2>Parent ID: {domInfo.parentID}</h2>

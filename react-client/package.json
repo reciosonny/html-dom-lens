@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf dist",
+    "clean": "rimraf ../code-ext/chrome/dist",
     "webpack": "webpack --config=config/webpack.config.js",
-    "build": "npm run clean && webpack --config=config/webpack.config.js --mode development --env.mode development",
-    "prod": "npm run clean && webpack --mode production --config=config/webpack.config.js --env.mode production --display-used-exports",
+    "build:dev": "npm run clean && webpack --config=config/webpack.config.js --mode development --env.mode development",
+    "build:prod": "npm run clean && webpack --mode production --config=config/webpack.config.js --env.mode production --presets analyze --display-used-exports",
     "prod:analyze": "npm run clean && webpack --mode production --config=config/webpack.config.js --env.mode production --presets analyze --display-used-exports",
     "web:dev": "webpack-dev-server --hotOnly --config=config/webpack.config.js --mode development --env.mode development --watch",
     "test": "jest"

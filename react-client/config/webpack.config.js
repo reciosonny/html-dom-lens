@@ -8,20 +8,21 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const modeConfig = env => require(`./modes/webpack.${env}.js`)(env);
 const pluginConfig = require("./loadPlugins");
 
-
-module.exports = (env, { mode, presets } = { mode: "development", presets: [] }) => {
+// mode: either "development" or "production"
+module.exports = (env, { mode, presets } = { mode: "", presets: [] }) => {
     
     process.env.NODE_ENV = env.mode; //note: We need to set it like this as webpack doesn't set NODE_ENV to development or production automatically.
     
     return webpackMerge({
         entry: {
-            bundle: './src/index.js'
+            bundle: './index.js'
         },
         output: {
-            path: path.join(__dirname, "../dist"),
+            // path: path.join(__dirname, "../dist"),
+            path: path.join(__dirname, "../../code-ext/chrome/dist"),
             //note: we changed `bundle` name into a variable `[name]` to get the key values in `entry` property instead of declaring the name statically.
             //[chunkhash] - this is a large string of characters that uses hash. If vendor or javascript files were updated, webpack will automatically bundle the contents of the file then generate a different hash.
-            filename: "[name].[hash].js"
+            filename: "[name].js"
         },
         resolve: {
             alias: {
@@ -29,7 +30,6 @@ module.exports = (env, { mode, presets } = { mode: "development", presets: [] })
                 'react-dom': 'preact/compat'
             }
         },
-        mode: "development",
         module: {
             rules: [
                 {
@@ -72,7 +72,7 @@ module.exports = (env, { mode, presets } = { mode: "development", presets: [] })
         },
         plugins: [
             new HtmlWebpackPlugin({
-                template: 'src/index.html'
+                template: 'index.html'
             }), //this plugin is responsible for injecting the entry scripts of webpack (such as `bundle.js` and `vendor.js`) inside the html file without specifying them manually.        
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode) //we will set the correct variable for `process.env.NODE_ENV` variable inside the `scripts` property in `package.json`

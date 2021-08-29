@@ -6,6 +6,7 @@ console.log("You're currently running webpack development...");
 
 module.exports = () => ({
     devtool: "inline-source-map",
+    mode: "development",
     devServer: {
         hot: true,
         open: true, //opens the browser once webpack-dev-server is started

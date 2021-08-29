@@ -1,4 +1,4 @@
-import { PRODUCTION_MODE } from './keys';
+import { PRODUCTION_MODE } from './src/keys';
 import "preact/debug";    
 
 // TODO: need to figure out how to conditionally render "debug" scripts for preact so it won't be included in bundle size.
@@ -10,7 +10,7 @@ import "preact/debug";
 import ReactDOM from 'react-dom';
 import React from 'react';
 
-import App from './Components/App';
+import App from './src/Components/App';
 import './style.scss';
 
 
