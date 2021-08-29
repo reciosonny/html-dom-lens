@@ -1,6 +1,5 @@
 import React, { Component, useEffect, useState } from 'react';
 import { hot } from "react-hot-loader";
-import axios from 'axios';
 
 import { PRODUCTION_MODE } from '../keys';
 
@@ -34,7 +33,7 @@ function App() {
   }, []);
 
 
-  const injectDOMEventInBody = () => {
+  const injectDOMEventInBody = async () => {
 
     document.addEventListener('click', e => {
 
@@ -67,10 +66,12 @@ function App() {
 
 
   const getPageContent = async (url) => {
-
+    
     if (!localStorage.getItem('webpage')) {
+      const axios = await import('axios');
+
       const res = await axios.get(url);
-      localStorage.setItem('webpage', res.data);  
+      localStorage.setItem('webpage', res.data);      
     }
 
     document.getElementById('samplePage').innerHTML = localStorage.getItem('webpage');
