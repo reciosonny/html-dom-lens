@@ -5,17 +5,17 @@ import DomInfoDialogBox from "./DomInfoDialogBox";
 import { PRODUCTION_MODE } from "../keys";
 
 function App() {
-  const [notes, setNotes] = useState([]);
-  const [domInfo, setDomInfo] = useState({
-    id: [],
-    class: "",
-    childcount: "",
-    sample: "",
-    parentID: "",
-    parentClass: "",
-    child: { ids: [], classes: [], totalCount: 0 },
-    coordinates: { top: [], left: [] },
-  });
+  const [domInfo, setDomInfo] = useState([]);
+  // const [domInfo, setDomInfo] = useState({
+  //   id: [],
+  //   class: "",
+  //   childcount: "",
+  //   sample: "",
+  //   parentID: "",
+  //   parentClass: "",
+  //   child: { ids: [], classes: [], totalCount: 0 },
+  //   coordinates: { top: [], left: [] },
+  // });
 
   useEffect(() => {
     if (!PRODUCTION_MODE) {
@@ -49,8 +49,8 @@ function App() {
         );
 
         //My work around state  requesting discussion regarding state
-        setNotes((notes) => [
-          ...notes,
+        setDomInfo((dominfo) => [
+          ...dominfo,
           {
             x: e.pageX,
             y: e.pageY,
@@ -94,12 +94,12 @@ function App() {
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
       <div>
-        {notes.map((note) => {
+        {domInfo.map((domInfo) => {
           const handleDelete = () => {
-            setNotes((prevNotes) =>
+            setDomInfo((prevNotes) =>
               prevNotes.reduce(
                 (init, curr) =>
-                  curr.x === note.x && curr.y === note.y
+                  curr.x === domInfo.x && curr.y === domInfo.y
                     ? init
                     : init.push(curr) && init,
                 []
@@ -124,15 +124,13 @@ function App() {
                 
               /> */}
               <DomInfoDialogBox
-                id={note.id}
-                clsname={note.clsname}
-                parentId={note.parentID}
-                parentClass={note.parentClass}
-                // count={domInfo.count}
-                child={note.child}
-                coordinates={domInfo.coordinates} //used in old code
-                top={note.y}
-                left={note.x}
+                id={domInfo.id}
+                clsname={domInfo.clsname}
+                parentId={domInfo.parentID}
+                parentClass={domInfo.parentClass}                
+                child={domInfo.child}                
+                top={domInfo.y}
+                left={domInfo.x}
                 closedialog={handleDelete}
               />
             </div>

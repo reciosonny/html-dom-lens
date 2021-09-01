@@ -7,7 +7,7 @@ const DomInfoDialogBox = ({
   parentClass,
   // count,
   child,
-  coordinates,
+  // coordinates,
   top,
   left,
   closedialog,
