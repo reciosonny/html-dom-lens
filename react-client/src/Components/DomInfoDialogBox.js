@@ -12,21 +12,12 @@ const DomInfoDialogBox = ({
   left,
   closedialog,
 }) => {
+
   return (
     <div>
       <div
+        className='dom-info-dialog-box'
         style={{
-          height: "550px",
-          width: "350px",
-          background: "white",
-          color: "blue",
-          fontWeight: "800 !important",
-          zIndex: "999",
-          border: "3px solid green",
-          borderRadius: "20px",
-          position: "absolute",
-          // top: `${coordinates.top}px`,
-          // left: `${coordinates.left}px`,
           top: `${top}px`,
           left: `${left}px`,
         }}
