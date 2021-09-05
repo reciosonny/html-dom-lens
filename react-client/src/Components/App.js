@@ -91,9 +91,46 @@ function App() {
 
   return (
     <div>
+       <div
+        style={{
+          height: "50px",
+          width: "150px",
+          background: "white",
+          color: "blue",
+          fontWeight: "800 !important",
+          zIndex: "999",
+          border: "3px solid green",
+          borderRadius: "20px",
+          right: 0,
+          position: "fixed",
+          padding: "15px 0px 0px 0px",
+          cursor: "pointer"        
+        }}
+      >
+        This is switch FUnction
+      </div>
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
       <div>
+      {/* <div
+        style={{
+          height: "50px",
+          width: "150px",
+          background: "white",
+          color: "blue",
+          fontWeight: "800 !important",
+          zIndex: "999",
+          border: "3px solid green",
+          borderRadius: "20px",
+          right: 0,
+          position: "fixed",
+          padding: "15px 0px 0px 0px",
+          cursor: "pointer"        
+        }}
+      >
+        This is switch FUnction
+      </div> */}
+
         {domInfo.map((domInfo) => {
           const handleDelete = () => {
             setDomInfo((prevNotes) =>
