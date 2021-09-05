@@ -3,19 +3,16 @@ import { hot } from "react-hot-loader";
 import DomInfoDialogBox from "./DomInfoDialogBox";
 
 import { PRODUCTION_MODE } from "../keys";
+import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
 
 function App() {
   const [domInfo, setDomInfo] = useState([]);
-  // const [domInfo, setDomInfo] = useState({
-  //   id: [],
-  //   class: "",
-  //   childcount: "",
-  //   sample: "",
-  //   parentID: "",
-  //   parentClass: "",
-  //   child: { ids: [], classes: [], totalCount: 0 },
-  //   coordinates: { top: [], left: [] },
-  // });
+  const [domLeanDetails, setDomLeanDetails] = useState({
+    elId: "",
+    elClassNames: [],
+    domType: "",
+  });
+  const refDomHighlight = React.useRef(null);
 
   useEffect(() => {
     if (!PRODUCTION_MODE) {
@@ -36,6 +33,7 @@ function App() {
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", (e) => {
+
       if (e.target.id !== "closedompeeker") {
         e.preventDefault();
 
@@ -74,6 +72,30 @@ function App() {
         // });
       }
     });
+
+    document.addEventListener("mouseover", async (e) => {
+      if (e.target.id !== "domInfoHighlight" && e.target.nodeName !== "HTML") {
+        // console.log(e);
+
+        const domType = e.target.nodeName?.toLowerCase();
+
+        await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+
+        e.target.classList.toggle("focused-dom");
+
+        e.target.appendChild(refDomHighlight.current.base);
+      }
+    });
+
+    document.addEventListener("mouseout", (e) => {
+
+      if (e.target.id !== "domInfoHighlight" && e.target.nodeName !== "HTML") {
+        e.target.classList.toggle("focused-dom");
+
+        e.target.removeChild(refDomHighlight.current.base);
+      }
+    });
+
   };
 
   const getPageContent = async (url) => {
@@ -111,6 +133,7 @@ function App() {
       </div>
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
+
       <div>
       {/* <div
         style={{
@@ -174,6 +197,14 @@ function App() {
           );
         })}
       </div>
+
+      <DomMinimalDetailsWidget
+        ref={refDomHighlight}
+        elId={domLeanDetails.elId}
+        elClassNames={domLeanDetails.elClassNames}
+        domType={domLeanDetails.domType}
+        show={true}
+      />
 
       {/* 
       // TODO by Sonny: Build DevTools to change webpage inside localhost dynamically
