@@ -16,6 +16,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         files: ["./dist/bundle.js"],
       }); //injects foreground script to webpage
 
+      await chrome.scripting.insertCSS({
+        target: { tabId: tabId },
+        files: ["./dist/bundle.css"],
+      });
+
       console.log("running async/await pattern");
       console.log("script injected...", result);
     } catch (ex) {

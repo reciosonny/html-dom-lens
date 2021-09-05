@@ -1,0 +1,65 @@
+// @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,500;1,500&display=swap');
+
+/* latin */
+// @font-face {
+//   font-family: 'Roboto Mono';
+//   font-style: normal;
+//   font-weight: 500;
+//   font-display: swap;
+//   src: url(./fonts/roboto-mono-regular-500.woff2) format('woff2');
+//   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+// }
+
+
+.dom-info-details-lean {
+  position: absolute;
+  // width: 250px;
+  display: block !important;
+  height: 20px;
+  z-index: 9999 !important;
+  top: -30px;
+  background: #673AB7 !important;
+  right: 20px;
+  border-radius: 5px 5px 0 0;
+  padding: 5px 15px;
+  color: #fff;
+  box-sizing: unset !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  font-family: 'Roboto Mono', monospace !important;
+}
+
+.dom-info-lean {
+
+  &--domtype {
+    color: #F48FB1 !important;
+  }
+  &--dom-id {
+    color: #EC407A !important;
+  }
+}
+
+
+.focused-dom {
+  position: relative !important;
+  // display: inline-block !important; //needed this in elements that are inline. Note: has bugs when overriding some div displays
+  border: 0 !important;//1px solid rgba(0, 0, 0, 0.3) !important;
+  // background: rgba(0, 0, 0, 0.2) !important;
+  background: rgba(103, 58, 183, 0.2) !important;
+  overflow: initial !important;
+
+  &::before {
+  }
+  &::after {
+    // content: "";
+    // height: 100%;
+    // width: 100%;
+    // border: 3px solid #000;
+    // position: absolute;
+    // // background: rgba(0, 0, 0, 0.3);
+    // background: transparent !important;
+    // z-index: -10;
+    // top: 0;
+    // left: 0;
+  }
+}

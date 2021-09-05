@@ -11,6 +11,9 @@
     "background":{
         "service_worker" : "./background.js"
     },
+    "content_scripts": [
+
+    ],
     "action":{
         "default_popup": "./popup.html",
         "default_icons":{
@@ -23,7 +26,7 @@
         "activeTab",
         "tabs",
         "storage",
-         "scripting"  
+        "scripting"  
     ],
     "host_permissions":[
         "*://*/*"
