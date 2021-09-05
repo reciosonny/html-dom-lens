@@ -3,6 +3,7 @@ import { hot } from "react-hot-loader";
 import DomInfoDialogBox from "./DomInfoDialogBox";
 
 import { PRODUCTION_MODE } from "../keys";
+import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
 
 function App() {
   // const [coordinates, setCoordinates] = useState({ top: 0, left: 0 });
@@ -16,6 +17,12 @@ function App() {
     child: { ids: [], classes: [], totalCount: 0 },
     coordinates: { top: 10, left: 10 },
   });
+  const [domLeanDetails, setDomLeanDetails] = useState({
+    elId: "",
+    elClassNames: [],
+    domType: "",
+  });
+  const refDomHighlight = React.useRef(null);
 
   useEffect(() => {
     if (!PRODUCTION_MODE) {
@@ -23,9 +30,9 @@ function App() {
        * Note: swap the urls for testing different websites. Sample websites for testing:
        * https://web.archive.org/web/20131014212210/http://stackoverflow.com/
        */
-      // getPageContent('https://www.redfin.com/');
-      getPageContent('https://web.archive.org/web/20131014212210/http://stackoverflow.com/'); 
-      
+      getPageContent("https://www.redfin.com/");
+      // getPageContent('https://web.archive.org/web/20131014212210/http://stackoverflow.com/');
+      // getPageContent('http://localhost/devtools');
     } else {
       injectDOMEventInBody();
     }
@@ -33,51 +40,76 @@ function App() {
     return () => {};
   }, []);
 
-
   const injectDOMEventInBody = async () => {
-
     document.addEventListener("click", (e) => {
       if (e.target.id !== "divDevTools") {
         e.preventDefault();
 
-        const reduceChild = [...e.target.children].reduce((init, curr) => {
-          init.ids.push(curr.id);
-          init.classes.push(curr.className);
-          return init;
-        },{ids:[],classes:[]});
+        const reduceChild = [...e.target.children].reduce(
+          (init, curr) => {
+            init.ids.push(curr.id);
+            init.classes.push(curr.className);
+            return init;
+          },
+          { ids: [], classes: [] }
+        );
 
         setDomInfo({
           ...domInfo,
           id: e.target.id,
           class: e.target.className,
-          child: {...reduceChild, totalCount: e.target.childElementCount},
+          child: { ...reduceChild, totalCount: e.target.childElementCount },
           parentID: e.target.parentElement.id,
           parentClass: e.target.parentElement.className,
           coordinates: { top: e.pageY, left: e.pageX },
         });
       }
     });
-  }
+    
+    document.addEventListener("mouseover", async (e) => {
+      if (e.target.id !== "domInfoHighlight" && e.target.nodeName !== "HTML") {
+        // console.log(e);
+
+        const domType = e.target.nodeName?.toLowerCase();
+
+        await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+
+        e.target.classList.toggle("focused-dom");
+
+        e.target.appendChild(refDomHighlight.current.base);
+      }
+    });
+
+    document.addEventListener("mouseout", (e) => {
+
+      if (e.target.id !== "domInfoHighlight" && e.target.nodeName !== "HTML") {
+        e.target.classList.toggle("focused-dom");
+
+        e.target.removeChild(refDomHighlight.current.base);
+      }
+    });
+
+  };
 
   const getPageContent = async (url) => {
-    
-    if (!localStorage.getItem('webpage')) {
-      const axios = await import('axios');
+    if (!localStorage.getItem("webpage")) {
+      const axios = await import("axios");
 
       const res = await axios.get(url);
-      localStorage.setItem('webpage', res.data);      
+      localStorage.setItem("webpage", res.data);
     }
 
-    document.getElementById('samplePage').innerHTML = localStorage.getItem('webpage');
+    document.getElementById("samplePage").innerHTML =
+      localStorage.getItem("webpage");
     injectDOMEventInBody();
-  }
+  };
 
   return (
     <div>
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
-      <DomInfoDialogBox
+      {/* <DomInfoDialogBox
         id={domInfo.id}
         clsname={domInfo.clsname}
         parentId={domInfo.parentID}
@@ -85,6 +117,14 @@ function App() {
         count={domInfo.count}
         child={domInfo.child}
         coordinates={domInfo.coordinates}       
+      /> */}
+
+      <DomMinimalDetailsWidget
+        ref={refDomHighlight}
+        elId={domLeanDetails.elId}
+        elClassNames={domLeanDetails.elClassNames}
+        domType={domLeanDetails.domType}
+        show={true}
       />
 
       {/* 
