@@ -37,14 +37,9 @@ function App() {
       if (e.target.id !== "closedompeeker") {
         e.preventDefault();
 
-        const reduceChild = [...e.target.children].reduce(
-          (init, curr) => {
-            init.ids.push(curr.id);
-            init.classes.push(curr.className);
-            return init;
-          },
-          { ids: [], classes: [] }
-        );
+        const children = [...e.target.children].map(child => {
+          return { id: child.id, class: child.className };
+        });
 
         //My work around state  requesting discussion regarding state
         setDomInfo((dominfo) => [
@@ -54,7 +49,7 @@ function App() {
             y: e.pageY,
             id: e.target.id,
             clsname: e.target.className,
-            child: { ...reduceChild, totalCount: e.target.childElementCount },
+            children: children,
             parentID: e.target.parentElement.id,
             parentClass: e.target.parentElement.className,
           },
@@ -152,6 +147,7 @@ function App() {
                 parentId={domInfo.parentID}
                 parentClass={domInfo.parentClass}                
                 child={domInfo.child}                
+                children={domInfo.children}
                 top={domInfo.y}
                 left={domInfo.x}
                 closedialog={handleDelete}
