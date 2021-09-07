@@ -116,21 +116,19 @@ function App() {
 
       <div>
         {domInfo.map((domInfo, idx) => (
-            <div>
-              <DomInfoDialogBox
-                key={idx}
-                idx={idx}
-                id={domInfo.id}
-                clsname={domInfo.clsname}
-                parentId={domInfo.parentID}
-                parentClass={domInfo.parentClass}                
-                child={domInfo.child}                
-                children={domInfo.children}
-                top={domInfo.y}
-                left={domInfo.x}
-                onClose={handleRemoveDialogBox}
-              />
-            </div>
+          <DomInfoDialogBox
+            key={idx}
+            idx={idx}
+            id={domInfo.id}
+            clsname={domInfo.clsname}
+            parentId={domInfo.parentID}
+            parentClass={domInfo.parentClass}                
+            child={domInfo.child}                
+            children={domInfo.children}
+            top={domInfo.y}
+            left={domInfo.x}
+            onClose={handleRemoveDialogBox}
+          />     
         ))}
       </div>
 
