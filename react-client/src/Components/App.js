@@ -5,6 +5,9 @@ import DomInfoDialogBox from "./DomInfoDialogBox";
 import { PRODUCTION_MODE } from "../keys";
 import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
 
+import * as domUtils from '../utils/domUtils';
+
+
 function App() {
   const [domInfo, setDomInfo] = useState([]);
   const [domLeanDetails, setDomLeanDetails] = useState({
@@ -20,10 +23,10 @@ function App() {
        * Note: swap the urls for testing different websites. Sample websites for testing:
        * https://web.archive.org/web/20131014212210/http://stackoverflow.com/
        */
-      // getPageContent('https://www.redfin.com/');
-      getPageContent(
-        "https://web.archive.org/web/20131014212210/http://stackoverflow.com/"
-      );
+      getPageContent('https://www.redfin.com/');
+      // getPageContent(
+      //   "https://facebook.com"
+      // );
     } else {
       injectDOMEventInBody();
     }
@@ -54,23 +57,14 @@ function App() {
             parentClass: e.target.parentElement.className,
           },
         ]);
-        //My work around state  requesting discussion regarding state
-
-        // setDomInfo({
-        //   ...domInfo,
-        //   id: e.target.id,
-        //   clsname: e.target.className,
-        //   child: { ...reduceChild, totalCount: e.target.childElementCount },
-        //   parentID: e.target.parentElement.id,
-        //   parentClass: e.target.parentElement.className,
-        //   coordinates: { top: e.pageY, left: e.pageX },
-        // });
       }
     });
 
     document.addEventListener("mouseover", async (e) => {
-      if (e.target.id !== "domInfoHighlight" && e.target.nodeName !== "HTML") {
-        // console.log(e);
+
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+
+      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
 
         const domType = e.target.nodeName?.toLowerCase();
 
@@ -84,7 +78,9 @@ function App() {
 
     document.addEventListener("mouseout", (e) => {
 
-      if (e.target.id !== "domInfoHighlight" && e.target.nodeName !== "HTML") {
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+
+      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
         e.target.classList.toggle("focused-dom");
 
         e.target.removeChild(refDomHighlight.current.base);
@@ -106,42 +102,24 @@ function App() {
     injectDOMEventInBody();
   };
 
+  const handleRemoveDialogBox = (idx) => {
+
+    const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
+
+    setDomInfo(newDomInfo);
+  }
+
   return (
     <div>
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
       <div>
-        {domInfo.map((domInfo) => {
-          const handleDelete = () => {
-            setDomInfo((prevNotes) =>
-              prevNotes.reduce(
-                (init, curr) =>
-                  curr.x === domInfo.x && curr.y === domInfo.y
-                    ? init
-                    : init.push(curr) && init,
-                []
-              )
-            );
-          };
-
-          return (
+        {domInfo.map((domInfo, idx) => (
             <div>
-              {/* <DomInfoDialogBox
-                id={domInfo.id}
-                clsname={domInfo.clsname}
-                parentId={domInfo.parentID}
-                parentClass={domInfo.parentClass}
-                count={domInfo.count}
-                child={domInfo.child}
-                coordinates={domInfo.coordinates}
-                top={note.y}
-                left={note.x}
-                closedialog={handleDelete}
-                noteid={note.myid}
-                
-              /> */}
               <DomInfoDialogBox
+                key={idx}
+                idx={idx}
                 id={domInfo.id}
                 clsname={domInfo.clsname}
                 parentId={domInfo.parentID}
@@ -150,11 +128,10 @@ function App() {
                 children={domInfo.children}
                 top={domInfo.y}
                 left={domInfo.x}
-                closedialog={handleDelete}
+                onClose={handleRemoveDialogBox}
               />
             </div>
-          );
-        })}
+        ))}
       </div>
 
       <DomMinimalDetailsWidget

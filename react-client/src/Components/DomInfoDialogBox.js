@@ -1,6 +1,6 @@
 import React from "react";
 
-const DomInfoDialogBox = ({ id, clsname, parentId, parentClass, children, top, left, closedialog }) => {
+const DomInfoDialogBox = ({ id, idx, clsname, parentId, parentClass, children, top, left, onClose }) => {
 
   return (
     <div>
@@ -12,7 +12,7 @@ const DomInfoDialogBox = ({ id, clsname, parentId, parentClass, children, top, l
         }}
       >
         <div style="float:right">
-          <button id="closedompeeker" onClick={closedialog}>
+          <button id="closedompeeker" onClick={() => onClose(idx)}>
             X
           </button>
         </div>
