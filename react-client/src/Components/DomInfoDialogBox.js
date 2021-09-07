@@ -32,7 +32,7 @@ const DomInfoDialogBox = ({
         }}
       >
         <div style="float:right">
-          <button id="closedompeeker" onClick={closedialog}>
+          <button id="divDeveloperTools" onClick={closedialog}>
             X
           </button>
         </div>

@@ -1,9 +1,9 @@
 import React, { Component, useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
 import DomInfoDialogBox from "./DomInfoDialogBox";
-
 import { PRODUCTION_MODE } from "../keys";
 import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
+import DomSwitch from "./DomSwitch";
 
 function App() {
   const [domInfo, setDomInfo] = useState([]);
@@ -12,6 +12,15 @@ function App() {
     elClassNames: [],
     domType: "",
   });
+  const [domSwitch, setdomSwitch] = useState(true);
+  const [initialState, setInitialState] = React.useState();
+  const switchdom = () => {
+
+     setdomSwitch(!domSwitch);
+    //  debugger
+  }
+
+  // debugger;
   const refDomHighlight = React.useRef(null);
 
   useEffect(() => {
@@ -31,10 +40,13 @@ function App() {
     return () => {};
   }, []);
 
+  useEffect(() => {
+    return () => {};
+  }, []);
+
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", (e) => {
-
-      if (e.target.id !== "closedompeeker") {
+      if (e.target.id !== "divDeveloperTools" && domSwitch == true) {
         e.preventDefault();
 
         const reduceChild = [...e.target.children].reduce(
@@ -46,7 +58,6 @@ function App() {
           { ids: [], classes: [] }
         );
 
-        //My work around state  requesting discussion regarding state
         setDomInfo((dominfo) => [
           ...dominfo,
           {
@@ -59,43 +70,38 @@ function App() {
             parentClass: e.target.parentElement.className,
           },
         ]);
-        //My work around state  requesting discussion regarding state
-
-        // setDomInfo({
-        //   ...domInfo,
-        //   id: e.target.id,
-        //   clsname: e.target.className,
-        //   child: { ...reduceChild, totalCount: e.target.childElementCount },
-        //   parentID: e.target.parentElement.id,
-        //   parentClass: e.target.parentElement.className,
-        //   coordinates: { top: e.pageY, left: e.pageX },
-        // });
       }
     });
 
     document.addEventListener("mouseover", async (e) => {
-      if (e.target.id !== "domInfoHighlight" && e.target.nodeName !== "HTML") {
-        // console.log(e);
+      // if (domSwitch !== true) {
+      //   if (
+      //     e.target.id !== "domInfoHighlight" &&
+      //     e.target.nodeName !== "HTML"
+      //   ) {
+      //     const domType = e.target.nodeName?.toLowerCase();
 
-        const domType = e.target.nodeName?.toLowerCase();
+      //     await setDomLeanDetails({
+      //       ...domLeanDetails,
+      //       elId: e.target.id,
+      //       domType,
+      //       elClassNames: [...e.target.classList],
+      //     }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
 
-        await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+      //     e.target.classList.toggle("focused-dom");
 
-        e.target.classList.toggle("focused-dom");
-
-        e.target.appendChild(refDomHighlight.current.base);
-      }
+      //     e.target.appendChild(refDomHighlight.current.base);
+      //   }
+      // }
     });
 
     document.addEventListener("mouseout", (e) => {
+      // if (e.target.id !== "domInfoHighlight" && e.target.nodeName !== "HTML") {
+      //   e.target.classList.toggle("focused-dom");
 
-      if (e.target.id !== "domInfoHighlight" && e.target.nodeName !== "HTML") {
-        e.target.classList.toggle("focused-dom");
-
-        e.target.removeChild(refDomHighlight.current.base);
-      }
+      //   e.target.removeChild(refDomHighlight.current.base);
+      // }
     });
-
   };
 
   const getPageContent = async (url) => {
@@ -111,100 +117,56 @@ function App() {
     injectDOMEventInBody();
   };
 
+ 
+
+  // const resetdom = () => setshowSwitch(true);
+
   return (
     <div>
-       <div
-        style={{
-          height: "50px",
-          width: "150px",
-          background: "white",
-          color: "blue",
-          fontWeight: "800 !important",
-          zIndex: "999",
-          border: "3px solid green",
-          borderRadius: "20px",
-          right: 0,
-          position: "fixed",
-          padding: "15px 0px 0px 0px",
-          cursor: "pointer"        
-        }}
-      >
-        This is switch FUnction
-      </div>
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
-      <div>
-      {/* <div
-        style={{
-          height: "50px",
-          width: "150px",
-          background: "white",
-          color: "blue",
-          fontWeight: "800 !important",
-          zIndex: "999",
-          border: "3px solid green",
-          borderRadius: "20px",
-          right: 0,
-          position: "fixed",
-          padding: "15px 0px 0px 0px",
-          cursor: "pointer"        
-        }}
-      >
-        This is switch FUnction
-      </div> */}
+      <div onClick={switchdom}>{domSwitch ? <DomSwitch /> : null}</div>
+      {domSwitch ? (
+        <div>
+          {domInfo.map((domInfo) => {
+            const handleDelete = () => {
+              setDomInfo((prevNotes) =>
+                prevNotes.reduce(
+                  (init, curr) =>
+                    curr.x === domInfo.x && curr.y === domInfo.y
+                      ? init
+                      : init.push(curr) && init,
+                  []
+                )
+              );
+            };
 
-        {domInfo.map((domInfo) => {
-          const handleDelete = () => {
-            setDomInfo((prevNotes) =>
-              prevNotes.reduce(
-                (init, curr) =>
-                  curr.x === domInfo.x && curr.y === domInfo.y
-                    ? init
-                    : init.push(curr) && init,
-                []
-              )
+            return (
+              <div>
+                <DomInfoDialogBox
+                  id={domInfo.id}
+                  clsname={domInfo.clsname}
+                  parentId={domInfo.parentID}
+                  parentClass={domInfo.parentClass}
+                  child={domInfo.child}
+                  top={domInfo.y}
+                  left={domInfo.x}
+                  closedialog={handleDelete}
+                />
+              </div>
             );
-          };
+          })}
 
-          return (
-            <div>
-              {/* <DomInfoDialogBox
-                id={domInfo.id}
-                clsname={domInfo.clsname}
-                parentId={domInfo.parentID}
-                parentClass={domInfo.parentClass}
-                count={domInfo.count}
-                child={domInfo.child}
-                coordinates={domInfo.coordinates}
-                top={note.y}
-                left={note.x}
-                closedialog={handleDelete}
-                noteid={note.myid}
-                
-              /> */}
-              <DomInfoDialogBox
-                id={domInfo.id}
-                clsname={domInfo.clsname}
-                parentId={domInfo.parentID}
-                parentClass={domInfo.parentClass}                
-                child={domInfo.child}                
-                top={domInfo.y}
-                left={domInfo.x}
-                closedialog={handleDelete}
-              />
-            </div>
-          );
-        })}
-      </div>
-
-      <DomMinimalDetailsWidget
-        ref={refDomHighlight}
-        elId={domLeanDetails.elId}
-        elClassNames={domLeanDetails.elClassNames}
-        domType={domLeanDetails.domType}
-        show={true}
-      />
+          <DomMinimalDetailsWidget
+            ref={refDomHighlight}
+            elId={domLeanDetails.elId}
+            elClassNames={domLeanDetails.elClassNames}
+            domType={domLeanDetails.domType}
+            show={true}
+          />
+        </div>
+      ) : null}
 
       {/* 
       // TODO by Sonny: Build DevTools to change webpage inside localhost dynamically
