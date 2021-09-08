@@ -15,10 +15,9 @@ function App() {
   const [domSwitch, setdomSwitch] = useState(true);
   const [initialState, setInitialState] = React.useState();
   const switchdom = () => {
-
-     setdomSwitch(!domSwitch);
+    setdomSwitch(!domSwitch);
     //  debugger
-  }
+  };
 
   // debugger;
   const refDomHighlight = React.useRef(null);
@@ -80,16 +79,13 @@ function App() {
       //     e.target.nodeName !== "HTML"
       //   ) {
       //     const domType = e.target.nodeName?.toLowerCase();
-
       //     await setDomLeanDetails({
       //       ...domLeanDetails,
       //       elId: e.target.id,
       //       domType,
       //       elClassNames: [...e.target.classList],
       //     }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
-
       //     e.target.classList.toggle("focused-dom");
-
       //     e.target.appendChild(refDomHighlight.current.base);
       //   }
       // }
@@ -98,7 +94,6 @@ function App() {
     document.addEventListener("mouseout", (e) => {
       // if (e.target.id !== "domInfoHighlight" && e.target.nodeName !== "HTML") {
       //   e.target.classList.toggle("focused-dom");
-
       //   e.target.removeChild(refDomHighlight.current.base);
       // }
     });
@@ -117,8 +112,6 @@ function App() {
     injectDOMEventInBody();
   };
 
- 
-
   // const resetdom = () => setshowSwitch(true);
 
   return (
@@ -126,7 +119,7 @@ function App() {
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
-      <div onClick={switchdom}>{domSwitch ? <DomSwitch /> : null}</div>
+      <div onClick={switchdom}>{domSwitch && <DomSwitch />}</div>
       {domSwitch ? (
         <div>
           {domInfo.map((domInfo) => {

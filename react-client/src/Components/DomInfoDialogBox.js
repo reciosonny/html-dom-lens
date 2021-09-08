@@ -16,7 +16,7 @@ const DomInfoDialogBox = ({
     <div>
       <div
         style={{
-          height: "550px",
+          height: "auto",
           width: "350px",
           background: "white",
           color: "blue",

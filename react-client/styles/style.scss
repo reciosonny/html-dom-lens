@@ -10,6 +10,21 @@
 //   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 // }
 
+.dom-switch {
+  height: 35px;
+  width: 150px;
+  background-color: #ede7f6;
+  color: #455a64;
+  border: 3px;
+  position: fixed;
+  border-radius: 8px;
+  top: 0px;
+  right: 0px;
+  cursor: pointer;
+  padding: 15px 0px 0px 0px;
+  font-family: Roboto monospace;
+  font: 10px;
+}
 
 .dom-info-details-lean {
   position: absolute;
@@ -18,7 +33,7 @@
   height: 20px;
   z-index: 9999 !important;
   top: -30px;
-  background: #673AB7 !important;
+  background: #673ab7 !important;
   right: 20px;
   border-radius: 5px 5px 0 0;
   padding: 5px 15px;
@@ -26,24 +41,22 @@
   box-sizing: unset !important;
   font-size: 12px !important;
   font-weight: 500 !important;
-  font-family: 'Roboto Mono', monospace !important;
+  font-family: "Roboto Mono", monospace !important;
 }
 
 .dom-info-lean {
-
   &--domtype {
-    color: #F48FB1 !important;
+    color: #f48fb1 !important;
   }
   &--dom-id {
-    color: #EC407A !important;
+    color: #ec407a !important;
   }
 }
-
 
 .focused-dom {
   position: relative !important;
   // display: inline-block !important; //needed this in elements that are inline. Note: has bugs when overriding some div displays
-  border: 0 !important;//1px solid rgba(0, 0, 0, 0.3) !important;
+  border: 0 !important; //1px solid rgba(0, 0, 0, 0.3) !important;
   // background: rgba(0, 0, 0, 0.2) !important;
   background: rgba(103, 58, 183, 0.2) !important;
   overflow: initial !important;
