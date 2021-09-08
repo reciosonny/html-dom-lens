@@ -1,9 +1,9 @@
 import React, { Component, useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
 import DomInfoDialogBox from "./DomInfoDialogBox";
-
 import { PRODUCTION_MODE } from "../keys";
 import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
+import DomSwitch from "./DomSwitch";
 
 import * as domUtils from '../utils/domUtils';
 
@@ -15,6 +15,14 @@ function App() {
     elClassNames: [],
     domType: "",
   });
+  const [domSwitch, setdomSwitch] = useState(true);
+  const [initialState, setInitialState] = React.useState();
+  const switchdom = () => {
+    setdomSwitch(!domSwitch);
+    //  debugger
+  };
+
+  // debugger;
   const refDomHighlight = React.useRef(null);
 
   useEffect(() => {
@@ -34,17 +42,19 @@ function App() {
     return () => {};
   }, []);
 
+  useEffect(() => {
+    return () => {};
+  }, []);
+
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", (e) => {
-
-      if (e.target.id !== "closedompeeker") {
+      if (e.target.id !== "closedompeeker" && domSwitch == true) {
         e.preventDefault();
 
         const children = [...e.target.children].map(child => {
           return { id: child.id, class: child.className };
         });
 
-        //My work around state  requesting discussion regarding state
         setDomInfo((dominfo) => [
           ...dominfo,
           {
@@ -61,7 +71,7 @@ function App() {
     });
 
     document.addEventListener("mouseover", async (e) => {
-
+      
       const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
 
       if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
@@ -86,7 +96,6 @@ function App() {
         e.target.removeChild(refDomHighlight.current.base);
       }
     });
-
   };
 
   const getPageContent = async (url) => {
@@ -108,37 +117,42 @@ function App() {
 
     setDomInfo(newDomInfo);
   }
+  // const resetdom = () => setshowSwitch(true);
 
   return (
     <div>
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
-      <div>
-        {domInfo.map((domInfo, idx) => (
-          <DomInfoDialogBox
-            key={idx}
-            idx={idx}
-            id={domInfo.id}
-            clsname={domInfo.clsname}
-            parentId={domInfo.parentID}
-            parentClass={domInfo.parentClass}                
-            child={domInfo.child}                
-            children={domInfo.children}
-            top={domInfo.y}
-            left={domInfo.x}
-            onClose={handleRemoveDialogBox}
-          />     
-        ))}
-      </div>
+      <div onClick={switchdom}>{domSwitch && <DomSwitch />}</div>
 
-      <DomMinimalDetailsWidget
-        ref={refDomHighlight}
-        elId={domLeanDetails.elId}
-        elClassNames={domLeanDetails.elClassNames}
-        domType={domLeanDetails.domType}
-        show={true}
-      />
+      {domSwitch && (
+        <div>
+          {domInfo.map((domInfo, idx) => (
+            <DomInfoDialogBox
+              key={idx}
+              idx={idx}
+              id={domInfo.id}
+              clsname={domInfo.clsname}
+              parentId={domInfo.parentID}
+              parentClass={domInfo.parentClass}                
+              child={domInfo.child}                
+              children={domInfo.children}
+              top={domInfo.y}
+              left={domInfo.x}
+              onClose={handleRemoveDialogBox}
+            />     
+          ))}
+
+          <DomMinimalDetailsWidget
+            ref={refDomHighlight}
+            elId={domLeanDetails.elId}
+            elClassNames={domLeanDetails.elClassNames}
+            domType={domLeanDetails.domType}
+            show={true}
+          />
+        </div>
+      )}
 
       {/* 
       // TODO by Sonny: Build DevTools to change webpage inside localhost dynamically

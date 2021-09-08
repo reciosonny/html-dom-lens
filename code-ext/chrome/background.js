@@ -6,18 +6,18 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.storage.local.get(["name"], (data) => {});
 
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  console.log(tab);
 
-  if (changeInfo.status === "complete" && /^http/.test(tab.url)) {
+chrome.action.onClicked.addListener(async ( tab) => {
+ console.log('Click Injection');
+  
     try {
       const result = await chrome.scripting.executeScript({
-        target: { tabId: tabId },
+        target: { tabId: tab.id },
         files: ["./dist/bundle.js"],
       }); //injects foreground script to webpage
 
       await chrome.scripting.insertCSS({
-        target: { tabId: tabId },
+        target: { tabId: tab.id },
         files: ["./dist/bundle.css"],
       });
 
@@ -26,7 +26,31 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     } catch (ex) {
       console.error(ex);
     }
-  }
+  
+});
+
+
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  // console.log(tab);
+
+  // if (changeInfo.status === "complete" && /^http/.test(tab.url)) {
+  //   try {
+  //     const result = await chrome.scripting.executeScript({
+  //       target: { tabId: tabId },
+  //       files: ["./dist/bundle.js"],
+  //     }); //injects foreground script to webpage
+
+  //     await chrome.scripting.insertCSS({
+  //       target: { tabId: tabId },
+  //       files: ["./dist/bundle.css"],
+  //     });
+
+  //     console.log("running async/await pattern");
+  //     console.log("script injected...", result);
+  //   } catch (ex) {
+  //     console.error(ex);
+  //   }
+  // }
 });
 
 console.log("background here ");
