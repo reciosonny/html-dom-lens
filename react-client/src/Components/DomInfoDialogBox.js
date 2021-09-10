@@ -1,19 +1,13 @@
-import React from "react";
+import React,{useeffect,useState} from "react";
 
-const DomInfoDialogBox = ({
-  id,
-  idx,
-  clsname,
-  parentId,
-  parentClass,
-  children,
-  top,
-  left,
-  onClose,
-  seeMore,
-  displayArr
-  
-}) => {
+const DomInfoDialogBox = ({ id,idx,clsname,parentId,parentClass,children,top,left,onClose}) => {
+  const [displayArray , setdisplayArray] = useState("2");  
+  const handleSeemore = () => {
+    setdisplayArray(children.length);
+ }; 
+ const leftover = 
+  children.length - displayArray;
+;
   return (
     <div>
       <div
@@ -42,7 +36,7 @@ const DomInfoDialogBox = ({
               <td>
                 <p> Child ID</p>
                 <ul>
-                  {children.slice(0,displayArr).map((val) => (
+                  {children.slice(0,displayArray).map((val) => (
                     <li>{val.id}</li>
                   ))}
                 </ul>
@@ -51,15 +45,15 @@ const DomInfoDialogBox = ({
               <td>
                 <p>Child classes:</p>
                 <ul>
-                  {children.slice(0,displayArr).map((val) => (
+                  {children.slice(0,displayArray).map((val) => (
                     <li>{val.class}</li>
                   ))}
                 </ul>
               </td>
             </tr>
           </table>
-          <button id="closedompeeker" style={{cursor: "pointer"}} onClick={seeMore} >
-            see more
+          <button id="closedompeeker" style={{cursor: "pointer"}} onClick={handleSeemore} >
+                see  {leftover} more
           </button>
         </div>
       </div>

@@ -15,14 +15,12 @@ function App() {
     domType: "",
   });
   const [domSwitch, setdomSwitch] = useState(true);
-  const [displayArray , setdisplayArray] = useState("2");
   const [initialState, setInitialState] = React.useState();
   const switchdom = () => {
     setdomSwitch(!domSwitch);
-    //  debugger
   };
 
-  // debugger;
+
   const refDomHighlight = React.useRef(null);
 
   useEffect(() => {
@@ -45,9 +43,7 @@ function App() {
     return () => {};
   }, []);
 
-  useEffect(() => {
-    return () => {};
-  }, []);
+ 
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", (e) => {
@@ -65,8 +61,7 @@ function App() {
             y: e.pageY,
             id: e.target.id,
             clsname: e.target.className,
-            children: children,
-            childcount: e.target.childElementCount,
+            children: children,            
             parentID: e.target.parentElement.id,
             parentClass: e.target.parentElement.className,
           },
@@ -75,21 +70,21 @@ function App() {
     });
 
     document.addEventListener("mouseover", async (e) => {
-      // const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-      // if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-      //   const domType = e.target.nodeName?.toLowerCase();
-      //   await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
-      //   e.target.classList.toggle("focused-dom");
-      //   e.target.appendChild(refDomHighlight.current.base);
-      // }
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+        const domType = e.target.nodeName?.toLowerCase();
+        await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+        e.target.classList.toggle("focused-dom");
+        e.target.appendChild(refDomHighlight.current.base);
+      }
     });
 
     document.addEventListener("mouseout", (e) => {
-      // const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-      // if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-      //   e.target.classList.toggle("focused-dom");
-      //   e.target.removeChild(refDomHighlight.current.base);
-      // }
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+        e.target.classList.toggle("focused-dom");
+        e.target.removeChild(refDomHighlight.current.base);
+      }
     });
   };
 
@@ -112,14 +107,6 @@ function App() {
     setDomInfo(newDomInfo);
   };
 
-  const handleSeemore = () => {
-    debugger
-   try {
-     setdisplayArray(domInfo.childcount);
-     
-   } finally{}
-  };
-  
 
   return (
     <div>
@@ -142,19 +129,18 @@ function App() {
               top={domInfo.y}
               left={domInfo.x}
               onClose={handleRemoveDialogBox}
-              seeMore={handleSeemore}
-              displayArr= {displayArray}
+             
             />
           ))}
         
 
-          {/* <DomMinimalDetailsWidget
+          <DomMinimalDetailsWidget
             ref={refDomHighlight}
             elId={domLeanDetails.elId}
             elClassNames={domLeanDetails.elClassNames}
             domType={domLeanDetails.domType}
             show={true}
-          /> */}
+          />
 
         </div>
       )}
