@@ -1,11 +1,23 @@
 import React from "react";
 
-const DomInfoDialogBox = ({ id, idx, clsname, parentId, parentClass, children, top, left, onClose }) => {
-
+const DomInfoDialogBox = ({
+  id,
+  idx,
+  clsname,
+  parentId,
+  parentClass,
+  children,
+  top,
+  left,
+  onClose,
+  seeMore,
+  displayArr
+  
+}) => {
   return (
     <div>
       <div
-        className='dom-info-dialog-box'
+        className="dom-info-dialog-box"
         style={{
           top: `${top}px`,
           left: `${left}px`,
@@ -16,27 +28,40 @@ const DomInfoDialogBox = ({ id, idx, clsname, parentId, parentClass, children, t
             X
           </button>
         </div>
+        <div>
+          <h1>Element ID: {id}</h1>
+          <h2>Class: {clsname}</h2>
+          <h2>Parent ID: {parentId}</h2>
+          <h2>Parent Class: {parentClass}</h2>
 
-        <h1>Element ID: {id}</h1>
-        <h2>Class: {clsname}</h2>
-        <h2>Parent ID: {parentId}</h2>
-        <h2>Parent Class: {parentClass}</h2>
-        {/* <h2># of Children Element: {child.totalCount}</h2> */}
-        <h2># of Children Element: {children.length}</h2>
+          <h2># of Children Element: {children.length}</h2>
 
-        <p>Child element ids:</p>
-        <ul>
-          {children.map((val) => (
-            <li>{val.id}</li>
-          ))}
-        </ul>
+          <p>Child elements </p>
+          <table align = "center">
+            <tr>
+              <td>
+                <p> Child ID</p>
+                <ul>
+                  {children.slice(0,displayArr).map((val) => (
+                    <li>{val.id}</li>
+                  ))}
+                </ul>
+              </td>
 
-        <p>Child element classes:</p>
-        <ul>
-          {children.map((val) => (
-            <li>{val.class}</li>
-          ))}
-        </ul>
+              <td>
+                <p>Child classes:</p>
+                <ul>
+                  {children.slice(0,displayArr).map((val) => (
+                    <li>{val.class}</li>
+                  ))}
+                </ul>
+              </td>
+            </tr>
+          </table>
+          <button id="closedompeeker" style={{cursor: "pointer"}} onClick={seeMore} >
+            see more
+          </button>
+        </div>
       </div>
     </div>
   );

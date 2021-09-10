@@ -5,8 +5,7 @@ import { PRODUCTION_MODE } from "../keys";
 import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
 import DomSwitch from "./DomSwitch";
 
-import * as domUtils from '../utils/domUtils';
-
+import * as domUtils from "../utils/domUtils";
 
 function App() {
   const [domInfo, setDomInfo] = useState([]);
@@ -16,6 +15,7 @@ function App() {
     domType: "",
   });
   const [domSwitch, setdomSwitch] = useState(true);
+  const [displayArray , setdisplayArray] = useState("2");
   const [initialState, setInitialState] = React.useState();
   const switchdom = () => {
     setdomSwitch(!domSwitch);
@@ -31,7 +31,10 @@ function App() {
        * Note: swap the urls for testing different websites. Sample websites for testing:
        * https://web.archive.org/web/20131014212210/http://stackoverflow.com/
        */
-      getPageContent('https://www.redfin.com/');
+      // getPageContent('https://www.redfin.com/');s
+      getPageContent(
+        "https://web.archive.org/web/20131014212210/http://stackoverflow.com/"
+      );
       // getPageContent(
       //   "https://facebook.com"
       // );
@@ -51,7 +54,7 @@ function App() {
       if (e.target.id !== "closedompeeker" && domSwitch == true) {
         e.preventDefault();
 
-        const children = [...e.target.children].map(child => {
+        const children = [...e.target.children].map((child) => {
           return { id: child.id, class: child.className };
         });
 
@@ -63,6 +66,7 @@ function App() {
             id: e.target.id,
             clsname: e.target.className,
             children: children,
+            childcount: e.target.childElementCount,
             parentID: e.target.parentElement.id,
             parentClass: e.target.parentElement.className,
           },
@@ -71,30 +75,21 @@ function App() {
     });
 
     document.addEventListener("mouseover", async (e) => {
-      
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-
-      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-
-        const domType = e.target.nodeName?.toLowerCase();
-
-        await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
-
-        e.target.classList.toggle("focused-dom");
-
-        e.target.appendChild(refDomHighlight.current.base);
-      }
+      // const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      // if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+      //   const domType = e.target.nodeName?.toLowerCase();
+      //   await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+      //   e.target.classList.toggle("focused-dom");
+      //   e.target.appendChild(refDomHighlight.current.base);
+      // }
     });
 
     document.addEventListener("mouseout", (e) => {
-
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-
-      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-        e.target.classList.toggle("focused-dom");
-
-        e.target.removeChild(refDomHighlight.current.base);
-      }
+      // const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      // if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+      //   e.target.classList.toggle("focused-dom");
+      //   e.target.removeChild(refDomHighlight.current.base);
+      // }
     });
   };
 
@@ -112,12 +107,19 @@ function App() {
   };
 
   const handleRemoveDialogBox = (idx) => {
-
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
 
     setDomInfo(newDomInfo);
-  }
-  // const resetdom = () => setshowSwitch(true);
+  };
+
+  const handleSeemore = () => {
+    debugger
+   try {
+     setdisplayArray(domInfo.childcount);
+     
+   } finally{}
+  };
+  
 
   return (
     <div>
@@ -135,22 +137,25 @@ function App() {
               id={domInfo.id}
               clsname={domInfo.clsname}
               parentId={domInfo.parentID}
-              parentClass={domInfo.parentClass}                
-              child={domInfo.child}                
+              parentClass={domInfo.parentClass}
               children={domInfo.children}
               top={domInfo.y}
               left={domInfo.x}
               onClose={handleRemoveDialogBox}
-            />     
+              seeMore={handleSeemore}
+              displayArr= {displayArray}
+            />
           ))}
+        
 
-          <DomMinimalDetailsWidget
+          {/* <DomMinimalDetailsWidget
             ref={refDomHighlight}
             elId={domLeanDetails.elId}
             elClassNames={domLeanDetails.elClassNames}
             domType={domLeanDetails.domType}
             show={true}
-          />
+          /> */}
+
         </div>
       )}
 
