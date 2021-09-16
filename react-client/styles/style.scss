@@ -11,7 +11,7 @@
 // }
 
 $MainDialogColor: #ede7f6;
-$MainDialogPadding: 10px 20px 20px 20px;
+$MainDialogPadding: 19px 17px 21px 17px;
 
 $Domheaderfontsize: 14px;
 
@@ -53,15 +53,16 @@ $DialogDetailPadding: 10px 0px 0px 0px;
     color: #E91E63;
     float:left;
     width:fit-content;
-    padding: 0px 5px 0px 0px;
+    // padding: 0px 5px 0px 0px;
   }
   .dom-details-tag{
     font-size: 12px;
     color: #E91E63;
     float:left;
     width:fit-content;
-    padding: 0px 5px 0px 0px;
+    // padding: 0px 5px 0px 0px;
   }
+ 
   .dom-styles {
     font-size: 8px;
     color: #78909c;
@@ -77,19 +78,23 @@ $DialogDetailPadding: 10px 0px 0px 0px;
     color: #78909c;
     padding: $DialogDetailPadding;
   }
-  .dom-dialog-details {
+  .dom-dialog-parent-details {
     font-size: 12px;
     color: #546e7a;  
     align: left; 
-    .details-table {
-      padding: 5px 5px 5px 5px;
-    }
+    padding: 0px 0px 15px 0px;
+  }
+  .dom-dialog-child-details {
+    font-size: 12px;
+    color: #546e7a;  
+    align: left;    
+    padding: 10px 0px 0px 0px;
+    
   }
   .see-more {
     cursor: pointer;
     font-size: 10px;
-    color: #455a64;
-    // padding: $DialogDetailPadding;
+    color: #78909c;    
   }
 }
 

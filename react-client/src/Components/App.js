@@ -48,7 +48,7 @@ function App() {
 
         const children = [...e.target.children].map((child) => {
           return {
-            id: child.id.trim() !== "" ? "#" + child.id : null,  class: child.className.trim() !== "" ? "." + child.className : null,
+            id: child.id.trim() !== "" ? "#" + child.id : null,  class: child.className.trim() !== "" ? "." + child.className : null, childtag: child.localName
           };
         });
 
@@ -77,19 +77,19 @@ function App() {
           parseInt(rgbArr[1]).toString(16) +
           parseInt(rgbArr[2]).toString(16);
 
-        debugger;
+        
         setDomInfo((dominfo) => [
           ...dominfo,
           {
             x: e.pageX,
             y: e.pageY,
-            id:   e.target.id.trim() !== "" ?  "#" + e.target.id : null,
+            id:   e.target.id.trim() !== "" ?  "#" + e.target.id.trim() : null,
             clstag: e.target.localName,
-            clsname:   e.target.className.trim() !== "" ?  "." + e.target.className : null,    
+            clsname:   e.target.className.trim() !== "" ?  "." + e.target.className.trim() : null,    
             children: children,
-            parentID:   e.target.parentElement.id.trim() !== "" ?  "#" + e.target.parentElement.id : null,       
+            parentID:   e.target.parentElement.id.trim() !== "" ?  "#" + e.target.parentElement.id.trim() : null,       
             parenttag: e.target.parentElement.localName,
-            parentClass:   e.target.parentElement.className.trim() !== "" ?  "." + e.target.parentElement.className : null,      
+            parentClass:   e.target.parentElement.className.trim() !== "" ?  "." + e.target.parentElement.className.trim() : null,      
             size: fontsize,
             textcolor: colorhex,
             family: fontfamily,
@@ -99,21 +99,21 @@ function App() {
     });
 
     document.addEventListener("mouseover", async (e) => {
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-        const domType = e.target.nodeName?.toLowerCase();
-        await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
-        e.target.classList.toggle("focused-dom");
-        e.target.appendChild(refDomHighlight.current.base);
-      }//return this comment after
+      // const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      // if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+      //   const domType = e.target.nodeName?.toLowerCase();
+      //   await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+      //   e.target.classList.toggle("focused-dom");
+      //   e.target.appendChild(refDomHighlight.current.base);
+      // }//return this comment after
     });
 
     document.addEventListener("mouseout", (e) => {
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-        e.target.classList.toggle("focused-dom");
-        e.target.removeChild(refDomHighlight.current.base);
-      }
+      // const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      // if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+      //   e.target.classList.toggle("focused-dom");
+      //   e.target.removeChild(refDomHighlight.current.base);
+      // }
     });
   };
 

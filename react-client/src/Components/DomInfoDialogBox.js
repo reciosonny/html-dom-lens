@@ -29,7 +29,7 @@ const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass
         <div>       
           <div className="dom-header">
             <div className="dom-header-tag"> {clstag}</div>
-            {id} {clsname}
+            {id}{clsname}
           </div>
           <table>
             <tr>
@@ -59,25 +59,26 @@ const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass
           <div className="dom-styles-details"> {fontfamily}</div>
           <div className="dom-styles">Font Family</div>
 
-          <div className="dom-dialog">Parent ID:</div>
+          <div className="dom-dialog">Parent </div>
 
-          <div className="dom-dialog-details">
+          <div className="dom-dialog-parent-details">
             <div className="dom-details-tag">{parenttag}</div>
             {parentId}
             {parentClass}
           </div>
           <div className="dom-dialog">Children[{children.length}]</div>
-          <div className="dom-dialog-details" align="center">
-            <p> Child ID</p>
-            <ul>
+          <div className="dom-dialog-child-details" >             
               {children.slice(0, displayArray).map((val) => (
-                <li>
+               
+               <div>
+                 <div  className="dom-details-tag">
+                   {val.childtag}
+                   </div>
                   {val.id}
                   {val.class}
-                </li>
+               </div>
               ))}
-            </ul>
-          </div>
+            </div>          
           {leftover > 0 && (
             <div
               id="closedompeeker"
