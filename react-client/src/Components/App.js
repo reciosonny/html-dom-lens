@@ -19,8 +19,6 @@ function App() {
   const switchdom = () => {
     setdomSwitch(!domSwitch);
   };
-
-
   const refDomHighlight = React.useRef(null);
 
   useEffect(() => {
@@ -43,27 +41,58 @@ function App() {
     return () => {};
   }, []);
 
- 
-
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", (e) => {
       if (e.target.id !== "closedompeeker" && domSwitch == true) {
         e.preventDefault();
 
         const children = [...e.target.children].map((child) => {
-          return { id: child.id, class: child.className };
+          return {
+            id: child.id.trim() !== "" ? "#" + child.id : null,  class: child.className.trim() !== "" ? "." + child.className : null,
+          };
         });
 
+        if (e.target.id.trim() !== "") {
+          var eltarget = document.querySelector(`#${e.target.id}`);
+        } else {
+          var eltarget = document.querySelector(`.${e.target.className}`);
+        }
+        var fontsize = window
+          .getComputedStyle(eltarget, null)
+          .getPropertyValue("font-size");
+
+        var fontfamily = window
+          .getComputedStyle(eltarget, null)
+          .getPropertyValue("font-family");
+
+        var fontcolor = window
+          .getComputedStyle(eltarget, null)
+          .getPropertyValue("color");
+
+        var rgbArr = fontcolor.substring(4).slice(0, -1).split(",");
+
+        var colorhex =
+          "#" +
+          parseInt(rgbArr[0]).toString(16) +
+          parseInt(rgbArr[1]).toString(16) +
+          parseInt(rgbArr[2]).toString(16);
+
+        debugger;
         setDomInfo((dominfo) => [
           ...dominfo,
           {
             x: e.pageX,
             y: e.pageY,
-            id: e.target.id,
-            clsname: e.target.className,
-            children: children,            
-            parentID: e.target.parentElement.id,
-            parentClass: e.target.parentElement.className,
+            id:   e.target.id.trim() !== "" ?  "#" + e.target.id : null,
+            clstag: e.target.localName,
+            clsname:   e.target.className.trim() !== "" ?  "." + e.target.className : null,    
+            children: children,
+            parentID:   e.target.parentElement.id.trim() !== "" ?  "#" + e.target.parentElement.id : null,       
+            parenttag: e.target.parentElement.localName,
+            parentClass:   e.target.parentElement.className.trim() !== "" ?  "." + e.target.parentElement.className : null,      
+            size: fontsize,
+            textcolor: colorhex,
+            family: fontfamily,
           },
         ]);
       }
@@ -76,7 +105,7 @@ function App() {
         await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
         e.target.classList.toggle("focused-dom");
         e.target.appendChild(refDomHighlight.current.base);
-      }
+      }//return this comment after
     });
 
     document.addEventListener("mouseout", (e) => {
@@ -107,7 +136,6 @@ function App() {
     setDomInfo(newDomInfo);
   };
 
-
   return (
     <div>
       {/* website page renders here... */}
@@ -122,17 +150,20 @@ function App() {
               key={idx}
               idx={idx}
               id={domInfo.id}
+              clstag={domInfo.clstag}
               clsname={domInfo.clsname}
+              parenttag={domInfo.parenttag}
               parentId={domInfo.parentID}
               parentClass={domInfo.parentClass}
               children={domInfo.children}
               top={domInfo.y}
               left={domInfo.x}
               onClose={handleRemoveDialogBox}
-             
+              fontsize={domInfo.size}
+              fontfamily={domInfo.family}
+              textcolor={domInfo.textcolor}
             />
           ))}
-        
 
           <DomMinimalDetailsWidget
             ref={refDomHighlight}
@@ -141,7 +172,6 @@ function App() {
             domType={domLeanDetails.domType}
             show={true}
           />
-
         </div>
       )}
 

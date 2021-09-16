@@ -13,6 +13,8 @@
 $MainDialogColor: #ede7f6;
 $MainDialogPadding: 10px 20px 20px 20px;
 
+$Domheaderfontsize: 14px;
+
 $DialogDetailPadding: 10px 0px 0px 0px;
 
 .dom-info-dialog-box {
@@ -27,7 +29,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   right: 0px;
   text-align: left;
   padding: $MainDialogPadding;
-  font-family: Roboto monospace;
+  font-family: Roboto Mono;
   font-size: 10px;
 
   .dom-close-btn {
@@ -42,18 +44,43 @@ $DialogDetailPadding: 10px 0px 0px 0px;
       cursor: pointer;
     }
   }
-  .dom-basic {
-    font-size: 14px;
-    padding: $DialogDetailPadding;
+  .dom-header {
+    font-size: $Domheaderfontsize;
+    // padding: $DialogDetailPadding;
+  }
+  .dom-header-tag{
+    font-size: $Domheaderfontsize;
+    color: #E91E63;
+    float:left;
+    width:fit-content;
+    padding: 0px 5px 0px 0px;
+  }
+  .dom-details-tag{
+    font-size: 12px;
+    color: #E91E63;
+    float:left;
+    width:fit-content;
+    padding: 0px 5px 0px 0px;
+  }
+  .dom-styles {
+    font-size: 8px;
+    color: #78909c;
+    padding: 0px 0px 0px 0px;
+  }
+  .dom-styles-details {
+    font-size: 10px;
+    color: #78909c;
+    padding: 10px 10px 0px 0px;
   }
   .dom-dialog {
     font-size: 10px;
     color: #78909c;
     padding: $DialogDetailPadding;
   }
-  .dom-details {
+  .dom-dialog-details {
     font-size: 12px;
-    color: #546e7a;
+    color: #546e7a;  
+    align: left; 
     .details-table {
       padding: 5px 5px 5px 5px;
     }
