@@ -5,8 +5,7 @@ import { PRODUCTION_MODE } from "../keys";
 import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
 import DomSwitch from "./DomSwitch";
 
-import * as domUtils from '../utils/domUtils';
-
+import * as domUtils from "../utils/domUtils";
 
 function App() {
   const [domInfo, setDomInfo] = useState([]);
@@ -19,10 +18,7 @@ function App() {
   const [initialState, setInitialState] = React.useState();
   const switchdom = () => {
     setdomSwitch(!domSwitch);
-    //  debugger
   };
-
-  // debugger;
   const refDomHighlight = React.useRef(null);
 
   useEffect(() => {
@@ -31,7 +27,10 @@ function App() {
        * Note: swap the urls for testing different websites. Sample websites for testing:
        * https://web.archive.org/web/20131014212210/http://stackoverflow.com/
        */
-      getPageContent('https://www.redfin.com/');
+      // getPageContent('https://www.redfin.com/');s
+      getPageContent(
+        "https://web.archive.org/web/20131014212210/http://stackoverflow.com/"
+      );
       // getPageContent(
       //   "https://facebook.com"
       // );
@@ -42,57 +41,81 @@ function App() {
     return () => {};
   }, []);
 
-  useEffect(() => {
-    return () => {};
-  }, []);
-
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", (e) => {
       if (e.target.id !== "closedompeeker" && domSwitch == true) {
         e.preventDefault();
 
-        const children = [...e.target.children].map(child => {
-          return { id: child.id, class: child.className };
+        const children = [...e.target.children].map((child) => {
+          return {
+            id: child.id.trim() ? "#" + child.id : null,
+            class: child.className.trim() ? "." + child.className : null,
+            tag: child.localName,
+          };
         });
+        var eltarget = e.target;
 
+        var fontsize = window
+          .getComputedStyle(eltarget, null)
+          .getPropertyValue("font-size");
+
+        var fontfamily = window
+          .getComputedStyle(eltarget, null)
+          .getPropertyValue("font-family");
+
+        var fontcolor = window
+          .getComputedStyle(eltarget, null)
+          .getPropertyValue("color");
+
+        var rgbArr = fontcolor.substring(4).slice(0, -1).split(",");
+
+        var colorhex = rgbArr.reduce(
+          (init, curr) => (init += parseInt(curr).toString(16)),
+          "#"
+        );
         setDomInfo((dominfo) => [
           ...dominfo,
           {
             x: e.pageX,
             y: e.pageY,
-            id: e.target.id,
-            clsname: e.target.className,
+            id: e.target.id.trim() !== "" ? "#" + e.target.id.trim() : null,
+            clstag: e.target.localName,
+            clsname:
+              e.target.className.trim() !== ""
+                ? "." + e.target.className.trim()
+                : null,
             children: children,
-            parentID: e.target.parentElement.id,
-            parentClass: e.target.parentElement.className,
+            parentID:
+              e.target.parentElement.id.trim() !== ""
+                ? "#" + e.target.parentElement.id.trim()
+                : null,
+            parenttag: e.target.parentElement.localName,
+            parentClass:
+              e.target.parentElement.className.trim() !== ""
+                ? "." + e.target.parentElement.className.trim()
+                : null,
+            size: fontsize,
+            textcolor: colorhex,
+            family: fontfamily,
           },
         ]);
       }
     });
 
     document.addEventListener("mouseover", async (e) => {
-      
       const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-
       if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-
         const domType = e.target.nodeName?.toLowerCase();
-
         await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
-
         e.target.classList.toggle("focused-dom");
-
         e.target.appendChild(refDomHighlight.current.base);
       }
     });
 
     document.addEventListener("mouseout", (e) => {
-
       const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-
       if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
         e.target.classList.toggle("focused-dom");
-
         e.target.removeChild(refDomHighlight.current.base);
       }
     });
@@ -112,12 +135,10 @@ function App() {
   };
 
   const handleRemoveDialogBox = (idx) => {
-
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
 
     setDomInfo(newDomInfo);
-  }
-  // const resetdom = () => setshowSwitch(true);
+  };
 
   return (
     <div>
@@ -133,15 +154,19 @@ function App() {
               key={idx}
               idx={idx}
               id={domInfo.id}
+              clstag={domInfo.clstag}
               clsname={domInfo.clsname}
+              parenttag={domInfo.parenttag}
               parentId={domInfo.parentID}
-              parentClass={domInfo.parentClass}                
-              child={domInfo.child}                
+              parentClass={domInfo.parentClass}
               children={domInfo.children}
               top={domInfo.y}
               left={domInfo.x}
               onClose={handleRemoveDialogBox}
-            />     
+              fontsize={domInfo.size}
+              fontfamily={domInfo.family}
+              textcolor={domInfo.textcolor}
+            />
           ))}
 
           <DomMinimalDetailsWidget
