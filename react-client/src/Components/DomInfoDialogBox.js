@@ -39,14 +39,11 @@ const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass
               </td>
               <td>
                 <div
-                  className="dot"
+                  className="display-dot"
                   style={{
-                    height: "10px",
-                    width: "10px",
-                    borderRadius: "50%",
+                   
                     background: textcolor,
-                    border: "1px",
-                    marginright: "5px",
+                   
                   }}
                 ></div>
               </td>

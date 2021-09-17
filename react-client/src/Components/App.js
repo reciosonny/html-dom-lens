@@ -48,15 +48,13 @@ function App() {
 
         const children = [...e.target.children].map((child) => {
           return {
-            id: child.id.trim() !== "" ? "#" + child.id : null,  class: child.className.trim() !== "" ? "." + child.className : null, childtag: child.localName
+            id: child.id.trim() ? "#" + child.id : null,
+            class: child.className.trim() ? "." + child.className : null,
+            tag: child.localName,
           };
         });
+        var eltarget = e.target;
 
-        if (e.target.id.trim() !== "") {
-          var eltarget = document.querySelector(`#${e.target.id}`);
-        } else {
-          var eltarget = document.querySelector(`.${e.target.className}`);
-        }
         var fontsize = window
           .getComputedStyle(eltarget, null)
           .getPropertyValue("font-size");
@@ -71,25 +69,31 @@ function App() {
 
         var rgbArr = fontcolor.substring(4).slice(0, -1).split(",");
 
-        var colorhex =
-          "#" +
-          parseInt(rgbArr[0]).toString(16) +
-          parseInt(rgbArr[1]).toString(16) +
-          parseInt(rgbArr[2]).toString(16);
-
-        
+        var colorhex = rgbArr.reduce(
+          (init, curr) => (init += parseInt(curr).toString(16)),
+          "#"
+        );
         setDomInfo((dominfo) => [
           ...dominfo,
           {
             x: e.pageX,
             y: e.pageY,
-            id:   e.target.id.trim() !== "" ?  "#" + e.target.id.trim() : null,
+            id: e.target.id.trim() !== "" ? "#" + e.target.id.trim() : null,
             clstag: e.target.localName,
-            clsname:   e.target.className.trim() !== "" ?  "." + e.target.className.trim() : null,    
+            clsname:
+              e.target.className.trim() !== ""
+                ? "." + e.target.className.trim()
+                : null,
             children: children,
-            parentID:   e.target.parentElement.id.trim() !== "" ?  "#" + e.target.parentElement.id.trim() : null,       
+            parentID:
+              e.target.parentElement.id.trim() !== ""
+                ? "#" + e.target.parentElement.id.trim()
+                : null,
             parenttag: e.target.parentElement.localName,
-            parentClass:   e.target.parentElement.className.trim() !== "" ?  "." + e.target.parentElement.className.trim() : null,      
+            parentClass:
+              e.target.parentElement.className.trim() !== ""
+                ? "." + e.target.parentElement.className.trim()
+                : null,
             size: fontsize,
             textcolor: colorhex,
             family: fontfamily,
@@ -99,21 +103,21 @@ function App() {
     });
 
     document.addEventListener("mouseover", async (e) => {
-      // const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-      // if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-      //   const domType = e.target.nodeName?.toLowerCase();
-      //   await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
-      //   e.target.classList.toggle("focused-dom");
-      //   e.target.appendChild(refDomHighlight.current.base);
-      // }//return this comment after
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+        const domType = e.target.nodeName?.toLowerCase();
+        await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+        e.target.classList.toggle("focused-dom");
+        e.target.appendChild(refDomHighlight.current.base);
+      }
     });
 
     document.addEventListener("mouseout", (e) => {
-      // const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-      // if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-      //   e.target.classList.toggle("focused-dom");
-      //   e.target.removeChild(refDomHighlight.current.base);
-      // }
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+        e.target.classList.toggle("focused-dom");
+        e.target.removeChild(refDomHighlight.current.base);
+      }
     });
   };
 
