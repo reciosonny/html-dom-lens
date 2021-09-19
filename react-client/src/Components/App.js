@@ -54,20 +54,10 @@ function App() {
           };
         });
         var eltarget = e.target;
+        const elComputedStyle = ['font-size', 'color', 'font-family']
+          .reduce((init, curr) => ({ ...init, [curr]: window.getComputedStyle(eltarget, null).getPropertyValue(curr) }), {});
 
-        var fontsize = window
-          .getComputedStyle(eltarget, null)
-          .getPropertyValue("font-size");
-
-        var fontfamily = window
-          .getComputedStyle(eltarget, null)
-          .getPropertyValue("font-family");
-
-        var fontcolor = window
-          .getComputedStyle(eltarget, null)
-          .getPropertyValue("color");
-
-        var rgbArr = fontcolor.substring(4).slice(0, -1).split(",");
+        var rgbArr = elComputedStyle['color'].substring(4).slice(0, -1).split(",");
 
         var colorhex = rgbArr.reduce(
           (init, curr) => (init += parseInt(curr).toString(16)),
@@ -94,9 +84,9 @@ function App() {
               e.target.parentElement.className.trim() !== ""
                 ? "." + e.target.parentElement.className.trim()
                 : null,
-            size: fontsize,
+            size: elComputedStyle['font-size'],
             textcolor: colorhex,
-            family: fontfamily,
+            family: elComputedStyle['font-family'],
           },
         ]);
       }
