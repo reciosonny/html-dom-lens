@@ -46,6 +46,12 @@ function App() {
       if (e.target.id !== "closedompeeker" && domSwitch == true) {
         e.preventDefault();
 
+        const clsArr =[...e.target.classList].map((cls) => {
+          return{
+            clsName: '.'+cls
+          }
+        })
+              
         const children = [...e.target.children].map((child) => {
           return {
             id: child.id.trim() ? "#" + child.id : null,
@@ -53,6 +59,7 @@ function App() {
             tag: child.localName,
           };
         });
+        
         var eltarget = e.target;
         const elComputedStyle = ['font-size', 'color', 'font-family']
           .reduce((init, curr) => ({ ...init, [curr]: window.getComputedStyle(eltarget, null).getPropertyValue(curr) }), {});
@@ -70,10 +77,11 @@ function App() {
             y: e.pageY,
             id: e.target.id.trim() !== "" ? "#" + e.target.id.trim() : null,
             clstag: e.target.localName,
-            clsname:
-              e.target.className.trim() !== ""
-                ? "." + e.target.className.trim()
-                : null,
+            // clsname:
+            //   e.target.className.trim() !== ""
+            //     ? "." + e.target.className.trim()
+            //     : null,
+            clsname: clsArr,
             children: children,
             parentID:
               e.target.parentElement.id.trim() !== ""
