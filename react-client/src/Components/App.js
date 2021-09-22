@@ -46,12 +46,10 @@ function App() {
       if (e.target.id !== "closedompeeker" && domSwitch == true) {
         e.preventDefault();
 
-        const clsArr =[...e.target.classList].map((cls) => {
-          return{
-            clsName: '.'+cls
-          }
-        })
-              
+        const clsArr = [...e.target.classList].map((cls) => ({
+          clsName: `.${cls}`,
+        }));
+
         const children = [...e.target.children].map((child) => {
           return {
             id: child.id.trim() ? "#" + child.id : null,
@@ -59,12 +57,22 @@ function App() {
             tag: child.localName,
           };
         });
-        
-        var eltarget = e.target;
-        const elComputedStyle = ['font-size', 'color', 'font-family']
-          .reduce((init, curr) => ({ ...init, [curr]: window.getComputedStyle(eltarget, null).getPropertyValue(curr) }), {});
 
-        var rgbArr = elComputedStyle['color'].substring(4).slice(0, -1).split(",");
+        var eltarget = e.target;
+        const elComputedStyle = ["font-size", "color", "font-family"].reduce(
+          (init, curr) => ({
+            ...init,
+            [curr]: window
+              .getComputedStyle(eltarget, null)
+              .getPropertyValue(curr),
+          }),
+          {}
+        );
+
+        var rgbArr = elComputedStyle["color"]
+          .substring(4)
+          .slice(0, -1)
+          .split(",");
 
         var colorhex = rgbArr.reduce(
           (init, curr) => (init += parseInt(curr).toString(16)),
@@ -77,10 +85,6 @@ function App() {
             y: e.pageY,
             id: e.target.id.trim() !== "" ? "#" + e.target.id.trim() : null,
             clstag: e.target.localName,
-            // clsname:
-            //   e.target.className.trim() !== ""
-            //     ? "." + e.target.className.trim()
-            //     : null,
             clsname: clsArr,
             children: children,
             parentID:
@@ -92,26 +96,37 @@ function App() {
               e.target.parentElement.className.trim() !== ""
                 ? "." + e.target.parentElement.className.trim()
                 : null,
-            size: elComputedStyle['font-size'],
+            size: elComputedStyle["font-size"],
             textcolor: colorhex,
-            family: elComputedStyle['font-family'],
+            family: elComputedStyle["font-family"],
           },
         ]);
       }
     });
 
     document.addEventListener("mouseover", async (e) => {
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
+        e.target,
+        "dom-info-dialog-box"
+      );
       if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
         const domType = e.target.nodeName?.toLowerCase();
-        await setDomLeanDetails({ ...domLeanDetails, elId: e.target.id, domType, elClassNames: [...e.target.classList] }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+        await setDomLeanDetails({
+          ...domLeanDetails,
+          elId: e.target.id,
+          domType,
+          elClassNames: [...e.target.classList],
+        }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
         e.target.classList.toggle("focused-dom");
         e.target.appendChild(refDomHighlight.current.base);
       }
     });
 
     document.addEventListener("mouseout", (e) => {
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
+        e.target,
+        "dom-info-dialog-box"
+      );
       if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
         e.target.classList.toggle("focused-dom");
         e.target.removeChild(refDomHighlight.current.base);
