@@ -26,10 +26,13 @@ const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass
             X
           </button>
         </div>
-        <div>       
+        <div>
           <div className="dom-header">
             <div className="dom-header-tag"> {clstag}</div>
-            {id}{clsname}
+            <div className="dom-header-details">{id}</div>
+            {clsname.map((val) => (
+              <div className="dom-header-details">{val.clsName}</div>
+            ))}
           </div>
           <table>
             <tr>
@@ -41,7 +44,7 @@ const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass
                 <div
                   className="display-dot"
                   style={{
-                    background: textcolor
+                    background: textcolor,
                   }}
                 ></div>
               </td>
@@ -62,18 +65,15 @@ const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass
             {parentClass}
           </div>
           <div className="dom-dialog">Children[{children.length}]</div>
-          <div className="dom-dialog-child-details" >             
-              {children.slice(0, displayArray).map((val) => (
-               
-               <div>
-                 <div  className="dom-details-tag">
-                   {val.childtag}
-                   </div>
-                  {val.id}
-                  {val.class}
-               </div>
-              ))}
-            </div>          
+          <div className="dom-dialog-child-details">
+            {children.slice(0, displayArray).map((val) => (
+              <div>
+                <div className="dom-details-tag">{val.tag}</div>
+                {val.id}
+                {val.class}
+              </div>
+            ))}
+          </div>
           {leftover > 0 && (
             <div
               id="closedompeeker"
