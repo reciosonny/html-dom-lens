@@ -6,7 +6,7 @@ const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass
   const handleSeemore = () => {
     setdisplayArray(children.length);
   };
-
+debugger
   const leftover = children.length - displayArray;
   return (
     <div>
@@ -30,7 +30,7 @@ const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass
           <div className="dom-header">
             <div className="dom-header-tag"> {clstag}</div>
             <div className="dom-header-details">{id}</div>
-            {clsname.map((val) => (
+            {clsname.filter(clsnames => clsnames.clsName !== ".focused-dom").map((val) => (
               <div className="dom-header-details">{val.clsName}</div>
             ))}
           </div>
