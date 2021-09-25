@@ -6,7 +6,7 @@ const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass
   const handleSeemore = () => {
     setdisplayArray(children.length);
   };
-debugger
+
   const leftover = children.length - displayArray;
   return (
     <div>
