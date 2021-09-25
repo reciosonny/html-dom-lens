@@ -27,10 +27,10 @@ function App() {
        * Note: swap the urls for testing different websites. Sample websites for testing:
        * https://web.archive.org/web/20131014212210/http://stackoverflow.com/
        */
-      // getPageContent('https://www.redfin.com/');s
-      getPageContent(
-        "https://web.archive.org/web/20131014212210/http://stackoverflow.com/"
-      );
+      getPageContent('https://www.redfin.com/');
+      // getPageContent(
+      //   "https://web.archive.org/web/20131014212210/http://stackoverflow.com/"
+      // );
       // getPageContent(
       //   "https://facebook.com"
       // );
