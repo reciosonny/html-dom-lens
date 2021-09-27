@@ -17,6 +17,16 @@ $Domheaderfontsize: 14px;
 
 $DialogDetailPadding: 10px 0px 0px 0px;
 
+
+.flex-row {
+  display: flex;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+
 .dom-info-dialog-box {
   height: fit-content;
   width: fit-content;
@@ -39,46 +49,57 @@ $DialogDetailPadding: 10px 0px 0px 0px;
     justify-content: right;
     width: 100%;
     padding: 0px 0px 0px 0px;
-    .close-btn-style {
-      background-color: $MainDialogColor;
-      border: 0px;
-      cursor: pointer;
-    }
   }
+  .close-btn-style {
+    position: absolute;
+    top: -10px;
+    right: -15px;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    padding: 10px;
+    background: #546E7A;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    border: 0px;
+    cursor: pointer;
+  }
+
   .dom-header {
     font-size: $Domheaderfontsize;
     // padding: $DialogDetailPadding;
   }
-  .dom-header-tag{
+  .dom-header-tag {
     font-size: $Domheaderfontsize;
-    color: #E91E63;
-    float:left;
-    width:fit-content;
-    // padding: 0px 5px 0px 0px;
+    color: #e91e63;
+    width: fit-content;
+    display: inline-block !important;
   }
-  .dom-header-details{
+  .dom-header-details {
+    color: #546E7A;
+    display: inline-block !important;
     font-size: $Domheaderfontsize;
-    // color: #E91E63;
-    float:left;
-    width:fit-content;
-    // padding: 0px 5px 0px 0px;
+    width: fit-content;
   }
-  .dom-details-tag{
+  .dom-details-tag {
     font-size: 12px;
-    color: #E91E63;
-    float:left;
-    width:fit-content;
+    color: #e91e63;
+    float: left;
+    width: fit-content;
     // padding: 0px 5px 0px 0px;
   }
- 
+
   .dom-styles {
-    font-size: 8px;
+    font-size: 10px;
     color: #78909c;
     padding: 0px 0px 0px 0px;
   }
   .dom-styles-details {
-    font-size: 10px;
-    color: #78909c;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: #455a64;
     padding: 10px 10px 0px 0px;
   }
   .dom-dialog {
@@ -88,31 +109,30 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   }
   .dom-dialog-parent-details {
     font-size: 12px;
-    color: #546e7a;  
-    align: left; 
+    color: #546e7a;
+    align: left;
     padding: 0px 0px 15px 0px;
   }
   .dom-dialog-child-details {
     font-size: 12px;
-    color: #546e7a;  
-    align: left;    
+    color: #546e7a;
+    align: left;
     padding: 10px 0px 0px 0px;
-    
   }
   .see-more {
     cursor: pointer;
     font-size: 10px;
-    color: #78909c;    
+    color: #78909c;
   }
 }
 
-.display-dot{
+.display-dot {
+  margin-right: 5px;
+  display: inline-block;
   height: 10px;
   width: 10px;
   border-radius: 50%;
-  // background-color: red;
   border: 1px;
-  margin-right: 5px,
 }
 
 .dom-switch {

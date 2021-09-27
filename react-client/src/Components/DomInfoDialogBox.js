@@ -1,6 +1,22 @@
 import React, { useeffect, useState } from "react";
 
 
+
+const FontColorDetails = ({ textcolor }) => {
+
+  return (
+    <React.Fragment>
+      <div
+        className="display-dot"
+        style={{
+          background: textcolor,
+        }}
+      ></div> {" "}
+      <span style={{ color: '#455A64' }}>{textcolor}</span>
+    </React.Fragment>
+  )
+}
+
 const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor }) => {
   const [displayArray, setdisplayArray] = useState("2");
   const handleSeemore = () => {
@@ -17,7 +33,15 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
           left: `${left}px`,
         }}
       >
-        <div className="dom-close-btn">
+        <button
+          id="closedompeeker"
+          className="close-btn-style"
+          onClick={() => onClose(idx)}
+        >
+          X
+        </button>
+
+        {/* <div className="dom-close-btn">
           <button
             id="closedompeeker"
             className="close-btn-style"
@@ -25,35 +49,29 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
           >
             X
           </button>
-        </div>
+        </div> */}
         <div>
           <div className="dom-header">
-            <div className="dom-header-tag"> {clstag}</div>
-            <div className="dom-header-details">{id}</div>
+            <span className="dom-header-tag">{clstag}</span>
+            {id && <span className="dom-header-details">{id}</span>}
+
             {clsname.filter(clsnames => clsnames.clsName !== ".focused-dom").map((val) => (
-              <div className="dom-header-details">{val.clsName}</div>
+              <span className="dom-header-details">{val.clsName}</span>
             ))}
           </div>
-          <table>
-            <tr>
-              <td>
-                <div className="dom-styles-details"> {fontsize}</div>
-                <div className="dom-styles">Size</div>
-              </td>
-              <td>
-                <div
-                  className="display-dot"
-                  style={{
-                    background: textcolor,
-                  }}
-                ></div>
-              </td>
-              <td>
-                <div className="dom-styles-details"> {textcolor}</div>
-                <div className="dom-styles">Color</div>
-              </td>
-            </tr>
-          </table>
+          <div className="flex-row">
+            <div className="flex-column">
+              <div className="dom-styles-details"> {fontsize}</div>
+              <div className="dom-styles">Size</div>
+            </div>
+            <div className="flex-column">
+              <div className="dom-styles-details">
+                <FontColorDetails textcolor={textcolor} />
+              </div>
+              <div className="dom-styles">Color</div>
+            </div>
+          </div>
+
           <div className="dom-styles-details"> {fontfamily}</div>
           <div className="dom-styles">Font Family</div>
 

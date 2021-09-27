@@ -99,7 +99,7 @@ function App() {
             parent,
             size: elComputedStyle["font-size"],
             textcolor: colorhex,
-            family: elComputedStyle["font-family"],
+            family: elComputedStyle["font-family"].replaceAll('"', ''),
           },
         ]);
       }
