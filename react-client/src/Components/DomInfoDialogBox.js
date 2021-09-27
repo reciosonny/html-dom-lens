@@ -40,16 +40,6 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
         >
           X
         </button>
-
-        {/* <div className="dom-close-btn">
-          <button
-            id="closedompeeker"
-            className="close-btn-style"
-            onClick={() => onClose(idx)}
-          >
-            X
-          </button>
-        </div> */}
         <div>
           <div className="dom-header">
             <span className="dom-header-tag">{clstag}</span>
