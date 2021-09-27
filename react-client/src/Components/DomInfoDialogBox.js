@@ -1,7 +1,7 @@
 import React, { useeffect, useState } from "react";
 
-const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass,children,top, left, onClose,fontsize, fontfamily,textcolor
-}) => {
+
+const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor }) => {
   const [displayArray, setdisplayArray] = useState("2");
   const handleSeemore = () => {
     setdisplayArray(children.length);
@@ -60,9 +60,9 @@ const DomInfoDialogBox = ({ id,idx,clstag,clsname,parenttag,parentId,parentClass
           <div className="dom-dialog">Parent </div>
 
           <div className="dom-dialog-parent-details">
-            <div className="dom-details-tag">{parenttag}</div>
-            {parentId}
-            {parentClass}
+            <div className="dom-details-tag">{parent.tag}</div>
+            {parent.id}
+            {parent.classes.map(val => `.${val}`)}
           </div>
           <div className="dom-dialog">Children[{children.length}]</div>
           <div className="dom-dialog-child-details">

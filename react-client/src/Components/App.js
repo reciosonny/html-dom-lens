@@ -78,6 +78,15 @@ function App() {
           (init, curr) => (init += parseInt(curr).toString(16)),
           "#"
         );
+        
+        const elParent = e.target.parentElement;
+        const parent = {
+          id: elParent.id.trim() && `#${elParent.id.trim()}`,
+          tag: elParent.localName,
+          class: elParent.className.trim() && `.${elParent.className.trim()}`,
+          classes: [...elParent.classList]
+        };
+
         setDomInfo((dominfo) => [
           ...dominfo,
           {
@@ -87,15 +96,7 @@ function App() {
             clstag: e.target.localName,
             clsname: clsArr,
             children: children,
-            parentID:
-              e.target.parentElement.id.trim() !== ""
-                ? "#" + e.target.parentElement.id.trim()
-                : null,
-            parenttag: e.target.parentElement.localName,
-            parentClass:
-              e.target.parentElement.className.trim() !== ""
-                ? "." + e.target.parentElement.className.trim()
-                : null,
+            parent,
             size: elComputedStyle["font-size"],
             textcolor: colorhex,
             family: elComputedStyle["font-family"],
@@ -172,6 +173,7 @@ function App() {
               parenttag={domInfo.parenttag}
               parentId={domInfo.parentID}
               parentClass={domInfo.parentClass}
+              parent={domInfo.parent}
               children={domInfo.children}
               top={domInfo.y}
               left={domInfo.x}
