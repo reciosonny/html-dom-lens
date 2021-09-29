@@ -74,13 +74,13 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
           </div>
           <div className="dom-dialog">Children[{children.length}]</div>
           <div className="dom-dialog-child-details">
-            {children.slice(0, displayArray).map((val) => (
+            {children.filter(clsname => clsname.id !== "#domInfoHighlight").slice(0, displayArray).map((val) => (
               <div>
                 <div className="dom-details-tag">{val.tag}</div>
                 {val.id}
                 {val.class}
               </div>
-            ))}
+            ))}         
           </div>
           {leftover > 0 && (
             <div
