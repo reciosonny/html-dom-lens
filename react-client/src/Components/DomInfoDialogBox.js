@@ -77,8 +77,8 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
             {children.filter(clsname => clsname.id !== "#domInfoHighlight").slice(0, displayArray).map((val) => (
               <div>
                 <div className="dom-details-tag">{val.tag}</div>
-                {val.id}
-                {val.class}
+                {val.id}                
+                {val.class.replace(/ /g, ".")}
               </div>
             ))}         
           </div>
