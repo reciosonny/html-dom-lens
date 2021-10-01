@@ -38,7 +38,7 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
           className="close-btn-style"
           onClick={() => onClose(idx)}
         >
-          X
+          x
         </button>
         <div>
           <div className="dom-header">

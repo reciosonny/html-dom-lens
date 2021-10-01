@@ -42,7 +42,7 @@ function App() {
   }, []);
 
   const injectDOMEventInBody = async () => {
-    document.addEventListener("click", (e) => {
+    document.addEventListener("click", async (e) => {
       if (e.target.id !== "closedompeeker" && domSwitch == true) {
         e.preventDefault();
 
@@ -87,21 +87,44 @@ function App() {
           classes: [...elParent.classList]
         };
 
-        setDomInfo((dominfo) => [
-          ...dominfo,
-          {
-            x: e.pageX,
-            y: e.pageY,
-            id: e.target.id.trim() !== "" ? "#" + e.target.id.trim() : null,
-            clstag: e.target.localName,
-            clsname: clsArr,
-            children: children,
-            parent,
-            size: elComputedStyle["font-size"],
-            textcolor: colorhex,
-            family: elComputedStyle["font-family"].replaceAll('"', ''),
-          },
-        ]);
+        const pageYcoordinate = e.pageY;
+
+        await setDomInfo(value => {
+
+          return [...value,
+            {
+              x: e.pageX,
+              y: pageYcoordinate + 100,
+              id: e.target.id.trim() !== "" ? "#" + e.target.id.trim() : null,
+              clstag: e.target.localName,
+              clsname: clsArr,
+              children: children,
+              parent,
+              size: elComputedStyle["font-size"],
+              textcolor: colorhex,
+              family: elComputedStyle["font-family"].replaceAll('"', ''),
+            },
+          ]
+        });
+
+        // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
+        (function(pageYcoordinate) {
+          setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
+            setDomInfo(values => {
+
+              const mappedValues = values.map((val, idx) => {
+                if(idx === values.length-1) {
+                  val.y = pageYcoordinate
+                }
+                return val;
+              });
+
+              return mappedValues;
+            });
+          }, 10);
+        }(pageYcoordinate));
+
+        
       }
     });
 
