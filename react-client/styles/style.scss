@@ -26,6 +26,15 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   flex-direction: column;
 }
 
+@keyframes animShow {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .dom-info-dialog-box {
   height: fit-content;
   width: fit-content;
@@ -42,6 +51,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   font-size: 10px;
   z-index: 9999;
   transition: top .3s;
+  animation: animShow .5s forwards;
 
   .close-btn-style {
     position: absolute;
