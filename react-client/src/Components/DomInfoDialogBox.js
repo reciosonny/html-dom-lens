@@ -22,8 +22,8 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
   const handleSeemore = () => {
     setdisplayArray(children.length);
   };
-
-  const leftover = children.length - displayArray;
+  
+  const leftover = children.length - displayArray -1;
   return (
     <div>
       <div
@@ -74,11 +74,11 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
           </div>
           <div className="dom-dialog">Children[{children.length}]</div>
           <div className="dom-dialog-child-details">
-            {children.filter(clsname => clsname.id !== "#domInfoHighlight").slice(0, displayArray).map((val) => (
+            {children.filter(clsname => clsname.id !== "#domInfoHighlight" ).slice(0, displayArray).map((val) => (              
               <div>
                 <div className="dom-details-tag">{val.tag}</div>
-                {val.id}                
-                {val.class.replace(/ /g, ".")}
+                {val.id}                     
+                {val.class && val.class.replace(/ /g, ".")}                
               </div>
             ))}         
           </div>
