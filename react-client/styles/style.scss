@@ -38,9 +38,10 @@ $DialogDetailPadding: 10px 0px 0px 0px;
 .dom-info-dialog-box {
   height: fit-content;
   width: fit-content;
+  z-index: 99999;
   background-color: $MainDialogColor;
   color: #455a64;
-  border: 3px;
+  // border: 3px solid;
   position: absolute;
   border-radius: 8px;
   top: 0px;
@@ -49,7 +50,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   padding: $MainDialogPadding;
   font-family: Roboto Mono;
   font-size: 10px;
-  z-index: 9999;
+  
   transition: top .3s;
   animation: animShow .5s forwards;
 
@@ -151,7 +152,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   width: auto;
   background-color: #ede7f6;
   color: #455a64;
-  border: 3px;
+  border: 3px ;
   position: fixed;
   border-radius: 8px;
   top: 0px;
@@ -160,6 +161,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   padding: 15px 15px 15px 15px;
   font-family: Roboto monospace;
   font: 10px;
+  z-index: 99999;
 }
 
 .dom-info-details-lean {
@@ -188,6 +190,13 @@ $DialogDetailPadding: 10px 0px 0px 0px;
     color: #ec407a !important;
   }
 }
+
+
+.test-dom {
+  border: 3px solid blue;
+
+}
+
 
 .focused-dom {
   position: relative !important;
