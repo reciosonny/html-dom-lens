@@ -15,7 +15,7 @@ const FontColorDetails = ({ textcolor }) => {
   )
 }
 
-const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor,borderclr,uniqueID }) => {
+const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID }) => {
   const [displayArray, setdisplayArray] = useState("2");
   const handleSeemore = () => {
     setdisplayArray(children.length);
