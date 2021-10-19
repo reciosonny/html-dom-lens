@@ -20,8 +20,7 @@ function App() {
     setdomSwitch(!domSwitch);
   };
   const refDomHighlight = React.useRef(null);
-  const uuidv4 = require("uuid/v4")
-  const originalID = "";
+  const uuidv4 = require("uuid/v4");
   const colorselection = ["#311B92", "#4527A0", "#512DA8","#5E35B1","#673AB7","#7E57C2","#9575CD","#B39DDB","#D1C4E9","#EDE7F6","#E91E63","#D81B60","#C2185B","#AD1457","#880E4F","#EC407A","#F06292","#F48FB1","#F8BBD0","#FCE4EC","#263238","#37474F","#455A64","#546E7A","#607D8B","#78909C","#90A4AE","#B0BEC5","#CFD8DC","#ECEFF1"];
 
  
@@ -67,7 +66,7 @@ function App() {
 
         var randomCode = uuidv4();
      
-          e.target.setAttribute("data-id" , randomCode);                  
+        e.target.setAttribute("data-id" , randomCode);                  
        
         const elComputedStyle = ["font-size", "color", "font-family"].reduce(
           (init, curr) => ({
@@ -100,16 +99,15 @@ function App() {
         const pageYcoordinate = e.pageY;
 
         const randomcolor = Math.floor(Math.random() * colorselection.length);      
-        eltarget.style.cssText += 'border:3px solid;border-color:'+ `${colorselection[randomcolor]}`;     
+        eltarget.style.cssText += `border:3px solid;border-color: ${colorselection[randomcolor]}`;     
         
         await setDomInfo(value => {
 
           return [...value,
             {
               x: e.pageX,
-              y: pageYcoordinate + 100,
-              // id: eltarget.id.trim() !== "" ? "#" + eltarget.id.trim() : null,
-              id: originalID.trim() !== "" && `#${originalID.trim()}`,
+              y: pageYcoordinate + 100,              
+              id: eltarget.id.trim() !== "" && `#${eltarget.id.trim()}`,              
               clstag: e.target.localName,
               clsname: clsArr,
               children: children,
@@ -187,7 +185,7 @@ function App() {
     injectDOMEventInBody();
   };
 
-  const handleRemoveDialogBox = (idx,id,uniqueID) => {
+  const handleRemoveDialogBox = (idx, id, uniqueID) => {
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
     const removeDomborder = domInfo.filter((x, currentIdx) => currentIdx === uniqueID);   
     document.querySelector('[data-id="'+uniqueID+'"]').style.removeProperty('border')

@@ -20,8 +20,8 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
   const handleSeemore = () => {
     setdisplayArray(children.length);
   };
-  
-const leftover =()=>{
+     
+  const leftover = () => {
     if ((children.length - displayArray -1) <= 0)
     {
       return 0
@@ -38,7 +38,7 @@ const leftover =()=>{
         style={{
           top: `${top}px`,
           left: `${left}px`,
-          border: '3px solid '+' '+`${borderclr}`,
+          border: `3px solid ${borderclr}`,
         }}
       >
         <button
