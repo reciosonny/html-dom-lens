@@ -43,7 +43,7 @@ function App() {
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
-      if (e.target.id !== "closedompeeker" && domSwitch == true) {
+      if (e.target.id !== 'closedompeeker' && e.target.id !== 'btnDomSwitch' && domSwitch == true) {
         e.preventDefault();
 
         const clsArr = [...e.target.classList].map((cls) => ({
@@ -133,7 +133,12 @@ function App() {
         e.target,
         "dom-info-dialog-box"
       );
-      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+      const isNotBtnDomSwitchComponent = !domUtils.ancestorExistsByClassName(
+        e.target,
+        "dom-switch"
+      );
+
+      if (isNotDomInfoComponent && isNotBtnDomSwitchComponent && e.target.nodeName !== "HTML") {
         const domType = e.target.nodeName?.toLowerCase();
         await setDomLeanDetails({
           ...domLeanDetails,
@@ -151,7 +156,12 @@ function App() {
         e.target,
         "dom-info-dialog-box"
       );
-      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+      const isNotBtnDomSwitchComponent = !domUtils.ancestorExistsByClassName(
+        e.target,
+        "dom-switch"
+      );
+
+      if (isNotDomInfoComponent && isNotBtnDomSwitchComponent && e.target.nodeName !== "HTML") {
         e.target.classList.toggle("focused-dom");
         e.target.removeChild(refDomHighlight.current.base);
       }
