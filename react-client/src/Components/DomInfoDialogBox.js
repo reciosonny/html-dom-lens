@@ -1,7 +1,5 @@
 import React, { useeffect, useState } from "react";
 
-
-
 const FontColorDetails = ({ textcolor }) => {
 
   return (
@@ -17,13 +15,22 @@ const FontColorDetails = ({ textcolor }) => {
   )
 }
 
-const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor }) => {
+const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID }) => {
   const [displayArray, setdisplayArray] = useState("2");
   const handleSeemore = () => {
     setdisplayArray(children.length);
   };
-  
-  const leftover = children.length - displayArray -1;
+     
+  const leftover = () => {
+    if ((children.length - displayArray -1) <= 0)
+    {
+      return 0
+    }
+    else 
+    {
+      return children.length - displayArray -1
+    }
+  } 
   return (
     <div>
       <div
@@ -31,12 +38,13 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
         style={{
           top: `${top}px`,
           left: `${left}px`,
+          border: `3px solid ${borderclr}`,
         }}
       >
         <button
           id="closedompeeker"
           className="close-btn-style"
-          onClick={() => onClose(idx)}
+          onClick={() => onClose(idx, id, uniqueID)}
         >
           x
         </button>
@@ -44,7 +52,6 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
           <div className="dom-header">
             <span className="dom-header-tag">{clstag}</span>
             {id && <span className="dom-header-details">{id}</span>}
-
             {clsname.filter(clsnames => clsnames.clsName !== ".focused-dom").map((val) => (
               <span className="dom-header-details">{val.clsName}</span>
             ))}
