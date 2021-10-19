@@ -44,7 +44,7 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
         <button
           id="closedompeeker"
           className="close-btn-style"
-          onClick={() => onClose(idx,id,uniqueID)}
+          onClick={() => onClose(idx, id, uniqueID)}
         >
           x
         </button>
