@@ -103,7 +103,7 @@ function App() {
         eltarget.style.cssText += 'border:3px solid;border-color:'+ `${colorselection[randomcolor]}`;     
         
         await setDomInfo(value => {
-debugger
+
           return [...value,
             {
               x: e.pageX,
