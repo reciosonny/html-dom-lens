@@ -21,15 +21,15 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
     setdisplayArray(children.length);
   };
   
-  const leftover =() =>{
-     if ((children.length - displayArray -1) <= 0)
-     {
-       return 0
-     }
-     else 
-     {
-       return children.length - displayArray -1
-     }
+const leftover =()=>{
+    if ((children.length - displayArray -1) <= 0)
+    {
+      return 0
+    }
+    else 
+    {
+      return children.length - displayArray -1
+    }
   } 
   return (
     <div>

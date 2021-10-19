@@ -191,13 +191,6 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   }
 }
 
-
-.test-dom {
-  border: 3px solid blue;
-
-}
-
-
 .focused-dom {
   position: relative !important;
   // display: inline-block !important; //needed this in elements that are inline. Note: has bugs when overriding some div displays

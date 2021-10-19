@@ -65,12 +65,10 @@ function App() {
 
         var eltarget = e.target;
 
-        var randomCode = "uniqueID"+uuidv4();
-        if(e.target.id === null || e.target.id.trim() === "")
-        {
-          e.target.setAttribute("id" , randomCode);                  
-        }
-
+        var randomCode = uuidv4();
+     
+          e.target.setAttribute("data-id" , randomCode);                  
+       
         const elComputedStyle = ["font-size", "color", "font-family"].reduce(
           (init, curr) => ({
             ...init,
@@ -105,13 +103,13 @@ function App() {
         eltarget.style.cssText += 'border:3px solid;border-color:'+ `${colorselection[randomcolor]}`;     
         
         await setDomInfo(value => {
-
+debugger
           return [...value,
             {
               x: e.pageX,
               y: pageYcoordinate + 100,
               // id: eltarget.id.trim() !== "" ? "#" + eltarget.id.trim() : null,
-              id: originalID.trim() !== "" ? "#" + originalID.trim() : null,
+              id: originalID.trim() !== "" && `#${originalID.trim()}`,
               clstag: e.target.localName,
               clsname: clsArr,
               children: children,
@@ -120,7 +118,7 @@ function App() {
               textcolor: colorhex,
               family: elComputedStyle["font-family"].replaceAll('"', ''),
               bordercolor: colorselection[randomcolor],
-              uniqueID:  eltarget.id.trim()
+              uniqueID:  eltarget.dataset.id.trim()
             },
           ]
         });
@@ -191,15 +189,8 @@ function App() {
 
   const handleRemoveDialogBox = (idx,id,uniqueID) => {
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
-    const removeDomborder = domInfo.filter((x, currentIdx) => currentIdx === uniqueID);
-    if (id !== null)
-    {      
-      document.querySelector('#'+id).style.removeProperty('border');
-    }
-    else
-    {
-      document.querySelector('#'+uniqueID).style.removeProperty('border');
-    }
+    const removeDomborder = domInfo.filter((x, currentIdx) => currentIdx === uniqueID);   
+    document.querySelector('[data-id="'+uniqueID+'"]').style.removeProperty('border')
     setDomInfo(newDomInfo);
   };
 
@@ -230,8 +221,8 @@ function App() {
               fontsize={domInfo.size}
               fontfamily={domInfo.family}
               textcolor={domInfo.textcolor}
-              borderclr = {domInfo.bordercolor}
-              uniqueID ={domInfo.uniqueID}
+              borderclr={domInfo.bordercolor}
+              uniqueID={domInfo.uniqueID}
             />
           ))}
 
