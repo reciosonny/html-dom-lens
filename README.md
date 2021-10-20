@@ -1,1 +1,1 @@
-# html-dom-info-peeker
+# html-dom-lens
