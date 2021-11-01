@@ -15,14 +15,25 @@ const FontColorDetails = ({ textcolor }) => {
   )
 }
 
-const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID }) => {
-  const [displayArray, setdisplayArray] = useState("2");
+const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID, attributes, keyattr, valattr }) => {
+  const [childrenArray, setchildrenArray] = useState("2");
+  const [attributeArray, setattributeArray] = useState("2");
   const handleSeemore = () => {
-    setdisplayArray(children.length);
+    setchildrenArray(children.length);
+  };
+  const handleSeeless = () => {
+    setchildrenArray("2");
+  };
+  const handleSeemoreAttr = () => {
+    setattributeArray(keyattr.length);   
+  };
+  const handleSeelessAttr = () => {
+    setattributeArray("2");   
   };
      
-  const leftover = children.length - displayArray - 1;
-
+  const leftover = children.length - childrenArray - 1;
+  const attrleftover = keyattr.length - attributeArray;
+// debugger
   return (
     <div>
       <div
@@ -60,36 +71,79 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
               <div className="dom-styles">Color</div>
             </div>
           </div>
-
           <div className="dom-styles-details"> {fontfamily}</div>
           <div className="dom-styles">Font Family</div>
-
           <div className="dom-dialog">Parent </div>
-
           <div className="dom-dialog-parent-details">
             <div className="dom-details-tag">{parent.tag}</div>
             {parent.id}
             {parent.classes.map(val => `.${val}`)}
           </div>
+          <div className="dom-dialog">data-* attributes </div>    
+           <div className="attributecontainer"> 
+            <div className="dom-dialog-child-details">   
+              {keyattr.slice(0, attributeArray).map((val) => (              
+                <div>                 
+                  {val}                
+                </div>
+              ))}                             
+            </div>          
+            <div className="dom-dialog-child-details">          
+              {valattr.slice(0, attributeArray).map((val) => (              
+                <div>                 
+                  {val}                
+                </div>
+              ))}                     
+            </div>         
+          </div>
+          {keyattr.length > 2 ?(
+            attrleftover > 0 ? (
+              <div
+                id="closedompeeker"
+                className="see-more"
+                onClick={handleSeemoreAttr}
+              >
+                ... {attrleftover} more
+              </div>
+            ) : (
+              <div
+                id="closedompeeker"
+                className="see-more"
+                onClick={handleSeelessAttr}
+              >
+                ... see less
+              </div>
+            )
+          ) :null}          
           <div className="dom-dialog">Children[{children.length-1}]</div>
           <div className="dom-dialog-child-details">
-            {children.filter(clsname => clsname.id !== "#domInfoHighlight" ).slice(0, displayArray).map((val) => (              
+            {children.filter(clsname => clsname.id !== "#domInfoHighlight" ).slice(0, childrenArray).map((val) => (              
               <div>
                 <div className="dom-details-tag">{val.tag}</div>
-                {val.id}                     
-                {val.class && val.class.replace(/ /g, ".")}                
+                {val.id}                             
+                {val.class && val.class.replace(/ /g, ".")  }                
               </div>
             ))}         
           </div>
-          {leftover > 0 && (
-            <div
-              id="closedompeeker"
-              className="see-more"
-              onClick={handleSeemore}
-            >
-              ... {leftover} more
-            </div>
-          )}
+          {children.length - 1 > 2 ? (
+            leftover > 0 ? (
+              <div
+                id="closedompeeker"
+                className="see-more"
+                onClick={handleSeemore}
+              >
+                ... {leftover} more
+              </div>
+            ) : (
+              <div
+                id="closedompeeker"
+                className="see-more"
+                onClick={handleSeeless}
+              >
+                ... see less
+              </div>
+            )
+          ) : null}
         </div>
       </div>
     </div>

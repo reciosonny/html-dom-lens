@@ -23,8 +23,6 @@ function App() {
   const uuidv4 = require("uuid/v4");
   const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "#7E57C2", "#9575CD", "#B39DDB", "#D1C4E9", "#EDE7F6", "#E91E63", "#D81B60", "#C2185B", "#AD1457", "#880E4F", "#EC407A", "#F06292", "#F48FB1", "#F8BBD0", "#FCE4EC", "#263238", "#37474F", "#455A64", "#546E7A", "#607D8B", "#78909C", "#90A4AE", "#B0BEC5", "#CFD8DC", "#ECEFF1"];
 
- 
-
   useEffect(() => {
     if (!PRODUCTION_MODE) {
       /**
@@ -62,12 +60,18 @@ function App() {
           };
         });
 
-        var eltarget = e.target;
+        var eltarget = e.target;        
 
         var randomCode = uuidv4();
      
-        e.target.setAttribute("data-id" , randomCode);                  
+        e.target.setAttribute("data-id" , randomCode);
        
+        var attributekey = new Array();
+        var attributevalue = new Array(); 
+        Object.entries(e.target.dataset).forEach(([key, value]) => attributekey.push(key));
+        Object.entries(e.target.dataset).forEach(([key, value]) => attributevalue.push(value));
+
+   
         const elComputedStyle = ["font-size", "color", "font-family"].reduce(
           (init, curr) => ({
             ...init,
@@ -116,7 +120,11 @@ function App() {
               textcolor: colorhex,
               family: elComputedStyle["font-family"].replaceAll('"', ''),
               bordercolor: colorselection[randomcolor],
-              uniqueID:  eltarget.dataset.id.trim()
+              uniqueID:  eltarget.dataset.id.trim(),
+              attributes: arrattrib,
+              keyattributes: attributekey,
+              valueattributes: attributevalue
+              
             },
           ]
         });
@@ -137,8 +145,6 @@ function App() {
             });
           }, 10);
         }(pageYcoordinate));
-
-        
       }
     });
 
@@ -221,6 +227,9 @@ function App() {
               textcolor={domInfo.textcolor}
               borderclr={domInfo.bordercolor}
               uniqueID={domInfo.uniqueID}
+              attributes={domInfo.attributes}
+              keyattr={domInfo.keyattributes}
+              valattr={domInfo.valueattributes}
             />
           ))}
 

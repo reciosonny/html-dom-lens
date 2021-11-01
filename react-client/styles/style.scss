@@ -19,8 +19,9 @@ $DialogDetailPadding: 10px 0px 0px 0px;
 
 
 .flex-row {
-  display: flex;
+  display: flex;   
 }
+
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -33,6 +34,11 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   100% {
     opacity: 1;
   }
+}
+
+.attributecontainer{
+  display:flex;
+  justify-content: space-between;  
 }
 
 .dom-info-dialog-box {
