@@ -30,10 +30,10 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
   const handleSeelessAttr = () => {
     setattributeArray("2");   
   };
-     debugger
+     
   const leftover = children.length - childrenArray - 1;
   const attrleftover = dataAttributes.length - attributeArray;
-// debugger
+
   return (
     <div>
       <div
