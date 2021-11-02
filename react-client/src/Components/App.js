@@ -65,13 +65,9 @@ function App() {
         var randomCode = uuidv4();
      
         e.target.setAttribute("data-id" , randomCode);
-       
-        var attributekey = new Array();
-        var attributevalue = new Array(); 
-        Object.entries(e.target.dataset).forEach(([key, value]) => attributekey.push(key));
-        Object.entries(e.target.dataset).forEach(([key, value]) => attributevalue.push(value));
-
-   
+     
+        const dataAttributes = Object.entries(e.target.dataset).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
+          
         const elComputedStyle = ["font-size", "color", "font-family"].reduce(
           (init, curr) => ({
             ...init,
@@ -121,10 +117,7 @@ function App() {
               family: elComputedStyle["font-family"].replaceAll('"', ''),
               bordercolor: colorselection[randomcolor],
               uniqueID:  eltarget.dataset.id.trim(),
-              attributes: arrattrib,
-              keyattributes: attributekey,
-              valueattributes: attributevalue
-              
+              attributes: dataAttributes                         
             },
           ]
         });
@@ -227,9 +220,7 @@ function App() {
               textcolor={domInfo.textcolor}
               borderclr={domInfo.bordercolor}
               uniqueID={domInfo.uniqueID}
-              attributes={domInfo.attributes}
-              keyattr={domInfo.keyattributes}
-              valattr={domInfo.valueattributes}
+              dataAttributes={domInfo.attributes}           
             />
           ))}
 

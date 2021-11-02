@@ -15,7 +15,7 @@ const FontColorDetails = ({ textcolor }) => {
   )
 }
 
-const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID, attributes, keyattr, valattr }) => {
+const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes  }) => {
   const [childrenArray, setchildrenArray] = useState("2");
   const [attributeArray, setattributeArray] = useState("2");
   const handleSeemore = () => {
@@ -25,14 +25,14 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
     setchildrenArray("2");
   };
   const handleSeemoreAttr = () => {
-    setattributeArray(keyattr.length);   
+    setattributeArray(dataAttributes.length);   
   };
   const handleSeelessAttr = () => {
     setattributeArray("2");   
   };
-     
+     debugger
   const leftover = children.length - childrenArray - 1;
-  const attrleftover = keyattr.length - attributeArray;
+  const attrleftover = dataAttributes.length - attributeArray;
 // debugger
   return (
     <div>
@@ -80,23 +80,20 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
             {parent.classes.map(val => `.${val}`)}
           </div>
           <div className="dom-dialog">data-* attributes </div>    
-           <div className="attributecontainer"> 
+           {/* <div className="attributecontainer">  */}
             <div className="dom-dialog-child-details">   
-              {keyattr.slice(0, attributeArray).map((val) => (              
-                <div>                 
-                  {val}                
+              {dataAttributes.slice(0, attributeArray).map((val) => (
+                <div className="attributecontainer">              
+                  <div>                 
+                    {val.key}                
+                  </div>
+                  <div>
+                    {val.value}
+                  </div>
                 </div>
               ))}                             
-            </div>          
-            <div className="dom-dialog-child-details">          
-              {valattr.slice(0, attributeArray).map((val) => (              
-                <div>                 
-                  {val}                
-                </div>
-              ))}                     
-            </div>         
-          </div>
-          {keyattr.length > 2 ?(
+            </div>                 
+          {dataAttributes.length > 2 ?(
             attrleftover > 0 ? (
               <div
                 id="closedompeeker"
