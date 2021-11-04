@@ -7,8 +7,39 @@ import { FaTrash } from 'react-icons/fa'
 import '../../styles/bookmarkpanel.scss'
 
 
+const BookmarkInfo = ({ bookmarkVisible, onCloseBookmark }) => (
+    <React.Fragment>
+        <div className='card-bookmark' hidden={!bookmarkVisible}>
+            <span className="bookmark-header">
+                <label className='header-text'>Bookmarks from this page</label>
+                <button id='btnClose' className='header__close-btn' type='button' onClick={onCloseBookmark}>
+                    <AiOutlineClose size={14}/>
+                </button>
+            </span>
+            <div className='bookmark-body'>
+                <ul>
+                    <BookmarkList />
+                </ul>
+            </div>
+        </div>
+    </React.Fragment>
+)
 
-function BookmarkPanel(props) {
+const BookmarkList = ({ onCloseBookmark }) => (
+    <li className='bookmark__list-item'>
+        <div>
+            <h3>Heading Bookmark</h3>
+            <label style={{fontSize: '12px'}}>div.class</label>
+        </div>
+        <span className='list__item-options'>
+            <button><RiPencilFill/></button>
+            <button><FaTrash/></button>
+        </span>
+        
+    </li>
+)
+
+const BookmarkPanel = (props) => {
     const [bookmarkVisible, setBookmarkVisible] = useState(false);
     const [btnBookmarkVisible, setBtnBookmarkVisible] = useState(true);
     const [bookmarks, setBookmarks] = useState([{}]);
@@ -19,7 +50,6 @@ function BookmarkPanel(props) {
     }  
     
     const onCloseBookmark = (e) => {
-        alert('test')
         setBookmarkVisible(false);
         setBtnBookmarkVisible(true);
     }  
@@ -27,38 +57,7 @@ function BookmarkPanel(props) {
     const onLoadedBookmark = function(e) {
         console.log(e)
     }
-
-    const BookmarkInfo = () => (
-        <React.Fragment>
-            <div className='card-bookmark' hidden={!bookmarkVisible}>
-                <span className="bookmark-header">
-                    <label className='header-text'>Bookmarks from this page</label>
-                    <button id='btnClose' className='header__close-btn' type='button' onClick={(e) => onCloseBookmark(e)}>
-                        <AiOutlineClose size={14}/>
-                    </button>
-                </span>
-                <div className='bookmark-body'>
-                    <ul>
-                        <BookmarkList/>
-                    </ul>
-                </div>
-            </div>
-        </React.Fragment>
-    )
-
-    const BookmarkList = (bookmarkObj) => (
-        <li className='bookmark__list-item'>
-            <div>
-                <h3>Heading Bookmark</h3>
-                <label style={{fontSize: '12px'}}>div.class</label>
-            </div>
-            <span className='list__item-options'>
-                <button onClick={onCloseBookmark}><RiPencilFill/></button>
-                <button><FaTrash/></button>
-            </span>
-            
-        </li>
-    )
+    
     
 
     useEffect(() => {
@@ -73,7 +72,7 @@ function BookmarkPanel(props) {
 
     return (
         <div class='bookmark-panel'>
-            <BookmarkInfo />
+            <BookmarkInfo bookmarkVisible={bookmarkVisible} onCloseBookmark={onCloseBookmark} />
             <button className='bookmark-btn' onClick={onOpenBookmark} hidden={!btnBookmarkVisible}>
                 <BsFillBookmarkFill/>
                 &nbsp;
