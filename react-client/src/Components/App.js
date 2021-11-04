@@ -6,6 +6,7 @@ import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
 import DomSwitch from "./DomSwitch";
 
 import * as domUtils from "../utils/domUtils";
+import BookmarkPanel from "./BookmarkPanel";
 
 function App() {
   const [domInfo, setDomInfo] = useState([]);
@@ -16,7 +17,7 @@ function App() {
   });
   const [domSwitch, setdomSwitch] = useState(true);
   const [initialState, setInitialState] = React.useState();
-  const switchdom = () => {
+  const switchdom = (e) => {
     setdomSwitch(!domSwitch);
   };
   const refDomHighlight = React.useRef(null);
@@ -47,128 +48,136 @@ function App() {
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
-      if (e.target.id !== "closedompeeker" && domSwitch == true) {
-        e.preventDefault();
-
-        const clsArr = [...e.target.classList].map((cls) => ({
-          clsName: `.${cls}`,
-        }));
-
-        const children = [...e.target.children].map((child) => {
-          return {
-            id: child.id.trim() ? "#" + child.id : null,
-            class: child.className.trim() ? "." + child.className : null,
-            tag: child.localName,
-          };
-        });
-
-        var eltarget = e.target;
-
-        var randomCode = uuidv4();
-     
-        e.target.setAttribute("data-id" , randomCode);                  
+      if(!e.target.classList.contains('bookmark-btn') && !e.target.classList.contains('card-bookmark')) {
+        if (e.target.id !== "closedompeeker" && domSwitch == true) {
+          e.preventDefault();
+  
+          const clsArr = [...e.target.classList].map((cls) => ({
+            clsName: `.${cls}`,
+          }));
+  
+          const children = [...e.target.children].map((child) => {
+            return {
+              id: child.id.trim() ? "#" + child.id : null,
+              class: child.className.trim() ? "." + child.className : null,
+              tag: child.localName,
+            };
+          });
+  
+          var eltarget = e.target;
+  
+          var randomCode = uuidv4();
        
-        const elComputedStyle = ["font-size", "color", "font-family"].reduce(
-          (init, curr) => ({
-            ...init,
-            [curr]: window
-              .getComputedStyle(eltarget, null)
-              .getPropertyValue(curr),
-          }),
-          {}
-        );
-
-        var rgbArr = elComputedStyle["color"]
-          .substring(4)
-          .slice(0, -1)
-          .split(",");
-
-        var colorhex = rgbArr.reduce(
-          (init, curr) => (init += parseInt(curr).toString(16)),
-          "#"
-        );
-        
-        const elParent = e.target.parentElement;
-        const parent = {
-          id: elParent.id.trim() && `#${elParent.id.trim()}`,
-          tag: elParent.localName,
-          class: elParent.className.trim() && `.${elParent.className.trim()}`,
-          classes: [...elParent.classList]
-        };
-
-        const pageYcoordinate = e.pageY;
-
-        const randomcolor = Math.floor(Math.random() * colorselection.length);      
-        eltarget.style.cssText += `border:3px solid;border-color: ${colorselection[randomcolor]}`;     
-        
-        await setDomInfo(value => {
-
-          return [...value,
-            {
-              x: e.pageX,
-              y: pageYcoordinate + 100,              
-              id: eltarget.id.trim() !== "" && `#${eltarget.id.trim()}`,              
-              clstag: e.target.localName,
-              clsname: clsArr,
-              children: children,
-              parent,
-              size: elComputedStyle["font-size"],
-              textcolor: colorhex,
-              family: elComputedStyle["font-family"].replaceAll('"', ''),
-              bordercolor: colorselection[randomcolor],
-              uniqueID:  eltarget.dataset.id.trim()
-            },
-          ]
-        });
-
-        // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
-        (function(pageYcoordinate) {
-          setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
-            setDomInfo(values => {
-
-              const mappedValues = values.map((val, idx) => {
-                if(idx === values.length-1) {
-                  val.y = pageYcoordinate
-                }
-                return val;
+          e.target.setAttribute("data-id" , randomCode);                  
+         
+          const elComputedStyle = ["font-size", "color", "font-family"].reduce(
+            (init, curr) => ({
+              ...init,
+              [curr]: window
+                .getComputedStyle(eltarget, null)
+                .getPropertyValue(curr),
+            }),
+            {}
+          );
+  
+          var rgbArr = elComputedStyle["color"]
+            .substring(4)
+            .slice(0, -1)
+            .split(",");
+  
+          var colorhex = rgbArr.reduce(
+            (init, curr) => (init += parseInt(curr).toString(16)),
+            "#"
+          );
+          
+          const elParent = e.target.parentElement;
+          const parent = {
+            id: elParent.id.trim() && `#${elParent.id.trim()}`,
+            tag: elParent.localName,
+            class: elParent.className.trim() && `.${elParent.className.trim()}`,
+            classes: [...elParent.classList]
+          };
+  
+          const pageYcoordinate = e.pageY;
+  
+          const randomcolor = Math.floor(Math.random() * colorselection.length);      
+          eltarget.style.cssText += `border:3px solid;border-color: ${colorselection[randomcolor]}`;     
+          
+          await setDomInfo(value => {
+  
+            return [...value,
+              {
+                x: e.pageX,
+                y: pageYcoordinate + 100,              
+                id: eltarget.id.trim() !== "" && `#${eltarget.id.trim()}`,              
+                clstag: e.target.localName,
+                clsname: clsArr,
+                children: children,
+                parent,
+                size: elComputedStyle["font-size"],
+                textcolor: colorhex,
+                family: elComputedStyle["font-family"].replaceAll('"', ''),
+                bordercolor: colorselection[randomcolor],
+                uniqueID:  eltarget.dataset.id.trim()
+              },
+            ]
+          });
+  
+          // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
+          (function(pageYcoordinate) {
+            setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
+              setDomInfo(values => {
+  
+                const mappedValues = values.map((val, idx) => {
+                  if(idx === values.length-1) {
+                    val.y = pageYcoordinate
+                  }
+                  return val;
+                });
+  
+                return mappedValues;
               });
-
-              return mappedValues;
-            });
-          }, 10);
-        }(pageYcoordinate));
-
-        
+            }, 10);
+          }(pageYcoordinate));
+  
+          
+        }
+      } else {
+        e.stopPropagation();
       }
     });
 
     document.addEventListener("mouseover", async (e) => {
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
-        e.target,
-        "dom-info-dialog-box"
-      );
-      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-        const domType = e.target.nodeName?.toLowerCase();
-        await setDomLeanDetails({
-          ...domLeanDetails,
-          elId: e.target.id,
-          domType,
-          elClassNames: [...e.target.classList],
-        }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
-        e.target.classList.toggle("focused-dom");
-        e.target.appendChild(refDomHighlight.current.base);
+      if(!e.target.classList.contains('bookmark-btn')) {
+        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-info-dialog-box"
+        );
+        if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+          const domType = e.target.nodeName?.toLowerCase();
+          await setDomLeanDetails({
+            ...domLeanDetails,
+            elId: e.target.id,
+            domType,
+            elClassNames: [...e.target.classList],
+          }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+          e.target.classList.toggle("focused-dom");
+          e.target.appendChild(refDomHighlight.current.base);
+        }
       }
     });
 
     document.addEventListener("mouseout", (e) => {
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
-        e.target,
-        "dom-info-dialog-box"
-      );
-      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
-        e.target.classList.toggle("focused-dom");
-        e.target.removeChild(refDomHighlight.current.base);
-      }
+      if(!e.target.classList.contains('bookmark-btn')) {
+        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-info-dialog-box"
+        );
+        if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+          e.target.classList.toggle("focused-dom");
+          e.target.removeChild(refDomHighlight.current.base);
+        }
+      } 
     });
   };
 
@@ -231,6 +240,8 @@ function App() {
             domType={domLeanDetails.domType}
             show={true}
           />
+
+          <BookmarkPanel />
         </div>
       )}
 
