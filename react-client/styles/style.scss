@@ -37,8 +37,12 @@ $DialogDetailPadding: 10px 0px 0px 0px;
 }
 
 .attributecontainer {
-  display:flex;
-  justify-content: space-between;  
+  display: flex;
+  justify-content: space-between;
+
+  .attributeitems {  
+    padding: 0px 10px 0px 0px;
+  }  
 }
 
 .dom-info-dialog-box {
