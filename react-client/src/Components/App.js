@@ -146,7 +146,12 @@ function App() {
         e.target,
         "dom-info-dialog-box"
       );
-      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+        e.target,
+        "dom-switch"
+      );
+
+      if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
         const domType = e.target.nodeName?.toLowerCase();
         await setDomLeanDetails({
           ...domLeanDetails,
@@ -164,7 +169,12 @@ function App() {
         e.target,
         "dom-info-dialog-box"
       );
-      if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+        e.target,
+        "dom-switch"
+      );
+
+      if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
         e.target.classList.toggle("focused-dom");
         e.target.removeChild(refDomHighlight.current.base);
       }

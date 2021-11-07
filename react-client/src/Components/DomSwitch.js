@@ -2,8 +2,8 @@ import React from "react";
 
 const DomSwitch = () => {
   return (
-    <div id="divDeveloperTools" className="dom-switch">
-      <p>Disable DOM Peeker </p>
+    <div id="btnDisableDomLens" className="dom-switch">
+      <p>Disable DOM Lens</p>
     </div>
   );
 };
