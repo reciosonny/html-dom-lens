@@ -24,8 +24,6 @@ function App() {
   const uuidv4 = require("uuid/v4");
   const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "#7E57C2", "#9575CD", "#B39DDB", "#D1C4E9", "#EDE7F6", "#E91E63", "#D81B60", "#C2185B", "#AD1457", "#880E4F", "#EC407A", "#F06292", "#F48FB1", "#F8BBD0", "#FCE4EC", "#263238", "#37474F", "#455A64", "#546E7A", "#607D8B", "#78909C", "#90A4AE", "#B0BEC5", "#CFD8DC", "#ECEFF1"];
 
- 
-
   useEffect(() => {
     if (!PRODUCTION_MODE) {
       /**
@@ -43,19 +41,19 @@ function App() {
       injectDOMEventInBody();
     }
 
-    return () => {};
+    return () => { };
   }, []);
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
-      if(!e.target.classList.contains('bookmark-btn') && !e.target.classList.contains('card-bookmark')) {
+      if (!e.target.classList.contains('bookmark-btn')) {
         if (e.target.id !== "closedompeeker" && domSwitch == true) {
           e.preventDefault();
-  
+
           const clsArr = [...e.target.classList].map((cls) => ({
             clsName: `.${cls}`,
           }));
-  
+
           const children = [...e.target.children].map((child) => {
             return {
               id: child.id.trim() ? "#" + child.id : null,
@@ -63,13 +61,15 @@ function App() {
               tag: child.localName,
             };
           });
-  
+
           var eltarget = e.target;
-  
+
           var randomCode = uuidv4();
-       
-          e.target.setAttribute("data-id" , randomCode);                  
-         
+
+          e.target.setAttribute("data-id", randomCode);
+
+          const dataAttributes = Object.entries(e.target.dataset).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
+
           const elComputedStyle = ["font-size", "color", "font-family"].reduce(
             (init, curr) => ({
               ...init,
@@ -79,17 +79,17 @@ function App() {
             }),
             {}
           );
-  
+
           var rgbArr = elComputedStyle["color"]
             .substring(4)
             .slice(0, -1)
             .split(",");
-  
+
           var colorhex = rgbArr.reduce(
             (init, curr) => (init += parseInt(curr).toString(16)),
             "#"
           );
-          
+
           const elParent = e.target.parentElement;
           const parent = {
             id: elParent.id.trim() && `#${elParent.id.trim()}`,
@@ -97,58 +97,55 @@ function App() {
             class: elParent.className.trim() && `.${elParent.className.trim()}`,
             classes: [...elParent.classList]
           };
-  
+
           const pageYcoordinate = e.pageY;
-  
-          const randomcolor = Math.floor(Math.random() * colorselection.length);      
-          eltarget.style.cssText += `border:3px solid;border-color: ${colorselection[randomcolor]}`;     
-          
+
+          const randomcolor = Math.floor(Math.random() * colorselection.length);
+          eltarget.style.cssText += `border:3px solid;border-color: ${colorselection[randomcolor]}`;
+
           await setDomInfo(value => {
-  
+
             return [...value,
-              {
-                x: e.pageX,
-                y: pageYcoordinate + 100,              
-                id: eltarget.id.trim() !== "" && `#${eltarget.id.trim()}`,              
-                clstag: e.target.localName,
-                clsname: clsArr,
-                children: children,
-                parent,
-                size: elComputedStyle["font-size"],
-                textcolor: colorhex,
-                family: elComputedStyle["font-family"].replaceAll('"', ''),
-                bordercolor: colorselection[randomcolor],
-                uniqueID:  eltarget.dataset.id.trim()
-              },
+            {
+              x: e.pageX,
+              y: pageYcoordinate + 100,
+              id: eltarget.id.trim() !== "" && `#${eltarget.id.trim()}`,
+              clstag: e.target.localName,
+              clsname: clsArr,
+              children: children,
+              parent,
+              size: elComputedStyle["font-size"],
+              textcolor: colorhex,
+              family: elComputedStyle["font-family"].replaceAll('"', ''),
+              bordercolor: colorselection[randomcolor],
+              uniqueID: eltarget.dataset.id.trim(),
+              attributes: dataAttributes
+            },
             ]
           });
-  
+
           // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
-          (function(pageYcoordinate) {
+          (function (pageYcoordinate) {
             setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
               setDomInfo(values => {
-  
+
                 const mappedValues = values.map((val, idx) => {
-                  if(idx === values.length-1) {
+                  if (idx === values.length - 1) {
                     val.y = pageYcoordinate
                   }
                   return val;
                 });
-  
+
                 return mappedValues;
               });
             }, 10);
           }(pageYcoordinate));
-  
-          
         }
-      } else {
-        e.stopPropagation();
       }
     });
 
     document.addEventListener("mouseover", async (e) => {
-      if(!e.target.classList.contains('bookmark-btn')) {
+      if (!e.target.classList.contains('bookmark-btn')) {
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
           e.target,
           "dom-info-dialog-box"
@@ -168,7 +165,7 @@ function App() {
     });
 
     document.addEventListener("mouseout", (e) => {
-      if(!e.target.classList.contains('bookmark-btn')) {
+      if (!e.target.classList.contains('bookmark-btn')) {
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
           e.target,
           "dom-info-dialog-box"
@@ -177,7 +174,7 @@ function App() {
           e.target.classList.toggle("focused-dom");
           e.target.removeChild(refDomHighlight.current.base);
         }
-      } 
+      }
     });
   };
 
@@ -196,8 +193,8 @@ function App() {
 
   const handleRemoveDialogBox = (idx, id, uniqueID) => {
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
-    const removeDomborder = domInfo.filter((x, currentIdx) => currentIdx === uniqueID);   
-    document.querySelector('[data-id="'+uniqueID+'"]').style.removeProperty('border')
+    const removeDomborder = domInfo.filter((x, currentIdx) => currentIdx === uniqueID);
+    document.querySelector('[data-id="' + uniqueID + '"]').style.removeProperty('border')
     setDomInfo(newDomInfo);
   };
 
@@ -230,6 +227,7 @@ function App() {
               textcolor={domInfo.textcolor}
               borderclr={domInfo.bordercolor}
               uniqueID={domInfo.uniqueID}
+              dataAttributes={domInfo.attributes}
             />
           ))}
 
