@@ -118,7 +118,8 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
               <div>
                 <div className="dom-details-tag">{val.tag}</div>
                 {val.id}                             
-                {val.class && val.class.replace(/ /g, ".")  }                
+                {val.class && val.class.replace(/ /g, ".")  }        
+                <br />        
               </div>
             ))}         
           </div>
