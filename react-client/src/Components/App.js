@@ -17,6 +17,8 @@ function App() {
   });
   const [domSwitch, setdomSwitch] = useState(true);
   const [initialState, setInitialState] = React.useState();
+  const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false)
+  const [selectedElem, setSelectedElem] = useState({});
   const switchdom = (e) => {
     setdomSwitch(!domSwitch);
   };
@@ -46,13 +48,27 @@ function App() {
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
-      if (!e.target.classList.contains('bookmark-btn')) {
+      if (!containsBookmarkModule(e)) {
         if (e.target.id !== "closedompeeker" && domSwitch == true) {
           e.preventDefault();
 
           const clsArr = [...e.target.classList].map((cls) => ({
             clsName: `.${cls}`,
           }));
+          let strClassList = '';
+
+          clsArr.map((data, idx) =>{
+            if(data.clsName !== '.focused-dom') {
+              strClassList += data.clsName
+            }
+          })
+
+          setSelectedElem({
+            elClassNames: strClassList,
+            domType: e.target.nodeName?.toLowerCase(),
+            x: e.pageX,
+            y: e.pageY
+          });
 
           const children = [...e.target.children].map((child) => {
             return {
@@ -145,13 +161,14 @@ function App() {
     });
 
     document.addEventListener("mouseover", async (e) => {
-      if (!e.target.classList.contains('bookmark-btn')) {
+      if (!containsBookmarkModule(e)) {
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
           e.target,
           "dom-info-dialog-box"
         );
         if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
           const domType = e.target.nodeName?.toLowerCase();
+          
           await setDomLeanDetails({
             ...domLeanDetails,
             elId: e.target.id,
@@ -165,7 +182,7 @@ function App() {
     });
 
     document.addEventListener("mouseout", (e) => {
-      if (!e.target.classList.contains('bookmark-btn')) {
+      if (!containsBookmarkModule(e)) {
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
           e.target,
           "dom-info-dialog-box"
@@ -198,6 +215,37 @@ function App() {
     setDomInfo(newDomInfo);
   };
 
+  const containsBookmarkModule = (elem) => {
+    // let classExist = false;
+    // const classList = ['bookmark-btn', 'card-bookmark', 'add__bookmark-panel', 'dom-options']
+    
+    // for(let i = 0; i < classList.length; i++) {
+    //   if(elem.classList.contains(classList[i]) || elem.closest(`.${classList[i]}`)) {
+    //     classExist = true
+    //   }
+    // }
+
+    if (elem.target.classList.contains('bookmark-btn') ||
+      elem.target.classList.contains('card-bookmark') ||
+      elem.target.closest('.card-bookmark') ||
+      elem.target.classList.contains('add__bookmark-panel') ||
+      elem.target.closest('.add__bookmark-panel') ||
+      elem.currentTarget.querySelector('.dom-options')) {
+      return true
+    }
+    return false
+    // return classExist
+  }
+
+  const onClickOption = (e) => {
+    setShowAddBookmarkPanel(true)
+  }
+
+  const onCloseOption = (e) => {
+    setShowAddBookmarkPanel(false)
+  }
+
+
   return (
     <div>
       {/* website page renders here... */}
@@ -228,9 +276,10 @@ function App() {
               borderclr={domInfo.bordercolor}
               uniqueID={domInfo.uniqueID}
               dataAttributes={domInfo.attributes}
+              onClickOption={onClickOption}
+              showAddBookmarkPanel={showAddBookmarkPanel}
             />
           ))}
-
           <DomMinimalDetailsWidget
             ref={refDomHighlight}
             elId={domLeanDetails.elId}
@@ -239,7 +288,14 @@ function App() {
             show={true}
           />
 
-          <BookmarkPanel />
+          <BookmarkPanel 
+            elClassNames={selectedElem.elClassNames}
+            domType={selectedElem.domType}
+            x={selectedElem.x}
+            y={selectedElem.y}
+            showAddBookmarkPanel={showAddBookmarkPanel}
+            onCloseOption={onCloseOption}
+          />
         </div>
       )}
 

@@ -11,6 +11,7 @@
         border-radius: 8px 0px 0px 8px;
         border-width: 0;
         font-weight: 600;
+        overflow-y: auto;
     
         .bookmark-header {
             display: flex;
@@ -45,11 +46,30 @@
                     background: #CFD8DC;
                 }
 
+                .edit__txt-title {
+                    width: 80%;
+                    input {
+                        font-size: 16px;
+                        border: none;
+                    }
+                }
+
+                .lbl-elem {
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+
+                .lbl-classes {
+                    font-size: 12px;
+                    font-weight: 300;
+                }
+
                 .list__item-options {
                     button {
-                        background-color: transparent;
+                        background-color: inherit;
                         margin-inline: 5px;
                         border: none;
+                        z-index: 999;
 
                         &:hover {
                             cursor: pointer;
@@ -72,5 +92,69 @@
         border-radius: 8px 0px 0px 8px;
         border-width: 0;
         font-weight: 600;
+    }
+
+    .add__bookmark-panel {
+        position: absolute;
+        width: 301px;
+        height: 120px;
+        right: 0;
+        top: 500px; 
+        z-index: 99999;
+        background: #EDE7F6;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px rgba(0, 0, 0, 0.12), 0px 1px 5px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        padding: 10px 20px;
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 40px;
+            margin-bottom: 10px;
+
+            .header-text {
+                font-style: normal;
+                font-weight: 500;
+                font-size: 12px;
+                line-height: 12px;
+                color: #546E7A;
+            }
+
+            button {
+                background-color: transparent;
+                margin-inline: 5px;
+                border: none;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .txt__bookmark-name {
+            font-family: Roboto monospace;
+            width: 100%;
+            height: 24px;
+            border: none;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 24px;
+            line-height: 24px;
+            background: transparent;
+
+            &:focus {
+                border: none;
+            }
+        }
+
+        .element-description {
+            font-size: 11px;
+            display: block;
+
+            .lbl-element {
+                color: #E91E63;
+            }
+        }
     }
 }
