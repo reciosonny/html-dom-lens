@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { BsBookmark, BsFillBookmarkFill } from 'react-icons/bs'
+import {BiComment} from 'react-icons/bi'
+import {GrTree} from 'react-icons/gr'
 import '../../styles/domoptions.scss'
 
 function DomOptions({onClickOption, showAddBookmarkPanel}) {
@@ -9,10 +11,10 @@ function DomOptions({onClickOption, showAddBookmarkPanel}) {
                 { showAddBookmarkPanel ? <BsFillBookmarkFill color='#673ab7'/> : <BsBookmark color="#673ab7" /> }
             </button>
             <button style={{ fontSize: '20px' }}>
-                a
+                <GrTree/>
             </button>
             <button style={{ fontSize: '20px' }}>
-                a
+                <BiComment/>
             </button>
         </div>
     )

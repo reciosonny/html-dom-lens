@@ -51,24 +51,11 @@ function App() {
       if (!containsBookmarkModule(e)) {
         if (e.target.id !== "closedompeeker" && domSwitch == true) {
           e.preventDefault();
+          let strClassList = '';
 
           const clsArr = [...e.target.classList].map((cls) => ({
             clsName: `.${cls}`,
           }));
-          let strClassList = '';
-
-          clsArr.map((data, idx) =>{
-            if(data.clsName !== '.focused-dom') {
-              strClassList += data.clsName
-            }
-          })
-
-          setSelectedElem({
-            elClassNames: strClassList,
-            domType: e.target.nodeName?.toLowerCase(),
-            x: e.pageX,
-            y: e.pageY
-          });
 
           const children = [...e.target.children].map((child) => {
             return {
@@ -82,8 +69,23 @@ function App() {
 
           var randomCode = uuidv4();
 
+          
           e.target.setAttribute("data-id", randomCode);
+          
+          clsArr.map((data, idx) =>{
+            if(data.clsName !== '.focused-dom') {
+              strClassList += data.clsName
+            }
+          })
 
+          setSelectedElem({
+            elClassNames: strClassList,
+            domType: e.target.nodeName?.toLowerCase(),
+            domId: e.target.getAttribute('data-id'),
+            x: e.pageX,
+            y: e.pageY
+          });
+          
           const dataAttributes = Object.entries(e.target.dataset).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
 
           const elComputedStyle = ["font-size", "color", "font-family"].reduce(
@@ -293,6 +295,7 @@ function App() {
             domType={selectedElem.domType}
             x={selectedElem.x}
             y={selectedElem.y}
+            domId={selectedElem.domId}
             showAddBookmarkPanel={showAddBookmarkPanel}
             onCloseOption={onCloseOption}
           />

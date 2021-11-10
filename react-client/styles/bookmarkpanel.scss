@@ -11,7 +11,6 @@
         border-radius: 8px 0px 0px 8px;
         border-width: 0;
         font-weight: 600;
-        overflow-y: auto;
     
         .bookmark-header {
             display: flex;
@@ -36,14 +35,32 @@
         }
     
         .bookmark-body {
+            height: 230px;
+            overflow: auto;
+
             .bookmark__list-item {
                 padding: 10px 15px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
 
-                &:hover {
+                &:hover, &.selected{
                     background: #CFD8DC;
+                }
+
+                .list__item-details {
+                    color: #263238;
+                    text-overflow: ellipsis;
+                    overflow-x: hidden;
+                    white-space: nowrap;
+                    width: 80%;
+                    font-size: 13px;
+
+                    h3 {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
                 }
 
                 .edit__txt-title {
@@ -76,6 +93,23 @@
                         }
                     }
                 }
+            }
+        }
+
+        .bookmark-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            padding-block: 20px;
+
+            a {
+                color: #607D8B;
+                font-weight: 300;
+                margin: 0 auto;
+                font-size: 11px;
+                text-align: center;
+                cursor: pointer;
             }
         }
     }
