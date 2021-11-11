@@ -19,8 +19,15 @@ function App() {
   const [initialState, setInitialState] = React.useState();
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false)
   const [selectedElem, setSelectedElem] = useState({});
+
   const switchdom = (e) => {
     setdomSwitch(!domSwitch);
+  }
+
+  const [switchExtensionFunctionality, setExtension] = useState(true);
+
+  const turnOffExtension = () => {
+    setExtension(false);
   };
   const refDomHighlight = React.useRef(null);
   const uuidv4 = require("uuid/v4");
@@ -41,6 +48,17 @@ function App() {
       // );
     } else {
       injectDOMEventInBody();
+
+      //chrome-related events
+      chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+        setExtension(true);
+
+        // console.log('Event is inside react component...');
+        if (msg.text === 'are_you_there_content_script?') {
+          sendResponse({ status: "yes" });
+        }
+      });
+
     }
 
     return () => { };
@@ -52,126 +70,140 @@ function App() {
         if (e.target.id !== "closedompeeker" && domSwitch == true) {
           e.preventDefault();
           let strClassList = '';
-
-          const clsArr = [...e.target.classList].map((cls) => ({
-            clsName: `.${cls}`,
-          }));
-
-          const children = [...e.target.children].map((child) => {
-            return {
-              id: child.id.trim() ? "#" + child.id : null,
-              class: child.className.trim() ? "." + child.className : null,
-              tag: child.localName,
-            };
-          });
-
           var eltarget = e.target;
 
-          var randomCode = uuidv4();
+          console.log('extension status: ', switchExtensionFunctionality.toString())
+          if (!switchExtensionFunctionality) return;
 
-          
-          e.target.setAttribute("data-id", randomCode);
-          
-          clsArr.map((data, idx) =>{
-            if(data.clsName !== '.focused-dom') {
-              strClassList += data.clsName
-            }
-          })
 
-          setSelectedElem({
-            elClassNames: strClassList,
-            domType: e.target.nodeName?.toLowerCase(),
-            domId: e.target.getAttribute('data-id'),
-            x: e.pageX,
-            y: e.pageY,
-            domTarget: e.target
-          });
-          
-          const dataAttributes = Object.entries(e.target.dataset).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
+          if (e.target.id !== "closedompeeker") {
+            e.preventDefault();
 
-          const elComputedStyle = ["font-size", "color", "font-family"].reduce(
-            (init, curr) => ({
-              ...init,
-              [curr]: window
-                .getComputedStyle(eltarget, null)
-                .getPropertyValue(curr),
-            }),
-            {}
-          );
+            const clsArr = [...e.target.classList].map((cls) => ({
+              clsName: `.${cls}`,
+            }));
 
-          var rgbArr = elComputedStyle["color"]
-            .substring(4)
-            .slice(0, -1)
-            .split(",");
+            const children = [...e.target.children].map((child) => {
+              return {
+                id: child.id.trim() ? "#" + child.id : null,
+                class: child.className.trim() ? "." + child.className : null,
+                tag: child.localName,
+              };
+            });
 
-          var colorhex = rgbArr.reduce(
-            (init, curr) => (init += parseInt(curr).toString(16)),
-            "#"
-          );
+            var randomCode = uuidv4();
 
-          const elParent = e.target.parentElement;
-          const parent = {
-            id: elParent.id.trim() && `#${elParent.id.trim()}`,
-            tag: elParent.localName,
-            class: elParent.className.trim() && `.${elParent.className.trim()}`,
-            classes: [...elParent.classList]
-          };
 
-          const pageYcoordinate = e.pageY;
+            e.target.setAttribute("data-id", randomCode);
 
-          const randomcolor = Math.floor(Math.random() * colorselection.length);
-          eltarget.style.cssText += `border:3px solid;border-color: ${colorselection[randomcolor]}`;
+            clsArr.map((data, idx) => {
+              if (data.clsName !== '.focused-dom') {
+                strClassList += data.clsName
+              }
+            })
 
-          await setDomInfo(value => {
-
-            return [...value,
-            {
+            setSelectedElem({
+              elClassNames: strClassList,
+              domType: e.target.nodeName?.toLowerCase(),
+              domId: e.target.getAttribute('data-id'),
               x: e.pageX,
-              y: pageYcoordinate + 100,
-              id: eltarget.id.trim() !== "" && `#${eltarget.id.trim()}`,
-              clstag: e.target.localName,
-              clsname: clsArr,
-              children: children,
-              parent,
-              size: elComputedStyle["font-size"],
-              textcolor: colorhex,
-              family: elComputedStyle["font-family"].replaceAll('"', ''),
-              bordercolor: colorselection[randomcolor],
-              uniqueID: eltarget.dataset.id.trim(),
-              attributes: dataAttributes
-            },
-            ]
-          });
+              y: e.pageY,
+              domTarget: e.target
+            });
 
-          // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
-          (function (pageYcoordinate) {
-            setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
-              setDomInfo(values => {
+            const dataAttributes = Object.entries(e.target.dataset).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
 
-                const mappedValues = values.map((val, idx) => {
-                  if (idx === values.length - 1) {
-                    val.y = pageYcoordinate
-                  }
-                  return val;
+            const elComputedStyle = ["font-size", "color", "font-family"].reduce(
+              (init, curr) => ({
+                ...init,
+                [curr]: window
+                  .getComputedStyle(eltarget, null)
+                  .getPropertyValue(curr),
+              }),
+              {}
+            );
+
+            var rgbArr = elComputedStyle["color"]
+              .substring(4)
+              .slice(0, -1)
+              .split(",");
+
+            var colorhex = rgbArr.reduce(
+              (init, curr) => (init += parseInt(curr).toString(16)),
+              "#"
+            );
+
+            const elParent = e.target.parentElement;
+            const parent = {
+              id: elParent.id.trim() && `#${elParent.id.trim()}`,
+              tag: elParent.localName,
+              class: elParent.className.trim() && `.${elParent.className.trim()}`,
+              classes: [...elParent.classList]
+            };
+
+            const pageYcoordinate = e.pageY;
+
+            const randomcolor = Math.floor(Math.random() * colorselection.length);
+            eltarget.style.cssText += `border:3px solid;border-color: ${colorselection[randomcolor]}`;
+
+            await setDomInfo(value => {
+
+              return [...value,
+              {
+                x: e.pageX,
+                y: pageYcoordinate + 100,
+                id: eltarget.id.trim() !== "" && `#${eltarget.id.trim()}`,
+                clstag: e.target.localName,
+                clsname: clsArr,
+                children: children,
+                parent,
+                size: elComputedStyle["font-size"],
+                textcolor: colorhex,
+                family: elComputedStyle["font-family"].replaceAll('"', ''),
+                bordercolor: colorselection[randomcolor],
+                uniqueID: eltarget.dataset.id.trim(),
+                attributes: dataAttributes
+              },
+              ]
+            });
+
+            // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
+            (function (pageYcoordinate) {
+              setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
+                setDomInfo(values => {
+
+                  const mappedValues = values.map((val, idx) => {
+                    if (idx === values.length - 1) {
+                      val.y = pageYcoordinate
+                    }
+                    return val;
+                  });
+
+                  return mappedValues;
                 });
-
-                return mappedValues;
-              });
-            }, 10);
-          }(pageYcoordinate));
+              }, 10);
+            }(pageYcoordinate));
+          }
         }
       }
     });
 
     document.addEventListener("mouseover", async (e) => {
       if (!containsBookmarkModule(e)) {
+        if (!switchExtensionFunctionality) return;
+
+
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
           e.target,
           "dom-info-dialog-box"
         );
-        if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-switch"
+        );
+
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
           const domType = e.target.nodeName?.toLowerCase();
-          
           await setDomLeanDetails({
             ...domLeanDetails,
             elId: e.target.id,
@@ -184,18 +216,33 @@ function App() {
       }
     });
 
-    document.addEventListener("mouseout", (e) => {
-      if (!containsBookmarkModule(e)) {
+    (function (switchExtensionFunctionality) {
+
+      document.addEventListener("mouseout", e => {
+
+        console.log('status: ', switchExtensionFunctionality);
+
+
+        if (!switchExtensionFunctionality) return;
+
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
           e.target,
           "dom-info-dialog-box"
         );
-        if (isNotDomInfoComponent && e.target.nodeName !== "HTML") {
+        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-switch"
+        );
+
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
           e.target.classList.toggle("focused-dom");
           e.target.removeChild(refDomHighlight.current.base);
         }
-      }
-    });
+
+      });
+
+    }(switchExtensionFunctionality));
+
   };
 
   const getPageContent = async (url) => {
@@ -244,9 +291,9 @@ function App() {
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
-      <div onClick={switchdom}>{domSwitch && <DomSwitch />}</div>
+      <div onClick={turnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
 
-      {domSwitch && (
+      {switchExtensionFunctionality && (
         <div>
           {domInfo.map((domInfo, idx) => (
             <DomInfoDialogBox
@@ -281,7 +328,7 @@ function App() {
             show={true}
           />
 
-          <BookmarkPanel 
+          <BookmarkPanel
             elClassNames={selectedElem.elClassNames}
             domType={selectedElem.domType}
             x={selectedElem.x}
