@@ -83,7 +83,8 @@ function App() {
             domType: e.target.nodeName?.toLowerCase(),
             domId: e.target.getAttribute('data-id'),
             x: e.pageX,
-            y: e.pageY
+            y: e.pageY,
+            domTarget: e.target
           });
           
           const dataAttributes = Object.entries(e.target.dataset).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
@@ -218,15 +219,6 @@ function App() {
   };
 
   const containsBookmarkModule = (elem) => {
-    // let classExist = false;
-    // const classList = ['bookmark-btn', 'card-bookmark', 'add__bookmark-panel', 'dom-options']
-    
-    // for(let i = 0; i < classList.length; i++) {
-    //   if(elem.classList.contains(classList[i]) || elem.closest(`.${classList[i]}`)) {
-    //     classExist = true
-    //   }
-    // }
-
     if (elem.target.classList.contains('bookmark-btn') ||
       elem.target.classList.contains('card-bookmark') ||
       elem.target.closest('.card-bookmark') ||
@@ -236,7 +228,6 @@ function App() {
       return true
     }
     return false
-    // return classExist
   }
 
   const onClickOption = (e) => {
@@ -298,6 +289,7 @@ function App() {
             domId={selectedElem.domId}
             showAddBookmarkPanel={showAddBookmarkPanel}
             onCloseOption={onCloseOption}
+            domTarget={selectedElem.domTarget}
           />
         </div>
       )}

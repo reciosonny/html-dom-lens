@@ -83,7 +83,6 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
             {parent.classes.map(val => `.${val}`)}
           </div>
           <div className="dom-dialog">data-* attributes </div>
-          {/* <div className="attributecontainer">  */}
           <div className="dom-dialog-child-details">
             {dataAttributes.slice(0, attributeArray).map((val) => (
               <div className="attributecontainer">
