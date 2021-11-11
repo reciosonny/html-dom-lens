@@ -14,10 +14,10 @@ function App() {
     elClassNames: [],
     domType: "",
   });
-  const [domSwitch, setdomSwitch] = useState(true);
-  const [initialState, setInitialState] = React.useState();
-  const switchdom = () => {
-    setdomSwitch(!domSwitch);
+  const [switchExtensionFunctionality, setExtension] = useState(true);
+
+  const turnOffExtension = () => {
+    setExtension(false);
   };
   const refDomHighlight = React.useRef(null);
   const uuidv4 = require("uuid/v4");
@@ -38,6 +38,17 @@ function App() {
       // );
     } else {
       injectDOMEventInBody();
+
+      //chrome-related events
+      chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+        setExtension(true);
+
+        // console.log('Event is inside react component...');
+        if (msg.text === 'are_you_there_content_script?') {
+          sendResponse({status: "yes"});
+        }
+      });
+
     }
 
     return () => {};
@@ -45,7 +56,12 @@ function App() {
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
-      if (e.target.id !== "closedompeeker" && domSwitch == true) {
+
+      console.log('extension status: ', switchExtensionFunctionality.toString())
+      if(!switchExtensionFunctionality) return;
+
+
+      if (e.target.id !== "closedompeeker") {
         e.preventDefault();
 
         const clsArr = [...e.target.classList].map((cls) => ({
@@ -142,6 +158,10 @@ function App() {
     });
 
     document.addEventListener("mouseover", async (e) => {
+
+      if(!switchExtensionFunctionality) return;
+
+
       const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
         e.target,
         "dom-info-dialog-box"
@@ -164,21 +184,33 @@ function App() {
       }
     });
 
-    document.addEventListener("mouseout", (e) => {
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
-        e.target,
-        "dom-info-dialog-box"
-      );
-      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
-        e.target,
-        "dom-switch"
-      );
+    (function (switchExtensionFunctionality) {
 
-      if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
-        e.target.classList.toggle("focused-dom");
-        e.target.removeChild(refDomHighlight.current.base);
-      }
-    });
+      document.addEventListener("mouseout", e => {
+
+        console.log('status: ', switchExtensionFunctionality);
+
+
+        if(!switchExtensionFunctionality) return;
+
+        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-info-dialog-box"
+        );
+        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-switch"
+        );
+  
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
+          e.target.classList.toggle("focused-dom");
+          e.target.removeChild(refDomHighlight.current.base);
+        }
+
+      });
+
+    }(switchExtensionFunctionality));
+
   };
 
   const getPageContent = async (url) => {
@@ -206,9 +238,9 @@ function App() {
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
-      <div onClick={switchdom}>{domSwitch && <DomSwitch />}</div>
+      <div onClick={turnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
 
-      {domSwitch && (
+      {switchExtensionFunctionality && (
         <div>
           {domInfo.map((domInfo, idx) => (
             <DomInfoDialogBox

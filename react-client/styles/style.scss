@@ -19,7 +19,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
 
 
 .flex-row {
-  display: flex;   
+  display: flex;     
 }
 
 .flex-column {
@@ -139,6 +139,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
     font-size: 12px;
     color: #546e7a;
     align: left;
+    // display: flex;
     padding: 10px 0px 0px 0px;
   }
   .see-more {
