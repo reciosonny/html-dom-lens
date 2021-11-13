@@ -1,5 +1,6 @@
 import React, { Component, useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
+import jss from 'jss';
 
 
 import DomInfoDialogBox from "./DomInfoDialogBox";
@@ -20,7 +21,25 @@ function App() {
   });
   const [switchExtensionFunctionality, setExtension] = useState(true);
 
-  const turnOffExtension = () => {
+  const onTurnOffExtension = () => {
+
+    // removes border highlights added in DOM elements when it's clicked
+    domInfo.forEach(val => {
+      const currEl = document.querySelector(`[data-id="${val.dataId}"]`);
+
+      if(!currEl) return;
+      
+      if(currEl.classList.contains(val.cssClassesAssigned)) {
+        currEl.classList.remove(val.cssClassesAssigned);
+      }
+    });
+
+    setTimeout(() => {
+      //remove left-over focused-dom highlights
+      [...document.querySelectorAll('.focused-dom')].forEach(el => el.classList.remove('focused-dom'));      
+    }, 300);
+
+    setDomInfo([]); //if DOM extension is turned off, empty the DOM info state array
     setExtension(false);
   };
   const refDomHighlight = React.useRef(null);
@@ -62,15 +81,18 @@ function App() {
     
     //dirty way to get the value from state since normal JS event handlers cannot communicate the state well with React
     window.store.switchExtensionFunctionality = switchExtensionFunctionality;
-
-    if (!switchExtensionFunctionality) {
-      setDomInfo([]); //if DOM extension is turned off, empty the DOM info state array
-    }
     
     return () => {
       
     }
   }, [switchExtensionFunctionality]);
+
+  React.useEffect(() => {
+    
+    return () => {
+      
+    }
+  }, [domInfo]);
 
 
 
@@ -79,6 +101,14 @@ function App() {
 
       if(!window.store.switchExtensionFunctionality) return;
 
+      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+        e.target,
+        "dom-switch"
+      );
+
+      if (!isNotBtnDisable)
+        return;    
+
       const elTarget = e.target;
 
       if (elTarget.id !== "closedompeeker") {
@@ -86,21 +116,35 @@ function App() {
 
         const extractedDomInfo = domUtils.extractDomInfo(e.target);        
         const pageYcoordinate = e.pageY;
+
+        const sheet = jss
+          .createStyleSheet(
+            {
+              domBorder: {
+                border: `3px solid ${extractedDomInfo.bordercolor}`,
+                'border-radius': '8px'
+              }
+            }
+          )
+          .attach();
+
+        //for modifying style directly...
+        e.target.classList.add(sheet.classes.domBorder);
+        //sets data-id to the DOM
+        e.target.setAttribute('data-id' , extractedDomInfo.dataId);
+        e.target.setAttribute('data-dom-lens-injected', true);
         
         await setDomInfo(value => {
           return [...value,
             {
               ...extractedDomInfo,
+              cssClassesAssigned: sheet.classes.domBorder,
               x: e.pageX,
               y: pageYcoordinate + 100                        
             }
           ]
         });
 
-        //sets data-id to the DOM
-        e.target.setAttribute("data-id" , extractedDomInfo.dataId);
-        //for modifying style directly...
-        e.target.style.cssText += `border:3px solid;border-color: ${extractedDomInfo.bordercolor}`;
 
 
         // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
@@ -199,7 +243,7 @@ function App() {
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
-      <div onClick={turnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
+      <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
 
       {switchExtensionFunctionality && (
         <div>

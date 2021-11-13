@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4';
+import uuidv4 from 'uuid/dist/v4';
 
 // Recursion algorithm. Performance may be slower so let's improve the tail-recursion algorithm later
 function ancestorExistsByClassName(element, className) {
