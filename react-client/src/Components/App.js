@@ -1,11 +1,15 @@
 import React, { Component, useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
+
+
 import DomInfoDialogBox from "./DomInfoDialogBox";
 import { PRODUCTION_MODE } from "../keys";
 import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
 import DomSwitch from "./DomSwitch";
 
 import * as domUtils from "../utils/domUtils";
+
+window.store = {};
 
 function App() {
   const [domInfo, setDomInfo] = useState([]);
@@ -20,8 +24,8 @@ function App() {
     setExtension(false);
   };
   const refDomHighlight = React.useRef(null);
-  const uuidv4 = require("uuid/v4");
-  const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "#7E57C2", "#9575CD", "#B39DDB", "#D1C4E9", "#EDE7F6", "#E91E63", "#D81B60", "#C2185B", "#AD1457", "#880E4F", "#EC407A", "#F06292", "#F48FB1", "#F8BBD0", "#FCE4EC", "#263238", "#37474F", "#455A64", "#546E7A", "#607D8B", "#78909C", "#90A4AE", "#B0BEC5", "#CFD8DC", "#ECEFF1"];
+
+  
 
   useEffect(() => {
     if (!PRODUCTION_MODE) {
@@ -43,7 +47,6 @@ function App() {
       chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         setExtension(true);
 
-        // console.log('Event is inside react component...');
         if (msg.text === 'are_you_there_content_script?') {
           sendResponse({status: "yes"});
         }
@@ -54,89 +57,51 @@ function App() {
     return () => {};
   }, []);
 
+
+  React.useEffect(() => {
+    
+    //dirty way to get the value from state since normal JS event handlers cannot communicate the state well with React
+    window.store.switchExtensionFunctionality = switchExtensionFunctionality;
+
+    if (!switchExtensionFunctionality) {
+      setDomInfo([]); //if DOM extension is turned off, empty the DOM info state array
+    }
+    
+    return () => {
+      
+    }
+  }, [switchExtensionFunctionality]);
+
+
+
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
 
-      console.log('extension status: ', switchExtensionFunctionality.toString())
-      if(!switchExtensionFunctionality) return;
+      if(!window.store.switchExtensionFunctionality) return;
 
+      const elTarget = e.target;
 
-      if (e.target.id !== "closedompeeker") {
+      if (elTarget.id !== "closedompeeker") {
         e.preventDefault();
 
-        const clsArr = [...e.target.classList].map((cls) => ({
-          clsName: `.${cls}`,
-        }));
-
-        const children = [...e.target.children].map((child) => {
-          return {
-            id: child.id.trim() ? "#" + child.id : null,
-            class: child.className.trim() ? "." + child.className : null,
-            tag: child.localName,
-          };
-        });
-
-        var eltarget = e.target;        
-
-        var randomCode = uuidv4();
-     
-        e.target.setAttribute("data-id" , randomCode);
-     
-        const dataAttributes = Object.entries(e.target.dataset).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
-          
-        const elComputedStyle = ["font-size", "color", "font-family"].reduce(
-          (init, curr) => ({
-            ...init,
-            [curr]: window
-              .getComputedStyle(eltarget, null)
-              .getPropertyValue(curr),
-          }),
-          {}
-        );
-
-        var rgbArr = elComputedStyle["color"]
-          .substring(4)
-          .slice(0, -1)
-          .split(",");
-
-        var colorhex = rgbArr.reduce(
-          (init, curr) => (init += parseInt(curr).toString(16)),
-          "#"
-        );
-        
-        const elParent = e.target.parentElement;
-        const parent = {
-          id: elParent.id.trim() && `#${elParent.id.trim()}`,
-          tag: elParent.localName,
-          class: elParent.className.trim() && `.${elParent.className.trim()}`,
-          classes: [...elParent.classList]
-        };
-
+        const extractedDomInfo = domUtils.extractDomInfo(e.target);        
         const pageYcoordinate = e.pageY;
-
-        const randomcolor = Math.floor(Math.random() * colorselection.length);      
-        eltarget.style.cssText += `border:3px solid;border-color: ${colorselection[randomcolor]}`;     
         
         await setDomInfo(value => {
-
           return [...value,
             {
+              ...extractedDomInfo,
               x: e.pageX,
-              y: pageYcoordinate + 100,              
-              id: eltarget.id.trim() !== "" && `#${eltarget.id.trim()}`,              
-              clstag: e.target.localName,
-              clsname: clsArr,
-              children: children,
-              parent,
-              size: elComputedStyle["font-size"],
-              textcolor: colorhex,
-              family: elComputedStyle["font-family"].replaceAll('"', ''),
-              bordercolor: colorselection[randomcolor],
-              uniqueID:  eltarget.dataset.id.trim(),
-              attributes: dataAttributes                         
-            },
+              y: pageYcoordinate + 100                        
+            }
           ]
         });
+
+        //sets data-id to the DOM
+        e.target.setAttribute("data-id" , extractedDomInfo.dataId);
+        //for modifying style directly...
+        e.target.style.cssText += `border:3px solid;border-color: ${extractedDomInfo.bordercolor}`;
+
 
         // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
         (function(pageYcoordinate) {
@@ -159,8 +124,7 @@ function App() {
 
     document.addEventListener("mouseover", async (e) => {
 
-      if(!switchExtensionFunctionality) return;
-
+      if(!window.store.switchExtensionFunctionality) return;
 
       const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
         e.target,
@@ -184,32 +148,27 @@ function App() {
       }
     });
 
-    (function (switchExtensionFunctionality) {
+    document.addEventListener("mouseout", e => {
 
-      document.addEventListener("mouseout", e => {
+      if(!window.store.switchExtensionFunctionality) return;
 
-        console.log('status: ', switchExtensionFunctionality);
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
+        e.target,
+        "dom-info-dialog-box"
+      );
+      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+        e.target,
+        "dom-switch"
+      );
+
+      if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
+        e.target.classList.toggle("focused-dom");
+        e.target.removeChild(refDomHighlight.current.base);
+      }
+
+    });
 
 
-        if(!switchExtensionFunctionality) return;
-
-        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
-          e.target,
-          "dom-info-dialog-box"
-        );
-        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
-          e.target,
-          "dom-switch"
-        );
-  
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
-          e.target.classList.toggle("focused-dom");
-          e.target.removeChild(refDomHighlight.current.base);
-        }
-
-      });
-
-    }(switchExtensionFunctionality));
 
   };
 
@@ -228,8 +187,10 @@ function App() {
 
   const handleRemoveDialogBox = (idx, id, uniqueID) => {
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
-    const removeDomborder = domInfo.filter((x, currentIdx) => currentIdx === uniqueID);   
-    document.querySelector('[data-id="'+uniqueID+'"]').style.removeProperty('border')
+    
+    document.querySelector('[data-id="'+uniqueID+'"]').style.removeProperty('border');
+
+
     setDomInfo(newDomInfo);
   };
 
