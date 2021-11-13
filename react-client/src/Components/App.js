@@ -230,9 +230,11 @@ function App() {
   };
 
   const handleRemoveDialogBox = (idx, id, uniqueID) => {
+
+    const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
     
-    document.querySelector('[data-id="'+uniqueID+'"]').style.removeProperty('border');
+    document.querySelector(`[data-id="${uniqueID}"]`).classList.remove(currDomInfo.cssClassesAssigned);
 
 
     setDomInfo(newDomInfo);
