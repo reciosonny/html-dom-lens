@@ -1,0 +1,19 @@
+.dom-options {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: -30px;
+    z-index: 999999999999 !important;
+    background-color: #fff;
+    border: 1px solid #e4d8f7;
+    padding-block: 5px;
+    border-radius: 5px;
+
+    button {
+        padding-block: 4px;
+        cursor: pointer;
+        border: none;
+        background-color: inherit;
+    }
+}

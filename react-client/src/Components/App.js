@@ -7,8 +7,10 @@ import DomInfoDialogBox from "./DomInfoDialogBox";
 import { PRODUCTION_MODE } from "../keys";
 import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
 import DomSwitch from "./DomSwitch";
+import {forEach} from 'lodash'
 
 import * as domUtils from "../utils/domUtils";
+import BookmarkPanel from "./BookmarkPanel";
 import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 
 window.store = {};
@@ -20,6 +22,15 @@ function App() {
     elClassNames: [],
     domType: "",
   });
+  const [domSwitch, setdomSwitch] = useState(true);
+  const [initialState, setInitialState] = React.useState();
+  const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false)
+  const [selectedElem, setSelectedElem] = useState({});
+
+  const switchdom = (e) => {
+    setdomSwitch(!domSwitch);
+  }
+
   const [switchExtensionFunctionality, setExtension] = useState(true);
 
   const onTurnOffExtension = () => {
@@ -28,16 +39,16 @@ function App() {
     domInfo.forEach(val => {
       const currEl = document.querySelector(`[data-id="${val.dataId}"]`);
 
-      if(!currEl) return;
-      
-      if(currEl.classList.contains(val.cssClassesAssigned)) {
+      if (!currEl) return;
+
+      if (currEl.classList.contains(val.cssClassesAssigned)) {
         currEl.classList.remove(val.cssClassesAssigned);
       }
     });
 
     setTimeout(() => {
       //remove left-over focused-dom highlights
-      [...document.querySelectorAll('.focused-dom')].forEach(el => el.classList.remove('focused-dom'));      
+      [...document.querySelectorAll('.focused-dom')].forEach(el => el.classList.remove('focused-dom'));
     }, 300);
 
     setDomInfo([]); //if DOM extension is turned off, empty the DOM info state array
@@ -45,7 +56,7 @@ function App() {
   };
   const refDomHighlight = React.useRef(null);
 
-  
+
 
   useEffect(() => {
     if (!PRODUCTION_MODE) {
@@ -65,28 +76,32 @@ function App() {
 
       chromeExtensionUtils.onMessageEvent(function (msg, sender, sendResponse) {
         setExtension(true);
+
+        if (msg.text === 'are_you_there_content_script?') {
+          sendResponse({ status: "yes" });
+        }
       });
 
     }
 
-    return () => {};
+    return () => { };
   }, []);
 
 
   React.useEffect(() => {
-    
+
     //dirty way to get the value from state since normal JS event handlers cannot communicate the state well with React
     window.store.switchExtensionFunctionality = switchExtensionFunctionality;
-    
+
     return () => {
-      
+
     }
   }, [switchExtensionFunctionality]);
 
   React.useEffect(() => {
-    
+
     return () => {
-      
+
     }
   }, [domInfo]);
 
@@ -94,122 +109,153 @@ function App() {
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
+      let strClassList = '';
+      if(!containsBookmarkModule(e)) {
+        if (!window.store.switchExtensionFunctionality) return;
+  
+        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-switch"
+        );
+  
+        if (!isNotBtnDisable)
+          return;
 
-      if(!window.store.switchExtensionFunctionality) return;
-
-      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
-        e.target,
-        "dom-switch"
-      );
-
-      if (!isNotBtnDisable)
-        return;    
-
-      const elTarget = e.target;
-
-      if (elTarget.id !== "closedompeeker") {
-        e.preventDefault();
-
-        const extractedDomInfo = domUtils.extractDomInfo(e.target);        
-        const pageYcoordinate = e.pageY;
-
-        const sheet = jss
-          .createStyleSheet(
-            {
-              domBorder: {
-                border: `3px solid ${extractedDomInfo.bordercolor}`,
-                'border-radius': '8px'
-              }
-            }
-          )
-          .attach();
-
-        //for modifying style directly...
-        e.target.classList.add(sheet.classes.domBorder);
-        //sets data-id to the DOM
-        e.target.setAttribute('data-id' , extractedDomInfo.dataId);
-        e.target.setAttribute('data-dom-lens-injected', true);
+        //capture all classes of the dom for bookmark module
+        for (let domClass of e.target.classList.values()) {
+          if(domClass !== 'focused-dom') {
+            strClassList += `.${domClass}`
+          }
+        }
         
-        await setDomInfo(value => {
-          return [...value,
+        //get the least properties for bookmark module
+        setSelectedElem({
+          elClassNames: strClassList,
+          domType: e.target.nodeName?.toLowerCase(),
+          domId: e.target.getAttribute('data-id'),
+          x: e.pageX,
+          y: e.pageY,
+          domTarget: e.target,
+          domLeanDetails
+        });
+        
+         
+  
+        const elTarget = e.target;
+  
+        if (elTarget.id !== "closedompeeker") {
+          e.preventDefault();
+  
+          const extractedDomInfo = domUtils.extractDomInfo(e.target);
+          const pageYcoordinate = e.pageY;
+  
+          const sheet = jss
+            .createStyleSheet(
+              {
+                domBorder: {
+                  border: `3px solid ${extractedDomInfo.bordercolor}`,
+                  'border-radius': '8px'
+                }
+              }
+            )
+            .attach();
+  
+          //for modifying style directly...
+          e.target.classList.add(sheet.classes.domBorder);
+          //sets data-id to the DOM
+          e.target.setAttribute('data-id', extractedDomInfo.dataId);
+          e.target.setAttribute('data-dom-lens-injected', true);
+  
+          await setDomInfo(value => {
+            return [...value,
             {
               ...extractedDomInfo,
               cssClassesAssigned: sheet.classes.domBorder,
               x: e.pageX,
-              y: pageYcoordinate + 100                        
+              y: pageYcoordinate + 100
             }
-          ]
-        });
-
-
-
-        // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
-        (function(pageYcoordinate) {
-          setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
-            setDomInfo(values => {
-
-              const mappedValues = values.map((val, idx) => {
-                if(idx === values.length-1) {
-                  val.y = pageYcoordinate
-                }
-                return val;
+            ]
+          });
+  
+          // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
+          (function (pageYcoordinate) {
+            setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
+              setDomInfo(values => {
+  
+                const mappedValues = values.map((val, idx) => {
+                  if (idx === values.length - 1) {
+                    val.y = pageYcoordinate
+                  }
+                  return val;
+                });
+  
+                return mappedValues;
               });
-
-              return mappedValues;
-            });
-          }, 10);
-        }(pageYcoordinate));
+            }, 10);
+          }(pageYcoordinate));
+        }
       }
     });
 
     document.addEventListener("mouseover", async (e) => {
+      if (!containsBookmarkModule(e)) {
+        if (!switchExtensionFunctionality) return;
 
-      if(!window.store.switchExtensionFunctionality) return;
 
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
-        e.target,
-        "dom-info-dialog-box"
-      );
-      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
-        e.target,
-        "dom-switch"
-      );
+        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-info-dialog-box"
+        );
+        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-switch"
+        );
 
-      if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
-        const domType = e.target.nodeName?.toLowerCase();
-        await setDomLeanDetails({
-          ...domLeanDetails,
-          elId: e.target.id,
-          domType,
-          elClassNames: [...e.target.classList],
-        }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
-        e.target.classList.toggle("focused-dom");
-        e.target.appendChild(refDomHighlight.current.base);
+        const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(
+          e.target,
+          'selected-dom'
+        )
+
+        if (!window.store.switchExtensionFunctionality) return;
+
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
+          const domType = e.target.nodeName?.toLowerCase();
+          await setDomLeanDetails({
+            ...domLeanDetails,
+            elId: e.target.id,
+            domType,
+            elClassNames: [...e.target.classList],
+          }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+          e.target.classList.toggle("focused-dom");
+          e.target.appendChild(refDomHighlight.current.base);
+        }
       }
     });
 
     document.addEventListener("mouseout", e => {
+      if(!containsBookmarkModule(e)) {
+        if (!window.store.switchExtensionFunctionality) return;
+  
+        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-info-dialog-box"
+        );
+        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-switch"
+        );
 
-      if(!window.store.switchExtensionFunctionality) return;
-
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
-        e.target,
-        "dom-info-dialog-box"
-      );
-      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
-        e.target,
-        "dom-switch"
-      );
-
-      if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
-        e.target.classList.toggle("focused-dom");
-        e.target.removeChild(refDomHighlight.current.base);
+        const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(
+          e.target,
+          'selected-dom'
+        )
+  
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
+          e.target.classList.toggle("focused-dom");
+          e.target.removeChild(refDomHighlight.current.base);
+        }
       }
-
     });
-
-
-
   };
 
   const getPageContent = async (url) => {
@@ -229,12 +275,34 @@ function App() {
 
     const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
-    
-    document.querySelector(`[data-id="${uniqueID}"]`).classList.remove(currDomInfo.cssClassesAssigned);
 
+    document.querySelector(`[data-id="${uniqueID}"]`).classList.remove(currDomInfo.cssClassesAssigned);
 
     setDomInfo(newDomInfo);
   };
+
+  const containsBookmarkModule = (elem) => {
+    if (elem.target.classList.contains('bookmark-btn') ||
+      elem.target.classList.contains('card-bookmark') ||
+      elem.target.closest('.card-bookmark') ||
+      elem.target.classList.contains('add__bookmark-panel') ||
+      elem.target.closest('.add__bookmark-panel') ||
+      elem.currentTarget.querySelector('.dom-options') ||
+      elem.target.classList.contains('.selected__dom-bookmark') ||
+      elem.target.closest('.selected__dom-bookmark')) {
+      return true
+    }
+    return false
+  }
+
+  const onClickOption = (e) => {
+    setShowAddBookmarkPanel(true)
+  }
+
+  const onCloseOption = (e) => {
+    setShowAddBookmarkPanel(false)
+  }
+
 
   return (
     <div>
@@ -265,16 +333,29 @@ function App() {
               textcolor={domInfo.textcolor}
               borderclr={domInfo.bordercolor}
               uniqueID={domInfo.uniqueID}
-              dataAttributes={domInfo.attributes}           
+              dataAttributes={domInfo.attributes}
+              onClickOption={onClickOption}
+              showAddBookmarkPanel={showAddBookmarkPanel}
             />
           ))}
-
           <DomMinimalDetailsWidget
             ref={refDomHighlight}
             elId={domLeanDetails.elId}
             elClassNames={domLeanDetails.elClassNames}
             domType={domLeanDetails.domType}
             show={true}
+          />
+
+          <BookmarkPanel
+            elClassNames={selectedElem.elClassNames}
+            domType={selectedElem.domType}
+            x={selectedElem.x}
+            y={selectedElem.y}
+            domId={selectedElem.domId}
+            showAddBookmarkPanel={showAddBookmarkPanel}
+            setShowAddBookmarkPanel={setShowAddBookmarkPanel}
+            onCloseOption={onCloseOption}
+            domTarget={selectedElem.domTarget}
           />
         </div>
       )}

@@ -1,4 +1,5 @@
 import React, { useeffect, useState } from "react";
+import DomOptions from "./DomOptions";
 
 const FontColorDetails = ({ textcolor }) => {
 
@@ -15,9 +16,11 @@ const FontColorDetails = ({ textcolor }) => {
   )
 }
 
-const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes  }) => {
+const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize,
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickOption, showAddBookmarkPanel }) => {
   const [childrenArray, setchildrenArray] = useState("2");
   const [attributeArray, setattributeArray] = useState("2");
+
   const handleSeemore = () => {
     setchildrenArray(children.length);
   };
@@ -25,12 +28,12 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
     setchildrenArray("2");
   };
   const handleSeemoreAttr = () => {
-    setattributeArray(dataAttributes.length);   
+    setattributeArray(dataAttributes.length);
   };
   const handleSeelessAttr = () => {
-    setattributeArray("2");   
+    setattributeArray("2");
   };
-     
+
   const leftover = children.length - childrenArray - 1;
   const attrleftover = dataAttributes.length - attributeArray;
 
@@ -79,21 +82,20 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
             {parent.id}
             {parent.classes.map(val => `.${val}`)}
           </div>
-          <div className="dom-dialog">data-* attributes </div>    
-           {/* <div className="attributecontainer">  */}
-            <div className="dom-dialog-child-details">   
-              {dataAttributes.slice(0, attributeArray).map((val) => (
-                <div className="attributecontainer">              
-                  <div className="attributeitems">                 
-                    {val.key}                
-                  </div>
-                  <div className="attributeitems">
-                    {val.value}
-                  </div>
+          <div className="dom-dialog">data-* attributes </div>
+          <div className="dom-dialog-child-details">
+            {dataAttributes.slice(0, attributeArray).map((val) => (
+              <div className="attributecontainer">
+                <div className="attributeitems">
+                  {val.key}
                 </div>
-              ))}                             
-            </div>                 
-          {dataAttributes.length > 2 ?(
+                <div className="attributeitems">
+                  {val.value}
+                </div>
+              </div>
+            ))}
+          </div>
+          {dataAttributes.length > 2 ? (
             attrleftover > 0 ? (
               <div
                 id="closedompeeker"
@@ -111,40 +113,43 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
                 ... see less
               </div>
             )
-          ) :null}          
-          <div className="dom-dialog">Children[{children.length-1}]</div>
+          ) : null}
+          <div className="dom-dialog">Children[{children.length - 1}]</div>
           <div className="dom-dialog-child-details">
-            {children.filter(clsname => clsname.id !== "#domInfoHighlight" ).slice(0, childrenArray).map((val) => (              
+            {children.filter(clsname => clsname.id !== "#domInfoHighlight").slice(0, childrenArray).map((val) => (
               <div>
                 <div className="dom-details-tag">{val.tag}</div>
                 {val.id}                             
                 {val.class && val.class.replace(/ /g, ".")  }        
                 <br />        
-              </div>
-            ))}         
-          </div>
-          {children.length - 1 > 2 ? (
-            leftover > 0 ? (
-              <div
-                id="closedompeeker"
-                className="see-more"
-                onClick={handleSeemore}
-              >
-                ... {leftover} more
-              </div>
-            ) : (
-              <div
-                id="closedompeeker"
-                className="see-more"
-                onClick={handleSeeless}
-              >
-                ... see less
-              </div>
-            )
-          ) : null}
-        </div>
+              </div >
+            ))}
+          </div >
+{
+  children.length - 1 > 2 ? (
+    leftover > 0 ? (
+      <div
+        id="closedompeeker"
+        className="see-more"
+        onClick={handleSeemore}
+      >
+        ... {leftover} more
       </div>
-    </div>
+    ) : (
+      <div
+        id="closedompeeker"
+        className="see-more"
+        onClick={handleSeeless}
+      >
+        ... see less
+      </div>
+    )
+  ) : null
+}
+        </div >
+  <DomOptions onClickOption={onClickOption} showAddBookmarkPanel={showAddBookmarkPanel} />
+      </div >
+    </div >
   );
 };
 
