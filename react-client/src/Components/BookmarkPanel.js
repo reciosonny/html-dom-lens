@@ -130,7 +130,6 @@ const BookmarkPanel = ({
 
         const element = e.target.parentElement.querySelector('.lbl-element').innerText;
         const classes = e.target.parentElement.querySelector('.lbl-classes').innerText;
-        // const domId = e.target.getAttribute('data-id');
         const elId = domTarget.id;
         const randomCode = uuidv4();
         let txtVal = e.target.querySelector('input').value;
