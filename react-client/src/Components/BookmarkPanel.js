@@ -135,7 +135,6 @@ const BookmarkPanel = ({
         const randomCode = uuidv4();
         let txtVal = e.target.querySelector('input').value;
         let savedBookmarks = localStorage.getItem('bookmarks') ? JSON.parse(localStorage.getItem('bookmarks')) : [];
-        debugger
         let bookmarkObj = {
             id: randomCode,
             title: txtVal,
