@@ -249,7 +249,6 @@ function App() {
           e.target,
           'selected-dom'
         )
-        console.log(isNotSelectedDomFromBookmark);
   
         if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
           e.target.classList.toggle("focused-dom");
