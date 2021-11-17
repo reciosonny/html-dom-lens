@@ -192,3 +192,27 @@
         }
     }
 }
+
+.selected__dom-bookmark {
+    position: absolute;
+    // width: 250px;
+    display: block !important;
+    height: 20px;
+    z-index: 9999 !important;
+    top: -30px;
+    background: #673ab7 !important;
+    right: 20px;
+    border-radius: 5px 5px 0 0;
+    padding: 5px 15px;
+    color: #fff;
+    box-sizing: unset !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    font-family: "Roboto Mono", monospace !important;
+}
+
+.selected-dom {
+    position: relative !important;
+    background: rgba(103, 58, 183, 0.2) !important;
+    overflow: initial !important;
+}

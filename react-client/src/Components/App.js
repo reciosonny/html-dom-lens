@@ -1,12 +1,18 @@
 import React, { Component, useEffect, useState } from "react";
 import { hot } from "react-hot-loader";
+import jss from 'jss';
+
+
 import DomInfoDialogBox from "./DomInfoDialogBox";
 import { PRODUCTION_MODE } from "../keys";
 import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
 import DomSwitch from "./DomSwitch";
+import {forEach} from 'lodash'
 
 import * as domUtils from "../utils/domUtils";
 import BookmarkPanel from "./BookmarkPanel";
+
+window.store = {};
 
 function App() {
   const [domInfo, setDomInfo] = useState([]);
@@ -26,12 +32,30 @@ function App() {
 
   const [switchExtensionFunctionality, setExtension] = useState(true);
 
-  const turnOffExtension = () => {
+  const onTurnOffExtension = () => {
+
+    // removes border highlights added in DOM elements when it's clicked
+    domInfo.forEach(val => {
+      const currEl = document.querySelector(`[data-id="${val.dataId}"]`);
+
+      if (!currEl) return;
+
+      if (currEl.classList.contains(val.cssClassesAssigned)) {
+        currEl.classList.remove(val.cssClassesAssigned);
+      }
+    });
+
+    setTimeout(() => {
+      //remove left-over focused-dom highlights
+      [...document.querySelectorAll('.focused-dom')].forEach(el => el.classList.remove('focused-dom'));
+    }, 300);
+
+    setDomInfo([]); //if DOM extension is turned off, empty the DOM info state array
     setExtension(false);
   };
   const refDomHighlight = React.useRef(null);
-  const uuidv4 = require("uuid/v4");
-  const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "#7E57C2", "#9575CD", "#B39DDB", "#D1C4E9", "#EDE7F6", "#E91E63", "#D81B60", "#C2185B", "#AD1457", "#880E4F", "#EC407A", "#F06292", "#F48FB1", "#F8BBD0", "#FCE4EC", "#263238", "#37474F", "#455A64", "#546E7A", "#607D8B", "#78909C", "#90A4AE", "#B0BEC5", "#CFD8DC", "#ECEFF1"];
+
+
 
   useEffect(() => {
     if (!PRODUCTION_MODE) {
@@ -53,7 +77,6 @@ function App() {
       chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         setExtension(true);
 
-        // console.log('Event is inside react component...');
         if (msg.text === 'are_you_there_content_script?') {
           sendResponse({ status: "yes" });
         }
@@ -64,126 +87,112 @@ function App() {
     return () => { };
   }, []);
 
+
+  React.useEffect(() => {
+
+    //dirty way to get the value from state since normal JS event handlers cannot communicate the state well with React
+    window.store.switchExtensionFunctionality = switchExtensionFunctionality;
+
+    return () => {
+
+    }
+  }, [switchExtensionFunctionality]);
+
+  React.useEffect(() => {
+
+    return () => {
+
+    }
+  }, [domInfo]);
+
+
+
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
-      if (!containsBookmarkModule(e)) {
-        if (e.target.id !== "closedompeeker" && domSwitch == true) {
-          e.preventDefault();
-          let strClassList = '';
-          var eltarget = e.target;
+      let strClassList = '';
+      if(!containsBookmarkModule(e)) {
+        if (!window.store.switchExtensionFunctionality) return;
+  
+        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-switch"
+        );
+  
+        if (!isNotBtnDisable)
+          return;
 
-          console.log('extension status: ', switchExtensionFunctionality.toString())
-          if (!switchExtensionFunctionality) return;
-
-
-          if (e.target.id !== "closedompeeker") {
-            e.preventDefault();
-
-            const clsArr = [...e.target.classList].map((cls) => ({
-              clsName: `.${cls}`,
-            }));
-
-            const children = [...e.target.children].map((child) => {
-              return {
-                id: child.id.trim() ? "#" + child.id : null,
-                class: child.className.trim() ? "." + child.className : null,
-                tag: child.localName,
-              };
-            });
-
-            var randomCode = uuidv4();
-
-
-            e.target.setAttribute("data-id", randomCode);
-
-            clsArr.map((data, idx) => {
-              if (data.clsName !== '.focused-dom') {
-                strClassList += data.clsName
-              }
-            })
-
-            setSelectedElem({
-              elClassNames: strClassList,
-              domType: e.target.nodeName?.toLowerCase(),
-              domId: e.target.getAttribute('data-id'),
-              x: e.pageX,
-              y: e.pageY,
-              domTarget: e.target
-            });
-
-            const dataAttributes = Object.entries(e.target.dataset).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
-
-            const elComputedStyle = ["font-size", "color", "font-family"].reduce(
-              (init, curr) => ({
-                ...init,
-                [curr]: window
-                  .getComputedStyle(eltarget, null)
-                  .getPropertyValue(curr),
-              }),
-              {}
-            );
-
-            var rgbArr = elComputedStyle["color"]
-              .substring(4)
-              .slice(0, -1)
-              .split(",");
-
-            var colorhex = rgbArr.reduce(
-              (init, curr) => (init += parseInt(curr).toString(16)),
-              "#"
-            );
-
-            const elParent = e.target.parentElement;
-            const parent = {
-              id: elParent.id.trim() && `#${elParent.id.trim()}`,
-              tag: elParent.localName,
-              class: elParent.className.trim() && `.${elParent.className.trim()}`,
-              classes: [...elParent.classList]
-            };
-
-            const pageYcoordinate = e.pageY;
-
-            const randomcolor = Math.floor(Math.random() * colorselection.length);
-            eltarget.style.cssText += `border:3px solid;border-color: ${colorselection[randomcolor]}`;
-
-            await setDomInfo(value => {
-
-              return [...value,
-              {
-                x: e.pageX,
-                y: pageYcoordinate + 100,
-                id: eltarget.id.trim() !== "" && `#${eltarget.id.trim()}`,
-                clstag: e.target.localName,
-                clsname: clsArr,
-                children: children,
-                parent,
-                size: elComputedStyle["font-size"],
-                textcolor: colorhex,
-                family: elComputedStyle["font-family"].replaceAll('"', ''),
-                bordercolor: colorselection[randomcolor],
-                uniqueID: eltarget.dataset.id.trim(),
-                attributes: dataAttributes
-              },
-              ]
-            });
-
-            // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
-            (function (pageYcoordinate) {
-              setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
-                setDomInfo(values => {
-
-                  const mappedValues = values.map((val, idx) => {
-                    if (idx === values.length - 1) {
-                      val.y = pageYcoordinate
-                    }
-                    return val;
-                  });
-
-                  return mappedValues;
-                });
-              }, 10);
-            }(pageYcoordinate));
+        //capture all classes of the dom for bookmark module
+        for (let domClass of e.target.classList.values()) {
+          if(domClass !== 'focused-dom') {
+            strClassList += `.${domClass}`
           }
+        }
+        
+        //get the least properties for bookmark module
+        setSelectedElem({
+          elClassNames: strClassList,
+          domType: e.target.nodeName?.toLowerCase(),
+          domId: e.target.getAttribute('data-id'),
+          x: e.pageX,
+          y: e.pageY,
+          domTarget: e.target,
+          domLeanDetails
+        });
+        
+         
+  
+        const elTarget = e.target;
+  
+        if (elTarget.id !== "closedompeeker") {
+          e.preventDefault();
+  
+          const extractedDomInfo = domUtils.extractDomInfo(e.target);
+          const pageYcoordinate = e.pageY;
+  
+          const sheet = jss
+            .createStyleSheet(
+              {
+                domBorder: {
+                  border: `3px solid ${extractedDomInfo.bordercolor}`,
+                  'border-radius': '8px'
+                }
+              }
+            )
+            .attach();
+  
+          //for modifying style directly...
+          e.target.classList.add(sheet.classes.domBorder);
+          //sets data-id to the DOM
+          e.target.setAttribute('data-id', extractedDomInfo.dataId);
+          e.target.setAttribute('data-dom-lens-injected', true);
+  
+          await setDomInfo(value => {
+            return [...value,
+            {
+              ...extractedDomInfo,
+              cssClassesAssigned: sheet.classes.domBorder,
+              x: e.pageX,
+              y: pageYcoordinate + 100
+            }
+            ]
+          });
+  
+          // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
+          (function (pageYcoordinate) {
+            setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
+              setDomInfo(values => {
+  
+                const mappedValues = values.map((val, idx) => {
+                  if (idx === values.length - 1) {
+                    val.y = pageYcoordinate
+                  }
+                  return val;
+                });
+  
+                return mappedValues;
+              });
+            }, 10);
+          }(pageYcoordinate));
         }
       }
     });
@@ -202,7 +211,14 @@ function App() {
           "dom-switch"
         );
 
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
+        const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(
+          e.target,
+          'selected-dom'
+        )
+
+        if (!window.store.switchExtensionFunctionality) return;
+
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
           const domType = e.target.nodeName?.toLowerCase();
           await setDomLeanDetails({
             ...domLeanDetails,
@@ -216,15 +232,10 @@ function App() {
       }
     });
 
-    (function (switchExtensionFunctionality) {
-
-      document.addEventListener("mouseout", e => {
-
-        console.log('status: ', switchExtensionFunctionality);
-
-
-        if (!switchExtensionFunctionality) return;
-
+    document.addEventListener("mouseout", e => {
+      if(!containsBookmarkModule(e)) {
+        if (!window.store.switchExtensionFunctionality) return;
+  
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
           e.target,
           "dom-info-dialog-box"
@@ -234,15 +245,18 @@ function App() {
           "dom-switch"
         );
 
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML") {
+        const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(
+          e.target,
+          'selected-dom'
+        )
+        console.log(isNotSelectedDomFromBookmark);
+  
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
           e.target.classList.toggle("focused-dom");
           e.target.removeChild(refDomHighlight.current.base);
         }
-
-      });
-
-    }(switchExtensionFunctionality));
-
+      }
+    });
   };
 
   const getPageContent = async (url) => {
@@ -259,9 +273,12 @@ function App() {
   };
 
   const handleRemoveDialogBox = (idx, id, uniqueID) => {
+
+    const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
-    const removeDomborder = domInfo.filter((x, currentIdx) => currentIdx === uniqueID);
-    document.querySelector('[data-id="' + uniqueID + '"]').style.removeProperty('border')
+
+    document.querySelector(`[data-id="${uniqueID}"]`).classList.remove(currDomInfo.cssClassesAssigned);
+
     setDomInfo(newDomInfo);
   };
 
@@ -271,7 +288,9 @@ function App() {
       elem.target.closest('.card-bookmark') ||
       elem.target.classList.contains('add__bookmark-panel') ||
       elem.target.closest('.add__bookmark-panel') ||
-      elem.currentTarget.querySelector('.dom-options')) {
+      elem.currentTarget.querySelector('.dom-options') ||
+      elem.target.classList.contains('.selected__dom-bookmark') ||
+      elem.target.closest('.selected__dom-bookmark')) {
       return true
     }
     return false
@@ -291,7 +310,7 @@ function App() {
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
-      <div onClick={turnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
+      <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
 
       {switchExtensionFunctionality && (
         <div>
@@ -335,6 +354,7 @@ function App() {
             y={selectedElem.y}
             domId={selectedElem.domId}
             showAddBookmarkPanel={showAddBookmarkPanel}
+            setShowAddBookmarkPanel={setShowAddBookmarkPanel}
             onCloseOption={onCloseOption}
             domTarget={selectedElem.domTarget}
           />

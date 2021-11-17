@@ -1,11 +1,13 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BsFillBookmarkFill } from 'react-icons/bs'
 import { AiOutlineClose } from 'react-icons/ai'
 import { RiPencilFill } from 'react-icons/ri'
 import { FaTrash } from 'react-icons/fa'
 import '../../styles/bookmarkpanel.scss'
-import { isEmpty } from 'lodash';
+import { forEach, isEmpty, uniq } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+import DomMinimalDetailsWidget from './DomMinimalDetailsWidget';
 
 const BookmarkInfo = ({ bookmarkHidden, onCloseBookmark, onEdit, onRemove, bookmarks, onClickBookmarkList }) => (
     <React.Fragment>
@@ -68,11 +70,25 @@ const AddBookmarkPanel = ({ domType, elClassNames, saveBookmark, show, onCloseOp
     </div>
 )
 
-const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseOption, x, y, domId, domTarget }) => {
+const SelectedDomFromBookmark = ({selectedDom, ref}) => (
+    <React.Fragment>
+      <div id='' className='selected__dom-bookmark' ref={ref}>
+        <span className='dom-info-domtype'>{selectedDom.elem}</span><span className='dom-info-lean--dom-id'>{selectedDom.elId !== '' ? `#${selectedDom.elId}`: ''}</span><span>{selectedDom.elClassNames}</span>
+      </div>
+    </React.Fragment>
+)
+
+const BookmarkPanel = ({
+    elClassNames, domType,
+    showAddBookmarkPanel, setShowAddBookmarkPanel,
+    onCloseOption, x, y, domId, domTarget
+}) => {
     const [bookmarkHidden, setBookmarkHidden] = useState(true);
     const [btnBookmarkHidden, setBtnBookmarkHidden] = useState(true);
     const [addBookmarkPanelVisible, setAddBookmarkPanelVisible] = useState(false)
     const [bookmarks, setBookmarks] = useState([]);
+    const [retrievedEl, setRetrievedEl] = useState({});
+    const refSelectedDom = React.useRef(null)
 
     const onOpenBookmark = (e) => {
         setBookmarkHidden(false);
@@ -103,31 +119,30 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseOpt
 
     const saveBookmark = async (e) => {
         e.preventDefault();
+        let dom = [...document.querySelectorAll(domTarget.tagName.toLowerCase())].reduce((acc, dom, idx) => {
+            if (dom === domTarget) {
+                acc.elType = dom.tagName.toLowerCase();
+                acc.index = idx;
+            }
+
+            return acc;
+        }, { elType: '', index: 0 });
+
         const element = e.target.parentElement.querySelector('.lbl-element').innerText;
         const classes = e.target.parentElement.querySelector('.lbl-classes').innerText;
-        let domIndex = 0;
-
-
-        const domId = e.target.getAttribute('data-id');
-        const uuidv4 = require("uuid/v4");
+        // const domId = e.target.getAttribute('data-id');
+        const elId = domTarget.id;
+        const randomCode = uuidv4();
         let txtVal = e.target.querySelector('input').value;
         let savedBookmarks = localStorage.getItem('bookmarks') ? JSON.parse(localStorage.getItem('bookmarks')) : [];
-
-        document.querySelectorAll(classes).forEach((data, idx) => {
-            if (data === domTarget) {
-                domIndex = idx
-            }
-        })
-
+        debugger
         let bookmarkObj = {
-            id: uuidv4(),
-            domIndex,
+            id: randomCode,
             title: txtVal,
-            elem: element,
-            domId,
+            elem: dom.elType,
+            elId,
             classes,
-            x,
-            y
+            domIndex: dom.index,
         }
 
         if (!isEmpty(txtVal)) {
@@ -140,6 +155,7 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseOpt
         await setBookmarks(oldBookmarks => [...oldBookmarks, savedBookmarks]);
         localStorage.setItem('bookmarks', JSON.stringify(savedBookmarks));
         e.target.querySelector('input').value = '';
+        setShowAddBookmarkPanel(false)
     }
 
     const onCloseAddBookmarkPanel = (e) => {
@@ -147,20 +163,24 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseOpt
     }
 
     const onClickBookmarkList = async (e) => {
-        const selectedBookmark = bookmarks.filter(data => e.currentTarget.getAttribute('data-bookmark-id') === data.id);
-        const domId = selectedBookmark[0].domId;
-        const elem = selectedBookmark[0].elem
-        const focusedDomLength = document.querySelectorAll('.focused-dom').length;
-        const domIndex = selectedBookmark[0].domIndex;
-
-        const selectedDom = document.querySelectorAll(selectedBookmark[0].classes)[domIndex]
-
+        const selectedBookmark = bookmarks.find(data => e.currentTarget.getAttribute('data-bookmark-id') === data.id);
+        const focusedDomLength = document.querySelectorAll('.selected-dom').length;
+        var elType = selectedBookmark.elem;
+        const retrievedElement = [...document.querySelectorAll(elType)].find((dom, idx) => idx === selectedBookmark.domIndex);
         
-        for(let i = 0; i < focusedDomLength; i++) {
-            document.querySelectorAll('.focused-dom')[0].classList.remove('focused-dom');
+        for (let i = 0; i < focusedDomLength; i++) {
+            document.querySelectorAll('.selected-dom')[i].classList.remove('selected-dom');
         }
 
-        selectedDom.classList.add('focused-dom')
+        await setRetrievedEl({
+            elClassNames: selectedBookmark.classes,
+            elem: selectedBookmark.elem,
+            elId: selectedBookmark.elId
+        })
+
+        retrievedElement.classList.add('selected-dom')
+        retrievedElement.scrollIntoView({ block: 'center' })
+        retrievedElement.appendChild(refSelectedDom.current.base);
     }
 
     useEffect(() => {
@@ -188,6 +208,12 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseOpt
                 y={y}
                 domId={domId}
             />
+
+            <SelectedDomFromBookmark 
+                ref={refSelectedDom}
+                selectedDom={retrievedEl}
+            />
+
             <BookmarkInfo
                 bookmarkHidden={bookmarkHidden}
                 onCloseBookmark={onCloseBookmark}

@@ -1,6 +1,5 @@
 import React from 'react'
 
-import DomOptions from './DomOptions'
 // This component is used to inject this into DOM element once we hover and display minimal details the DOM needs
 const DomMinimalDetailsWidget = ({ ref, elId, elClassNames, domType, show }) => {
   console.log(ref)
