@@ -11,6 +11,7 @@ import {forEach} from 'lodash'
 
 import * as domUtils from "../utils/domUtils";
 import BookmarkPanel from "./BookmarkPanel";
+import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 
 window.store = {};
 
@@ -73,8 +74,7 @@ function App() {
     } else {
       injectDOMEventInBody();
 
-      //chrome-related events
-      chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
+      chromeExtensionUtils.onMessageEvent(function (msg, sender, sendResponse) {
         setExtension(true);
 
         if (msg.text === 'are_you_there_content_script?') {
