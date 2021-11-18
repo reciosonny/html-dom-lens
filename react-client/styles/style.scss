@@ -48,6 +48,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
 .dom-info-dialog-box {
   height: fit-content;
   width: fit-content;
+  max-width: 400px;
   z-index: 99999;
   background-color: $MainDialogColor;
   color: #455a64;

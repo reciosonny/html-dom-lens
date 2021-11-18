@@ -18,19 +18,19 @@ const FontColorDetails = ({ textcolor }) => {
 const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes  }) => {
   const [childrenArray, setchildrenArray] = useState("2");
   const [attributeArray, setattributeArray] = useState("2");
-  const handleSeemore = () => {
-    setchildrenArray(children.length);
+  const [seemoreAttr, setseemoreAttr] = useState(false);
+  const [seemoreChild, setseemoreChild] = useState(false);
+
+  const handleSeeMoreChild = () => {
+    seemoreChild !== true ? setchildrenArray(children.length)  : setchildrenArray("2");
+    setseemoreChild(!seemoreChild);
   };
-  const handleSeeless = () => {
-    setchildrenArray("2");
+
+  const handleSeeMoreAttr = () => {   
+    seemoreAttr !== true ? setattributeArray(dataAttributes.length)  : setattributeArray("2");
+    setseemoreAttr(!seemoreAttr);
   };
-  const handleSeemoreAttr = () => {
-    setattributeArray(dataAttributes.length);   
-  };
-  const handleSeelessAttr = () => {
-    setattributeArray("2");   
-  };
-     
+
   const leftover = children.length - childrenArray - 1;
   const attrleftover = dataAttributes.length - attributeArray;
 
@@ -93,25 +93,15 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
                 </div>
               ))}                             
             </div>                 
-          {dataAttributes.length > 2 ?(
-            attrleftover > 0 ? (
-              <div
-                id="closedompeeker"
-                className="see-more"
-                onClick={handleSeemoreAttr}
-              >
-                ... {attrleftover} more
-              </div>
-            ) : (
-              <div
-                id="closedompeeker"
-                className="see-more"
-                onClick={handleSeelessAttr}
-              >
-                ... see less
-              </div>
-            )
-          ) :null}          
+          {dataAttributes.length > 2 ?(            
+            <div
+              id="closedompeeker"
+              className="see-more"
+              onClick={handleSeeMoreAttr}
+            >
+              {attrleftover > 0 ? `... ${attrleftover} more` : `... see less`}
+            </div>
+          ) : null}                    
           <div className="dom-dialog">Children[{children.length-1}]</div>
           <div className="dom-dialog-child-details">
             {children.filter(clsname => clsname.id !== "#domInfoHighlight" ).slice(0, childrenArray).map((val) => (              
@@ -122,25 +112,15 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
                 <br />        
               </div>
             ))}         
-          </div>
-          {children.length - 1 > 2 ? (
-            leftover > 0 ? (
-              <div
-                id="closedompeeker"
-                className="see-more"
-                onClick={handleSeemore}
-              >
-                ... {leftover} more
-              </div>
-            ) : (
-              <div
-                id="closedompeeker"
-                className="see-more"
-                onClick={handleSeeless}
-              >
-                ... see less
-              </div>
-            )
+          </div>          
+          {children.length - 1 > 2 ? (            
+            <div
+              id="closedompeeker"
+              className="see-more"
+              onClick={handleSeeMoreChild}
+            >              
+              {leftover > 0 ? `... ${leftover} more` : `... see less`}
+            </div>
           ) : null}
         </div>
       </div>
