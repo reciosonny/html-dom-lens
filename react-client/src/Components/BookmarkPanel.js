@@ -78,11 +78,8 @@ const SelectedDomFromBookmark = ({selectedDom, ref}) => (
     </React.Fragment>
 )
 
-const BookmarkPanel = ({
-    elClassNames, domType,
-    showAddBookmarkPanel, setShowAddBookmarkPanel,
-    onCloseOption, x, y, domId, domTarget
-}) => {
+const BookmarkPanel = ({ elClassNames, domType,showAddBookmarkPanel, setShowAddBookmarkPanel, onCloseOption, x, y, domId, domTarget }) => {
+    
     const [bookmarkHidden, setBookmarkHidden] = useState(true);
     const [btnBookmarkHidden, setBtnBookmarkHidden] = useState(true);
     const [addBookmarkPanelVisible, setAddBookmarkPanelVisible] = useState(false)
@@ -132,6 +129,8 @@ const BookmarkPanel = ({
         const classes = e.target.parentElement.querySelector('.lbl-classes').innerText;
         const elId = domTarget.id;
         const randomCode = uuidv4();
+
+
         let txtVal = e.target.querySelector('input').value;
         let savedBookmarks = localStorage.getItem('bookmarks') ? JSON.parse(localStorage.getItem('bookmarks')) : [];
         let bookmarkObj = {
@@ -150,10 +149,13 @@ const BookmarkPanel = ({
         }
 
         savedBookmarks.push(bookmarkObj);
+        
         await setBookmarks(oldBookmarks => [...oldBookmarks, savedBookmarks]);
+        
         localStorage.setItem('bookmarks', JSON.stringify(savedBookmarks));
         e.target.querySelector('input').value = '';
-        setShowAddBookmarkPanel(false)
+
+        setShowAddBookmarkPanel(false);
     }
 
     const onCloseAddBookmarkPanel = (e) => {

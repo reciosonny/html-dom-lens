@@ -17,9 +17,10 @@ const FontColorDetails = ({ textcolor }) => {
 }
 
 const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickOption, onClickFocus, showAddBookmarkPanel, domElement, focusMode }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode }) => {
   const [childrenArray, setchildrenArray] = useState("2");
   const [attributeArray, setattributeArray] = useState("2");
+  const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
 
   const handleSeemore = () => {
     setchildrenArray(children.length);
@@ -33,6 +34,10 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
   const handleSeelessAttr = () => {
     setattributeArray("2");
   };
+
+  const onClickBookmark = () => {
+    setShowAddBookmarkPanel(!showAddBookmarkPanel);
+  }
 
   const leftover = children.length - childrenArray - 1;
   const attrleftover = dataAttributes.length - attributeArray;
@@ -147,7 +152,7 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
             ) : null
           }
         </div>
-        <DomOptions focusMode={focusMode} onClickFocus={() => onClickFocus(domElement)} onClickOption={onClickOption} showAddBookmarkPanel={showAddBookmarkPanel} />
+        <DomOptions focusMode={focusMode} onClickFocus={() => onClickFocus(domElement)} onClickBookmark={onClickBookmark} showAddBookmarkPanel={showAddBookmarkPanel} />
 
       </div >
     </div >

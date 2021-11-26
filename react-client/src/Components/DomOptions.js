@@ -5,10 +5,10 @@ import { BiComment } from "react-icons/bi";
 import { GrTree } from "react-icons/gr";
 import "../../styles/domoptions.scss";
 
-function DomOptions({ onClickOption, onClickFocus, showAddBookmarkPanel, focusMode }) {
+function DomOptions({ onClickBookmark, onClickFocus, showAddBookmarkPanel, focusMode }) {
   return (
     <div className="dom-options">
-      <button style={{ fontSize: "20px" }} onClick={onClickOption}>
+      <button style={{ fontSize: "20px" }} onClick={onClickBookmark}>
         {showAddBookmarkPanel ? (
           <BsFillBookmarkFill color="#673ab7" />
         ) : (
