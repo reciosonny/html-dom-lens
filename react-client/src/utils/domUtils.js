@@ -1,6 +1,7 @@
 import uuidv4 from 'uuid/dist/v4';
 
 // Recursion algorithm. Performance may be slower so let's improve the tail-recursion algorithm later
+// TODO: Offer another function for this one which checks for multiple classNames needed checking
 function ancestorExistsByClassName(element, className) {
   
   if(!element) return false;
@@ -28,8 +29,8 @@ function extractDomInfo(elTarget) {
 
   const children = [...elTarget.children].map((child) => {
     return {
-      id: child.id.trim() ? "#" + child.id : null,
-      class: child.className.trim() ? "." + child.className : null,
+      id: child.id ? "#" + child.id : null,
+      class: child.className ? "." + child.className : null,
       tag: child.localName,
     };
   });
@@ -59,9 +60,9 @@ function extractDomInfo(elTarget) {
   
   const elParent = elTarget.parentElement;
   const parent = {
-    id: elParent.id.trim() && `#${elParent.id.trim()}`,
+    id: elParent.id && `#${elParent.id.trim()}`,
     tag: elParent.localName,
-    class: elParent.className.trim() && `.${elParent.className.trim()}`,
+    class: elParent.className && `.${elParent.className.trim()}`,
     classes: [...elParent.classList]
   };
 
@@ -69,7 +70,8 @@ function extractDomInfo(elTarget) {
   const dataId = uuidv4();     
 
   return {
-    id: elTarget.id.trim() !== "" && `#${elTarget.id.trim()}`,              
+    id: elTarget.id !== "" && `#${elTarget.id.trim()}`,
+    domElement: elTarget,
     clstag: elTarget.localName,
     clsname: clsArr,
     children: children,

@@ -13,7 +13,10 @@ import * as domUtils from "../utils/domUtils";
 import BookmarkPanel from "./BookmarkPanel";
 import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 
-window.store = {};
+window.store = {
+  focusMode: false,
+  switchExtensionFunctionality: true
+};
 
 function App() {
   const [domInfo, setDomInfo] = useState([]);
@@ -22,16 +25,12 @@ function App() {
     elClassNames: [],
     domType: "",
   });
-  const [domSwitch, setdomSwitch] = useState(true);
-  const [initialState, setInitialState] = React.useState();
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false)
   const [selectedElem, setSelectedElem] = useState({});
+  const [focusMode, setFocusMode] = useState(false);
 
-  const switchdom = (e) => {
-    setdomSwitch(!domSwitch);
-  }
 
-  const [switchExtensionFunctionality, setExtension] = useState(true);
+  const [switchExtensionFunctionality, setExtensionFunctionality] = useState(true);
 
   const onTurnOffExtension = () => {
 
@@ -52,11 +51,12 @@ function App() {
     }, 300);
 
     setDomInfo([]); //if DOM extension is turned off, empty the DOM info state array
-    setExtension(false);
+    setExtensionFunctionality(false);
   };
   const refDomHighlight = React.useRef(null);
 
 
+  //#region Effects hook
 
   useEffect(() => {
     if (!PRODUCTION_MODE) {
@@ -75,7 +75,7 @@ function App() {
       injectDOMEventInBody();
 
       chromeExtensionUtils.onMessageEvent(function (msg, sender, sendResponse) {
-        setExtension(true);
+        setExtensionFunctionality(true);
 
         if (msg.text === 'are_you_there_content_script?') {
           sendResponse({ status: "yes" });
@@ -99,26 +99,42 @@ function App() {
   }, [switchExtensionFunctionality]);
 
   React.useEffect(() => {
+    
+    window.store.focusMode = focusMode;
+
+    return () => {
+      
+    }
+  }, [focusMode]);
+
+  React.useEffect(() => {
 
     return () => {
 
     }
   }, [domInfo]);
 
+  //#endregion
 
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
       let strClassList = '';
+      
+      if (!window.store.switchExtensionFunctionality) return;
+
       if(!containsBookmarkModule(e)) {
-        if (!window.store.switchExtensionFunctionality) return;
-  
+        
+        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
+          e.target,
+          "dom-info-dialog-box"
+        );
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
           e.target,
           "dom-switch"
         );
   
-        if (!isNotBtnDisable)
+        if (!isNotBtnDisable || !isNotDomInfoComponent)
           return;
 
         //capture all classes of the dom for bookmark module
@@ -146,7 +162,7 @@ function App() {
         if (elTarget.id !== "closedompeeker") {
           e.preventDefault();
   
-          const extractedDomInfo = domUtils.extractDomInfo(e.target);
+          const extractedDomInfo = domUtils.extractDomInfo(elTarget);
           const pageYcoordinate = e.pageY;
   
           const sheet = jss
@@ -159,13 +175,13 @@ function App() {
               }
             )
             .attach();
-  
+ 
           //for modifying style directly...
           e.target.classList.add(sheet.classes.domBorder);
           //sets data-id to the DOM
           e.target.setAttribute('data-id', extractedDomInfo.dataId);
-          e.target.setAttribute('data-dom-lens-injected', true);
-  
+          e.target.setAttribute('data-dom-lens-injected', true);         
+    
           await setDomInfo(value => {
             return [...value,
             {
@@ -176,6 +192,7 @@ function App() {
             }
             ]
           });
+          
   
           // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
           (function (pageYcoordinate) {
@@ -199,7 +216,7 @@ function App() {
 
     document.addEventListener("mouseover", async (e) => {
       if (!containsBookmarkModule(e)) {
-        if (!switchExtensionFunctionality) return;
+        if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
 
 
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
@@ -214,11 +231,10 @@ function App() {
         const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(
           e.target,
           'selected-dom'
-        )
+        );
+        
 
-        if (!window.store.switchExtensionFunctionality) return;
-
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode) {
           const domType = e.target.nodeName?.toLowerCase();
           await setDomLeanDetails({
             ...domLeanDetails,
@@ -234,7 +250,7 @@ function App() {
 
     document.addEventListener("mouseout", e => {
       if(!containsBookmarkModule(e)) {
-        if (!window.store.switchExtensionFunctionality) return;
+        if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
   
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
           e.target,
@@ -276,23 +292,29 @@ function App() {
     const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
 
-    document.querySelector(`[data-id="${uniqueID}"]`).classList.remove(currDomInfo.cssClassesAssigned);
 
+    const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
+
+    if(currentEl) 
+      currentEl.classList.remove(currDomInfo.cssClassesAssigned);
+      
+
+    setFocusMode(false);
     setDomInfo(newDomInfo);
   };
 
-  const containsBookmarkModule = (elem) => {
-    if (elem.target.classList.contains('bookmark-btn') ||
-      elem.target.classList.contains('card-bookmark') ||
-      elem.target.closest('.card-bookmark') ||
-      elem.target.classList.contains('add__bookmark-panel') ||
-      elem.target.closest('.add__bookmark-panel') ||
-      elem.currentTarget.querySelector('.dom-options') ||
-      elem.target.classList.contains('.selected__dom-bookmark') ||
-      elem.target.closest('.selected__dom-bookmark')) {
-      return true
-    }
-    return false
+  const containsBookmarkModule = (e) => {
+    
+    const isBookmarkBtn = domUtils.ancestorExistsByClassName(
+      e.target,
+      'bookmark-btn'
+    );
+    const isBookmarkPanel = domUtils.ancestorExistsByClassName(
+      e.target,
+      'bookmark-panel'
+    );    
+
+    return isBookmarkBtn || isBookmarkPanel;
   }
 
   const onClickOption = (e) => {
@@ -303,9 +325,17 @@ function App() {
     setShowAddBookmarkPanel(false)
   }
 
+  const onClickFocus = (elTarget) => {
+    setFocusMode(!focusMode);
+    elTarget.classList.toggle('focused-targeted-element');
+  }
+
 
   return (
     <div>
+      {/* {focusMode && <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>} */}
+      <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>
+
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
 
@@ -332,9 +362,12 @@ function App() {
               fontfamily={domInfo.family}
               textcolor={domInfo.textcolor}
               borderclr={domInfo.bordercolor}
+              domElement={domInfo.domElement}
               uniqueID={domInfo.uniqueID}
               dataAttributes={domInfo.attributes}
               onClickOption={onClickOption}
+              onClickFocus={onClickFocus}
+              focusMode={focusMode}
               showAddBookmarkPanel={showAddBookmarkPanel}
             />
           ))}

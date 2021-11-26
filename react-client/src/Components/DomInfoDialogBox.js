@@ -17,7 +17,7 @@ const FontColorDetails = ({ textcolor }) => {
 }
 
 const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickOption, showAddBookmarkPanel }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickOption, onClickFocus, showAddBookmarkPanel, domElement, focusMode }) => {
   const [childrenArray, setchildrenArray] = useState("2");
   const [attributeArray, setattributeArray] = useState("2");
 
@@ -124,30 +124,31 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
                 <br />        
               </div >
             ))}
-          </div >
-{
-  children.length - 1 > 2 ? (
-    leftover > 0 ? (
-      <div
-        id="closedompeeker"
-        className="see-more"
-        onClick={handleSeemore}
-      >
-        ... {leftover} more
-      </div>
-    ) : (
-      <div
-        id="closedompeeker"
-        className="see-more"
-        onClick={handleSeeless}
-      >
-        ... see less
-      </div>
-    )
-  ) : null
-}
-        </div >
-  <DomOptions onClickOption={onClickOption} showAddBookmarkPanel={showAddBookmarkPanel} />
+          </div>
+          {
+            children.length - 1 > 2 ? (
+              leftover > 0 ? (
+                <div
+                  id="closedompeeker"
+                  className="see-more"
+                  onClick={handleSeemore}
+                >
+                  ... {leftover} more
+                </div>
+              ) : (
+                <div
+                  id="closedompeeker"
+                  className="see-more"
+                  onClick={handleSeeless}
+                >
+                  ... see less
+                </div>
+              )
+            ) : null
+          }
+        </div>
+        <DomOptions focusMode={focusMode} onClickFocus={() => onClickFocus(domElement)} onClickOption={onClickOption} showAddBookmarkPanel={showAddBookmarkPanel} />
+
       </div >
     </div >
   );

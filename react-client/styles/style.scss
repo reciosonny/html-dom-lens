@@ -36,6 +36,29 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   }
 }
 
+#dimmer {
+  background: rgb(0, 0, 0);
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: -9999;
+  opacity: 0;
+  transition: all .3s;
+}
+
+.dimmer-show {
+  opacity: 0.9 !important;
+  z-index: 9999 !important;
+}
+
+
+.focused-targeted-element {
+  z-index: 9999;
+  position: relative;
+  background: #FFFFFF;
+}
+
+
 .attributecontainer {
   display: flex;
   justify-content: space-between;
