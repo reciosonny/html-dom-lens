@@ -18,6 +18,46 @@ function ancestorExistsByClassName(element, className) {
   return true;
 }
 
+function ancestorExistsByClassNames(element, classNames) {
+  
+  if(!element) return false;
+  if(classNames.some(className => className === element.className)) {
+    return true;
+  }
+  if(!element.parentElement) return false;
+
+
+  if (element.parentElement.className !== className) {
+    return ancestorExistsByClassName(element.parentElement, className);
+  }
+
+  return true;
+}
+
+// This algorithm gets the unique element identifier by using element tag(e.g. p, div, span, input), and the index where that particular element is located
+function getUniqueElementIdentifierByTagAndIndex(elTarget) {
+  const result = [...document.querySelectorAll(elTarget.tagName.toLowerCase())]
+    .reduce((acc, dom, idx) => {
+      if (dom === elTarget) {
+          acc.elType = dom.tagName.toLowerCase();
+          acc.index = idx;
+      }
+
+      return acc;
+    }, { elType: '', index: 0 });
+
+
+  return result;
+}
+
+// gets element by element tag and index location
+function getElementByTagAndIndex(elType, idxToFind) {
+  const retrievedElement = [...document.querySelectorAll(elType)]
+    .find((dom, idx) => idx === idxToFind);
+
+  return retrievedElement;
+}
+
 const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "#7E57C2", "#9575CD", "#B39DDB", "#D1C4E9", "#EDE7F6", "#E91E63", "#D81B60", "#C2185B", "#AD1457", "#880E4F", "#EC407A", "#F06292", "#F48FB1", "#F8BBD0", "#FCE4EC", "#263238", "#37474F", "#455A64", "#546E7A", "#607D8B", "#78909C", "#90A4AE", "#B0BEC5", "#CFD8DC", "#ECEFF1"];
 
 
@@ -90,5 +130,7 @@ function extractDomInfo(elTarget) {
 
 export {
   ancestorExistsByClassName,
-  extractDomInfo
+  extractDomInfo,
+  getElementByTagAndIndex,
+  getUniqueElementIdentifierByTagAndIndex
 }

@@ -5,7 +5,7 @@ import React from 'react';
 import jss from 'jss';
 
 import App from './src/Components/App';
-import './styles/style.scss';
+import './styles/main.scss';
 
 
 if (module.hot) {

@@ -84,7 +84,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   font-family: Roboto Mono;
   font-size: 10px;
   
-  transition: top .3s;
+  transition: top .2s;
   animation: animShow .5s forwards;
 
   .close-btn-style {
@@ -101,7 +101,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
     justify-content: center;
     border: 0px;
     cursor: pointer;
-    transition: all .3s;
+    transition: all .2s;
 
     &:hover {
       transform: scale(1.2);

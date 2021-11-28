@@ -10,12 +10,13 @@ import DomSwitch from "./DomSwitch";
 import {forEach} from 'lodash'
 
 import * as domUtils from "../utils/domUtils";
-import BookmarkPanel from "./BookmarkPanel";
+import BookmarkPanel from "./BookmarkPanel/index";
 import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 
 window.store = {
   focusMode: false,
-  switchExtensionFunctionality: true
+  switchExtensionFunctionality: true,
+  bookmarkBtnClicked: false //we can use this to set a guard to `onClick` event we wired up using plain javascript to prevent those logic from getting mixed up
 };
 
 function App() {
@@ -25,12 +26,19 @@ function App() {
     elClassNames: [],
     domType: "",
   });
-  const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false)
-  const [selectedElem, setSelectedElem] = useState({});
+
+  // TODO: Use this once we're done with fixing bookmarks feature...
+  const [stateConfigOptions, setStateConfigOptions] = useState({ showAddBookmarkPanel: false, focusMode: false, addBookmarkModeEnabled: false });
+
+  const [selectedAddBookmarkDomElIdx, setSelectedAddBookmarkDomElIdx] = useState(null);
+  const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
-
-
+  // If this is enabled, disable events like mouse hover. If user clicks outside of add bookmark component, then set `add bookmark mode` to false.
+  const [addBookmarkModeEnabled, setAddBookmarkModeEnabled] = useState(false);
+  
+  const [selectedElem, setSelectedElem] = useState({});
   const [switchExtensionFunctionality, setExtensionFunctionality] = useState(true);
+  
 
   const onTurnOffExtension = () => {
 
@@ -125,16 +133,11 @@ function App() {
 
       if(!containsBookmarkModule(e)) {
         
-        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
-          e.target,
-          "dom-info-dialog-box"
-        );
-        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
-          e.target,
-          "dom-switch"
-        );
+        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
+        const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");
   
-        if (!isNotBtnDisable || !isNotDomInfoComponent)
+        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked)
           return;
 
         //capture all classes of the dom for bookmark module
@@ -252,19 +255,9 @@ function App() {
       if(!containsBookmarkModule(e)) {
         if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
   
-        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
-          e.target,
-          "dom-info-dialog-box"
-        );
-        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
-          e.target,
-          "dom-switch"
-        );
-
-        const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(
-          e.target,
-          'selected-dom'
-        )
+        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
+        const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
   
         if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
           e.target.classList.toggle("focused-dom");
@@ -305,24 +298,25 @@ function App() {
 
   const containsBookmarkModule = (e) => {
     
-    const isBookmarkBtn = domUtils.ancestorExistsByClassName(
-      e.target,
-      'bookmark-btn'
-    );
-    const isBookmarkPanel = domUtils.ancestorExistsByClassName(
-      e.target,
-      'bookmark-panel'
-    );    
+    const isBookmarkPanel = domUtils.ancestorExistsByClassName(e.target, 'bookmark-panel');
 
-    return isBookmarkBtn || isBookmarkPanel;
+    return isBookmarkPanel;
   }
 
   const onClickOption = (e) => {
     setShowAddBookmarkPanel(true)
   }
 
-  const onCloseOption = (e) => {
-    setShowAddBookmarkPanel(false)
+  const onCloseAddBookmark = (e) => {
+    setSelectedAddBookmarkDomElIdx(null);
+    setShowAddBookmarkPanel(false);
+
+    window.store.bookmarkBtnClicked = false; //set the store to false afterwards
+  }
+
+  const onClickAddBookmark = (idx) => {
+    setSelectedAddBookmarkDomElIdx(idx);
+    setShowAddBookmarkPanel(!showAddBookmarkPanel);
   }
 
   const onClickFocus = (elTarget) => {
@@ -330,10 +324,8 @@ function App() {
     elTarget.classList.toggle('focused-targeted-element');
   }
 
-
   return (
     <div>
-      {/* {focusMode && <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>} */}
       <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>
 
       {/* website page renders here... */}
@@ -343,6 +335,10 @@ function App() {
 
       {switchExtensionFunctionality && (
         <div>
+          {/* TODO:
+                1. Toggle bookmark as enabled once the DomInfoDialogbox instance is saved in bookmarks list (We can do this by comparing HTML elements saved in bookmarks against dialogbox element)
+                2. Remove
+          */}
           {domInfo.map((domInfo, idx) => (
             <DomInfoDialogBox
               key={idx}
@@ -368,9 +364,12 @@ function App() {
               onClickOption={onClickOption}
               onClickFocus={onClickFocus}
               focusMode={focusMode}
-              showAddBookmarkPanel={showAddBookmarkPanel}
+              onClickBookmarkEmit={onClickAddBookmark}
+              hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || domInfo.hasExistingBookmark}
             />
           ))}
+
+          {/* Note: This component is used to inject this into DOM element once we hover and display minimal details the DOM needs */}
           <DomMinimalDetailsWidget
             ref={refDomHighlight}
             elId={domLeanDetails.elId}
@@ -386,8 +385,7 @@ function App() {
             y={selectedElem.y}
             domId={selectedElem.domId}
             showAddBookmarkPanel={showAddBookmarkPanel}
-            setShowAddBookmarkPanel={setShowAddBookmarkPanel}
-            onCloseOption={onCloseOption}
+            onCloseAddBookmark={onCloseAddBookmark}
             domTarget={selectedElem.domTarget}
           />
         </div>

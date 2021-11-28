@@ -17,7 +17,9 @@ const FontColorDetails = ({ textcolor }) => {
 }
 
 const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark }) => {
+
+  
   const [childrenArray, setchildrenArray] = useState("2");
   const [attributeArray, setattributeArray] = useState("2");
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
@@ -36,11 +38,26 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
   };
 
   const onClickBookmark = () => {
+
+    // still need to fix this a bit...can introduce spaghetti code
+    window.store.bookmarkBtnClicked = true;
+
     setShowAddBookmarkPanel(!showAddBookmarkPanel);
+    onClickBookmarkEmit(idx);
   }
 
   const leftover = children.length - childrenArray - 1;
   const attrleftover = dataAttributes.length - attributeArray;
+
+
+  React.useEffect(() => {
+    // if the DOM has existing bookmark, enable it by default.
+    setShowAddBookmarkPanel(hasExistingBookmark);
+
+    return () => {
+      
+    }
+  }, [hasExistingBookmark]);
 
   return (
     <div>
@@ -79,9 +96,9 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
               <div className="dom-styles">Color</div>
             </div>
           </div>
-          <div className="dom-styles-details"> {fontfamily}</div>
+          <div className="dom-styles-details">{fontfamily}</div>
           <div className="dom-styles">Font Family</div>
-          <div className="dom-dialog">Parent </div>
+          <div className="dom-dialog">Parent</div>
           <div className="dom-dialog-parent-details">
             <div className="dom-details-tag">{parent.tag}</div>
             {parent.id}
@@ -152,10 +169,15 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
             ) : null
           }
         </div>
-        <DomOptions focusMode={focusMode} onClickFocus={() => onClickFocus(domElement)} onClickBookmark={onClickBookmark} showAddBookmarkPanel={showAddBookmarkPanel} />
+        <DomOptions 
+          focusMode={focusMode} 
+          onClickFocus={() => onClickFocus(domElement)} 
+          onClickBookmark={onClickBookmark} 
+          showAddBookmarkPanel={showAddBookmarkPanel} 
+        />
 
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };
 
