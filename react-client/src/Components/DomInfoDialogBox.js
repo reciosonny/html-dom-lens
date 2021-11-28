@@ -16,23 +16,21 @@ const FontColorDetails = ({ textcolor }) => {
 }
 
 const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes  }) => {
-  const [childrenArray, setchildrenArray] = useState("2");
-  const [attributeArray, setattributeArray] = useState("2");
-  const [seemoreAttr, setseemoreAttr] = useState(false);
-  const [seemoreChild, setseemoreChild] = useState(false);
+  const [seemoreAttr, setseemoreAttr] = useState(true);
+  const [seemoreChild, setseemoreChild] = useState(true);
 
   const handleSeeMoreChild = () => {
-    seemoreChild !== true ? setchildrenArray(children.length)  : setchildrenArray("2");
     setseemoreChild(!seemoreChild);
   };
 
   const handleSeeMoreAttr = () => {   
-    seemoreAttr !== true ? setattributeArray(dataAttributes.length)  : setattributeArray("2");
     setseemoreAttr(!seemoreAttr);
   };
 
-  const leftover = children.length - childrenArray - 1;
-  const attrleftover = dataAttributes.length - attributeArray;
+  const numChildrenToDisplay = !seemoreChild ? children.length : 2 ;
+  const numAttibToDisplay = !seemoreAttr ? dataAttributes.length : 2 ;
+  const leftover = children.length  - 3;
+  const attrleftover = dataAttributes.length - 2;
 
   return (
     <div>
@@ -79,10 +77,9 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
             {parent.id}
             {parent.classes.map(val => `.${val}`)}
           </div>
-          <div className="dom-dialog">data-* attributes </div>    
-           {/* <div className="attributecontainer">  */}
+          <div className="dom-dialog">data-* attributes </div>             
             <div className="dom-dialog-child-details">   
-              {dataAttributes.slice(0, attributeArray).map((val) => (
+              {dataAttributes.slice(0, numAttibToDisplay).map((val) => (
                 <div className="attributecontainer">              
                   <div className="attributeitems">                 
                     {val.key}                
@@ -93,35 +90,35 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
                 </div>
               ))}                             
             </div>                 
-          {dataAttributes.length > 2 ?(            
+          {dataAttributes.length > 2 &&(            
             <div
               id="closedompeeker"
               className="see-more"
               onClick={handleSeeMoreAttr}
             >
-              {attrleftover > 0 ? `... ${attrleftover} more` : `... see less`}
+              {seemoreAttr  ? `... ${attrleftover} more` : `... see less`}
             </div>
-          ) : null}                    
+          ) }                    
           <div className="dom-dialog">Children[{children.length-1}]</div>
           <div className="dom-dialog-child-details">
-            {children.filter(clsname => clsname.id !== "#domInfoHighlight" ).slice(0, childrenArray).map((val) => (              
+            {children.filter(clsname => clsname.id !== "#domInfoHighlight" ).slice(0, numChildrenToDisplay).map((val) => (              
               <div>
                 <div className="dom-details-tag">{val.tag}</div>
                 {val.id}                             
-                {val.class && val.class.replace(/ /g, ".")  }        
+                {val.class && val.class.replace(/  /g, ".").replace(/ /g, ".")  }        
                 <br />        
               </div>
             ))}         
           </div>          
-          {children.length - 1 > 2 ? (            
+          {children.length - 1 > 2 && (            
             <div
               id="closedompeeker"
               className="see-more"
               onClick={handleSeeMoreChild}
-            >              
-              {leftover > 0 ? `... ${leftover} more` : `... see less`}
+            >                        
+              {seemoreChild  ? `... ${leftover} more` : `... see less`}
             </div>
-          ) : null}
+          ) }
         </div>
       </div>
     </div>
