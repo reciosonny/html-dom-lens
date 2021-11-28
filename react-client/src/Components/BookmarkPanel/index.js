@@ -27,6 +27,7 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
   const [addBookmarkPanelVisible, setAddBookmarkPanelVisible] = useState(false);
   const [bookmarks, setBookmarks] = useState([]);
   const [retrievedEl, setRetrievedEl] = useState({});
+  const [savedElNode, setRetrievedElNode] = useState(null);
 
   const refSelectedDom = React.useRef(null);
 
@@ -105,17 +106,18 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
   };
 
   const onClickBookmarkList = async (e) => {
-    const selectedBookmark = bookmarks.find(
-      (data) => e.currentTarget.getAttribute("data-bookmark-id") === data.id
-    );
+
+    // note: We should remove the child first before querying the element in `retrievedElement` variable. Otherwise the query will go wrong because of indexing
+    if(savedElNode && savedElNode.contains(refSelectedDom.current.base)) {
+        savedElNode.removeChild(refSelectedDom.current.base);
+    }
+
+    const selectedBookmark = bookmarks.find((data) => e.currentTarget.getAttribute("data-bookmark-id") === data.id);
 
     const focusedDomLength = document.querySelectorAll(".selected-dom").length;
     var elType = selectedBookmark.elem;
 
-    const retrievedElement = domUtils.getElementByTagAndIndex(
-      elType,
-      selectedBookmark.domIndex
-    );
+    const retrievedElement = domUtils.getElementByTagAndIndex(elType, selectedBookmark.domIndex);
 
     for (let i = 0; i < focusedDomLength; i++) {
       document
@@ -123,15 +125,17 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
         [i].classList.remove("selected-dom");
     }
 
-    await setRetrievedEl({
-      elClassNames: selectedBookmark.classes,
-      elem: selectedBookmark.elem,
-      elId: selectedBookmark.elId,
-    });
+    await setRetrievedEl({ elClassNames: selectedBookmark.classes, elem: selectedBookmark.elem, elId: selectedBookmark.elId });
 
     retrievedElement.classList.add("selected-dom");
     retrievedElement.scrollIntoView({ block: "center" });
-    retrievedElement.appendChild(refSelectedDom.current.base);
+    if(retrievedElement.parentElement !== refSelectedDom.current.base) {
+        retrievedElement.appendChild(refSelectedDom.current.base);
+    }
+
+    console.log('retrieved element: ', retrievedElement);
+
+    await setRetrievedElNode(retrievedElement);
   };
 
   useEffect(() => {

@@ -27,26 +27,38 @@ const BookmarkInfo = ({ bookmarkHidden, onCloseBookmark, onEdit, onRemove, bookm
   </React.Fragment>
 );
 
+const BookmarkItem = ({ data, index, onEdit, onRemove, onClickBookmarkList }) => {
+  return (
+    <li className='bookmark__list-item' key={index} data-bookmark-id={data.id} onClick={onClickBookmarkList}>
+      <div className='list__item-details'>
+        <h3>{data.title}</h3>
+        <label className='lbl-elem'>{data.elem}</label>
+        <label className='lbl-classes' style={{ fontSize: "12px" }}>
+          {data.classes}
+        </label>
+      </div>
+      <span className='list__item-options'>
+        <button>
+          <RiPencilFill data-bookmark-id={data.id} onClick={onEdit} />
+        </button>
+        <button data-bookmark-id={data.id} onClick={onRemove}>
+          <FaTrash />
+        </button>
+      </span>
+    </li>
+  );
+};
+
 const BookmarkList = ({ bookmarks, onEdit, onRemove, onClickBookmarkList }) => (
   <ul>
     {bookmarks.map((data, index) => (
-      <li className='bookmark__list-item' key={index} data-bookmark-id={data.id} onClick={onClickBookmarkList}>
-        <div className='list__item-details'>
-          <h3>{data.title}</h3>
-          <label className='lbl-elem'>{data.elem}</label>
-          <label className='lbl-classes' style={{ fontSize: "12px" }}>
-            {data.classes}
-          </label>
-        </div>
-        <span className='list__item-options'>
-          <button>
-            <RiPencilFill data-bookmark-id={data.id} onClick={onEdit} />
-          </button>
-          <button data-bookmark-id={data.id} onClick={onRemove}>
-            <FaTrash />
-          </button>
-        </span>
-      </li>
+      <BookmarkItem
+        data={data}
+        index={index}
+        onEdit={onEdit}
+        onRemove={onRemove}
+        onClickBookmarkList={onClickBookmarkList}
+      />
     ))}
   </ul>
 );
