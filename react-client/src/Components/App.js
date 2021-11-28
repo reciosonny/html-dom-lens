@@ -34,7 +34,6 @@ function App() {
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   // If this is enabled, disable events like mouse hover. If user clicks outside of add bookmark component, then set `add bookmark mode` to false.
-  const [addBookmarkModeEnabled, setAddBookmarkModeEnabled] = useState(false);
   
   const [selectedElem, setSelectedElem] = useState({});
   const [switchExtensionFunctionality, setExtensionFunctionality] = useState(true);
@@ -213,6 +212,8 @@ function App() {
               });
             }, 10);
           }(pageYcoordinate));
+
+
         }
       }
     });
@@ -222,19 +223,9 @@ function App() {
         if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
 
 
-        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(
-          e.target,
-          "dom-info-dialog-box"
-        );
-        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(
-          e.target,
-          "dom-switch"
-        );
-
-        const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(
-          e.target,
-          'selected-dom'
-        );
+        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
+        const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
         
 
         if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode) {
