@@ -10,8 +10,10 @@ import DomSwitch from "./DomSwitch";
 import {forEach} from 'lodash'
 
 import * as domUtils from "../utils/domUtils";
-import BookmarkPanel from "./BookmarkPanel/index";
+import BookmarkPanel from "./BookmarkPanel";
 import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
+
+import useBookmarksStore from '../hooks/useBookmarksStore';
 
 window.store = {
   focusMode: false,
@@ -21,11 +23,7 @@ window.store = {
 
 function App() {
   const [domInfo, setDomInfo] = useState([]);
-  const [domLeanDetails, setDomLeanDetails] = useState({
-    elId: "",
-    elClassNames: [],
-    domType: "",
-  });
+  const [domLeanDetails, setDomLeanDetails] = useState({ elId: "", elClassNames: [], domType: "" });
 
   // TODO: Use this once we're done with fixing bookmarks feature...
   const [stateConfigOptions, setStateConfigOptions] = useState({ showAddBookmarkPanel: false, focusMode: false, addBookmarkModeEnabled: false });
@@ -37,6 +35,8 @@ function App() {
   
   const [selectedElem, setSelectedElem] = useState({});
   const [switchExtensionFunctionality, setExtensionFunctionality] = useState(true);
+
+  const bookmarksStore = useBookmarksStore();
   
 
   const onTurnOffExtension = () => {
@@ -65,7 +65,7 @@ function App() {
 
   //#region Effects hook
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!PRODUCTION_MODE) {
       /**
        * Note: swap the urls for testing different websites. Sample websites for testing:
@@ -327,38 +327,44 @@ function App() {
       {switchExtensionFunctionality && (
         <div>
           {/* TODO:
-                1. Toggle bookmark as enabled once the DomInfoDialogbox instance is saved in bookmarks list (We can do this by comparing HTML elements saved in bookmarks against dialogbox element)
-                2. Remove
+                1. Toggle bookmark as enabled once the DomInfoDialogbox instance is saved in bookmarks list (We can do this by comparing HTML elements saved in bookmarks against dialogbox element) - DONE
+                2. Change the behavior of toggle bookmark when an existing bookmark is already saved for the same DOM element clicked. Remove the bookmark instead if it exists in bookmark list
           */}
-          {domInfo.map((domInfo, idx) => (
-            <DomInfoDialogBox
-              key={idx}
-              idx={idx}
-              id={domInfo.id}
-              clstag={domInfo.clstag}
-              clsname={domInfo.clsname}
-              parenttag={domInfo.parenttag}
-              parentId={domInfo.parentID}
-              parentClass={domInfo.parentClass}
-              parent={domInfo.parent}
-              children={domInfo.children}
-              top={domInfo.y}
-              left={domInfo.x}
-              onClose={handleRemoveDialogBox}
-              fontsize={domInfo.size}
-              fontfamily={domInfo.family}
-              textcolor={domInfo.textcolor}
-              borderclr={domInfo.bordercolor}
-              domElement={domInfo.domElement}
-              uniqueID={domInfo.uniqueID}
-              dataAttributes={domInfo.attributes}
-              onClickOption={onClickOption}
-              onClickFocus={onClickFocus}
-              focusMode={focusMode}
-              onClickBookmarkEmit={onClickAddBookmark}
-              hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || domInfo.hasExistingBookmark}
-            />
-          ))}
+          {domInfo.map((domInfo, idx) => {
+
+            const elBookmarks = bookmarksStore.map(({ elem, domIndex }) => domUtils.getElementByTagAndIndex(elem, domIndex));
+            const hasExistingBookmark = elBookmarks.some(el => el === domInfo.domElement);
+
+            return (
+              <DomInfoDialogBox
+                key={idx}
+                idx={idx}
+                id={domInfo.id}
+                clstag={domInfo.clstag}
+                clsname={domInfo.clsname}
+                parenttag={domInfo.parenttag}
+                parentId={domInfo.parentID}
+                parentClass={domInfo.parentClass}
+                parent={domInfo.parent}
+                children={domInfo.children}
+                top={domInfo.y}
+                left={domInfo.x}
+                onClose={handleRemoveDialogBox}
+                fontsize={domInfo.size}
+                fontfamily={domInfo.family}
+                textcolor={domInfo.textcolor}
+                borderclr={domInfo.bordercolor}
+                domElement={domInfo.domElement}
+                uniqueID={domInfo.uniqueID}
+                dataAttributes={domInfo.attributes}
+                onClickOption={onClickOption}
+                onClickFocus={onClickFocus}
+                focusMode={focusMode}
+                onClickBookmarkEmit={onClickAddBookmark}
+                hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark}
+              />
+            );
+          })}
 
           {/* Note: This component is used to inject this into DOM element once we hover and display minimal details the DOM needs */}
           <DomMinimalDetailsWidget

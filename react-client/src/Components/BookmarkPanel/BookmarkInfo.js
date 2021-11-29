@@ -27,7 +27,16 @@ const BookmarkInfo = ({ bookmarkHidden, onCloseBookmark, onEdit, onRemove, bookm
   </React.Fragment>
 );
 
-const BookmarkItem = ({ data, index, onEdit, onRemove, onClickBookmarkList }) => {
+const BookmarkItem = ({ data, index, onRemove, onClickBookmarkList }) => {
+
+  const onEdit = () => {
+    alert('editing a bookmark details');
+  }
+
+  // const onRemove = () => {
+    
+  // }
+
   return (
     <li className='bookmark__list-item' key={index} data-bookmark-id={data.id} onClick={onClickBookmarkList}>
       <div className='list__item-details'>
