@@ -16,10 +16,13 @@ const FontColorDetails = ({ textcolor }) => {
   )
 }
 
+let domObserver;
 const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark, ...rest }) => {
 
-  
+  const [domInfo, setDomInfo] = useState({ clstag: '', clsname: '', parent: '', children: '', fontsize: '',
+    fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
+
   const [childrenArray, setchildrenArray] = useState("2");
   const [attributeArray, setattributeArray] = useState("2");
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
@@ -49,6 +52,45 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
   const leftover = children.length - childrenArray - 1;
   const attrleftover = dataAttributes.length - attributeArray;
 
+  const initializeDomObserver = async () => {
+
+    const targetNode = domElement;
+
+    // Options for the observer (which mutations to observe)
+    const config = { attributes: true, childList: true, subtree: true };
+
+    // Callback function to execute when mutations are observed
+    const callback = function(mutationsList, observer) {
+        console.log(mutationsList);
+        
+        // TODO: if mutation happens, re-update the dialogbox information
+        // Bonus: highlight class names and data attributes that was newly added in dialogbox when changes in DOM is observed(Use this color: #F6ECAA)
+
+        // Use traditional 'for loops' for IE 11
+        // for(const mutation of mutationsList) {
+        //   if (mutation.type === 'childList') {
+        //       console.log('A child node has been added or removed.');
+        //   }
+        //   else if (mutation.type === 'attributes') {
+        //       console.log('The ' + mutation.attributeName + ' attribute was modified.');
+        //   }
+        // }
+    };
+
+    domObserver = new MutationObserver(callback);
+    domObserver.observe(targetNode, config);
+  }
+
+  React.useEffect(() => {
+    
+    initializeDomObserver();
+
+    // setDomInfo({  }) //set DOM info here...
+
+    return () => {
+      domObserver.disconnect();
+    }
+  }, []);
 
   React.useEffect(() => {
     // if the DOM has existing bookmark, enable it by default.
@@ -60,7 +102,7 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
   }, [hasExistingBookmark]);
 
   return (
-    <div>
+    <React.Fragment>
       <div
         className="dom-info-dialog-box"
         style={{
@@ -177,7 +219,7 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
         />
 
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 
