@@ -54,12 +54,12 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
   const saveBookmark = async (e) => {
     e.preventDefault();
 
+    const elParent = e.target.parentElement;
     const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(domTarget);
 
-    const element =
-      e.target.parentElement.querySelector(".lbl-element").innerText;
-    const classes =
-      e.target.parentElement.querySelector(".lbl-classes").innerText;
+    const [element, classes] = ['.lbl-element', '.lbl-classes']
+      .reduce((acc, curr) => [...acc, elParent.querySelector(curr).innerText], []);
+    
     const elId = domTarget.id;
     const randomCode = uuidv4();
 
