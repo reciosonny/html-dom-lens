@@ -13,7 +13,7 @@ import * as domUtils from "../utils/domUtils";
 import BookmarkPanel from "./BookmarkPanel";
 import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 
-import useBookmarksStore from '../hooks/useBookmarksStore';
+import useLocalStorageStore from "../hooks/useLocalStorageStore";
 
 window.store = {
   focusMode: false,
@@ -36,7 +36,7 @@ function App() {
   const [selectedElem, setSelectedElem] = useState({});
   const [switchExtensionFunctionality, setExtensionFunctionality] = useState(true);
 
-  const bookmarksStore = useBookmarksStore();
+  const [bookmarksStore, setBookmarksStore] = useLocalStorageStore('bookmarks');
   
 
   const onTurnOffExtension = () => {

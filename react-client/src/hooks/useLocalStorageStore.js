@@ -1,9 +1,9 @@
 import React from 'react'
 
 
-const useLocalStorageStore = (storeName, isNotJSON) => {
+const useLocalStorageStore = (storeName, defaultValue, isNotJSON) => {
   
-  const [state, setState] = React.useState([]);
+  const [state, setState] = React.useState(defaultValue);
 
   
   React.useEffect(() => {
@@ -18,17 +18,6 @@ const useLocalStorageStore = (storeName, isNotJSON) => {
       
     }
   }, []);
-
-  React.useEffect(() => {
-
-    let finalValue = isNotJSON ? state : JSON.stringify(state);
-
-    
-    localStorage.setItem(storeName, finalValue); //if state changes, sync it on localStorage
-    return () => {
-      
-    }
-  }, [state]);
 
 
   const getFinalValue = () => {
@@ -51,6 +40,16 @@ const useLocalStorageStore = (storeName, isNotJSON) => {
 
   const setLocalStorage = (value) => {
     
+    if (!value) {
+      localStorage.removeItem(storeName);
+      setState(defaultValue);
+
+      return;
+    }
+
+    let finalValue = isNotJSON ? value : JSON.stringify(value);    
+    localStorage.setItem(storeName, finalValue); //if state changes, sync it on localStorage
+
     setState(value);
   }
 

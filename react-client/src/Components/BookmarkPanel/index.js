@@ -20,7 +20,7 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
 
   const refSelectedDom = React.useRef(null);
 
-  const [bookmarksStore, setBookmarksStore] = useLocalStorageStore('bookmarks');
+  const [bookmarksStore, setBookmarksStore] = useLocalStorageStore('bookmarks', []);
 
   const onOpenBookmark = (e) => {
     setBookmarkHidden(false);
@@ -46,7 +46,7 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
       if (newBookmarks.length === 0) {
         setBookmarkHidden(true);
         setBtnBookmarkHidden(false);
-        localStorage.removeItem("bookmarks");
+        setBookmarksStore(null);
       }
     }
   };
