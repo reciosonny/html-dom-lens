@@ -38,11 +38,12 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
     const selectedBookmarkIdx = bookmarksStore.findIndex((data) => data.id === e.currentTarget.getAttribute("data-bookmark-id"));
 
     if (selectedBookmarkIdx !== -1) {
-      bookmarksStore.splice(selectedBookmarkIdx, 1);
 
-      setBookmarksStore(bookmarksStore);
+      const newBookmarks = bookmarksStore.filter((x, idx) => idx !== selectedBookmarkIdx);
 
-      if (bookmarksStore.length === 0) {
+      setBookmarksStore(newBookmarks);
+
+      if (newBookmarks.length === 0) {
         setBookmarkHidden(true);
         setBtnBookmarkHidden(false);
         localStorage.removeItem("bookmarks");
@@ -79,9 +80,9 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
       bookmarkObj.title = element + classes;
     }
 
-    bookmarksStore.push(bookmarkObj);
+    const newBookmarks = [...bookmarksStore, bookmarkObj];
 
-    await setBookmarksStore((oldBookmarks) => [...oldBookmarks, bookmarksStore]);
+    await setBookmarksStore(newBookmarks);
 
     e.target.querySelector("input").value = "";
 
