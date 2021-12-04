@@ -15,39 +15,25 @@ const FontColorDetails = ({ textcolor }) => {
     </React.Fragment>
   )
 }
-
 const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark  }) => {
 
-  
-  const [childrenArray, setchildrenArray] = useState("2");
-  const [attributeArray, setattributeArray] = useState("2");
+  const [seemoreAttr, setseemoreAttr] = useState(true);
+  const [seemoreChild, setseemoreChild] = useState(true);
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
 
-  const handleSeemore = () => {
-    setchildrenArray(children.length);
-  };
-  const handleSeeless = () => {
-    setchildrenArray("2");
-  };
-  const handleSeemoreAttr = () => {
-    setattributeArray(dataAttributes.length);
-  };
-  const handleSeelessAttr = () => {
-    setattributeArray("2");
+  const handleSeeMoreChild = () => {
+    setseemoreChild(!seemoreChild);
   };
 
-  const onClickBookmark = () => {
+  const handleSeeMoreAttr = () => {   
+    setseemoreAttr(!seemoreAttr);
+  };
 
-    // still need to fix this a bit...can introduce spaghetti code
-    window.store.bookmarkBtnClicked = true;
-
-    setShowAddBookmarkPanel(!showAddBookmarkPanel);
-    onClickBookmarkEmit(idx);
-  }
-
-  const leftover = children.length - childrenArray - 1;
-  const attrleftover = dataAttributes.length - attributeArray;
+  const numChildrenToDisplay = !seemoreChild ? children.length : 2 ;
+  const numAttibToDisplay = !seemoreAttr ? dataAttributes.length : 2 ;
+  const leftover = children.length  - 3;
+  const attrleftover = dataAttributes.length - 2;
 
 
   React.useEffect(() => {
@@ -104,75 +90,54 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
             {parent.id}
             {parent.classes.map(val => `.${val}`)}
           </div>
-          <div className="dom-dialog">data-* attributes </div>
-          <div className="dom-dialog-child-details">
-            {dataAttributes.slice(0, attributeArray).map((val) => (
-              <div className="attributecontainer">
-                <div className="attributeitems">
-                  {val.key}
+          <div className="dom-dialog">data-* attributes </div>             
+            <div className="dom-dialog-child-details">   
+              {dataAttributes.slice(0, numAttibToDisplay).map((val) => (
+                <div className="attributecontainer">              
+                  <div className="attributeitems">                 
+                    {val.key}                
+                  </div>
+                  <div className="attributeitems">
+                    {val.value}
+                  </div>
                 </div>
-                <div className="attributeitems">
-                  {val.value}
-                </div>
-              </div>
-            ))}
-          </div>
-          {dataAttributes.length > 2 ? (
-            attrleftover > 0 ? (
-              <div
-                id="closedompeeker"
-                className="see-more"
-                onClick={handleSeemoreAttr}
-              >
-                ... {attrleftover} more
-              </div>
-            ) : (
-              <div
-                id="closedompeeker"
-                className="see-more"
-                onClick={handleSeelessAttr}
-              >
-                ... see less
-              </div>
-            )
-          ) : null}
-          <div className="dom-dialog">Children[{children.length - 1}]</div>
+              ))}                             
+            </div>                 
+          {dataAttributes.length > 2 &&(            
+            <div
+              id="closedompeeker"
+              className="see-more"
+              onClick={handleSeeMoreAttr}
+            >
+              {seemoreAttr  ? `... ${attrleftover} more` : `... see less`}
+            </div>
+          ) }                    
+          <div className="dom-dialog">Children[{children.length-1}]</div>
           <div className="dom-dialog-child-details">
-            {children.filter(clsname => clsname.id !== "#domInfoHighlight").slice(0, childrenArray).map((val) => (
+            {children.filter(clsname => clsname.id !== "#domInfoHighlight" ).slice(0, numChildrenToDisplay).map((val) => (              
               <div>
                 <div className="dom-details-tag">{val.tag}</div>
                 {val.id}                             
-                {val.class && val.class.replace(/ /g, ".")  }        
-                <br />        
-              </div >
-            ))}
-          </div>
-          {
-            children.length - 1 > 2 ? (
-              leftover > 0 ? (
-                <div
-                  id="closedompeeker"
-                  className="see-more"
-                  onClick={handleSeemore}
-                >
-                  ... {leftover} more
-                </div>
-              ) : (
-                <div
-                  id="closedompeeker"
-                  className="see-more"
-                  onClick={handleSeeless}
-                >
-                  ... see less
-                </div>
-              )
-            ) : null
-          }
+                {val.class && val.class.replace(/  /g, ".").replace(/ /g, ".")  }        
+                <br />
+              </div>
+            ))}         
+          </div>          
+          {children.length - 1 > 2 && (            
+            <div
+              id="closedompeeker"
+              className="see-more"
+              onClick={handleSeeMoreChild}
+            >                        
+              {seemoreChild  ? `... ${leftover} more` : `... see less`}
+            </div>
+          ) }
         </div>
+
         <DomOptions 
           focusMode={focusMode} 
           onClickFocus={() => onClickFocus(domElement)} 
-          onClickBookmark={onClickBookmark} 
+          onClickBookmark={onClickBookmarkEmit} 
           showAddBookmarkPanel={showAddBookmarkPanel} 
         />
 
