@@ -36,7 +36,7 @@ function App() {
   const [selectedElem, setSelectedElem] = useState({});
   const [switchExtensionFunctionality, setExtensionFunctionality] = useState(true);
 
-  const [bookmarksStore, setBookmarksStore] = useLocalStorageStore('bookmarks');
+  const [bookmarksStore, setBookmarksStore] = useLocalStorageStore('bookmarks', []);
   
 
   const onTurnOffExtension = () => {
