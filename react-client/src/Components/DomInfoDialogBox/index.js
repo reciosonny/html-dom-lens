@@ -3,6 +3,11 @@ import DomOptions from "../DomOptions";
 import ChildrenDetails from "./ChildrenDetails";
 import ParentDetails from "./ParentDetails";
 
+// window.store.DomInfoDialogBox = {
+//   children: [],
+//   classList: []
+// }
+
 const FontColorDetails = ({ textcolor }) => {
 
   return (
@@ -42,14 +47,28 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
 
     // Callback function to execute when mutations are observed
     const callback = (mutationsList, observer) => {
-        console.log(mutationsList);
 
-        // TODO: if mutation happens, re-update the dialogbox information
-        // Use traditional 'for loops' for IE 11
         for(const mutation of mutationsList) {
           if (mutation.type === 'childList') {
-              // console.log('A child node has been added or removed.');
+              
+            if (domElement !== mutation.target) return;
 
+            const newChildren = [...mutation.target.children].map((child) => {
+
+              // If it doesn't exist in existing children the first time dialogbox shows up, then it's a new child
+              const updated = !children.some(val => val.element === child);
+
+              return {
+                id: child.id ? "#" + child.id : null,
+                class: child.className ? "." + child.className : null,
+                tag: child.localName,
+                updated
+              };
+            });
+
+            window.store.DomInfoDialogBox.children = newChildren; //need to put it inside window.store so it gets the updated children (see mutation type attributes)
+
+            setDomInfo({ ...domInfo, classNames: window.store.DomInfoDialogBox.classList, children: newChildren });
           }
           else if (mutation.type === 'attributes') {
 
@@ -63,8 +82,10 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
                       updated
                     }
                   });
+
+                  window.store.DomInfoDialogBox.classList = newClassList; //store inside window for later retrieval
   
-                  setDomInfo({ ...domInfo, classNames: newClassList })                  
+                  setDomInfo({ ...domInfo, children: window.store.DomInfoDialogBox.children, classNames: newClassList }); //need to call window.store.children here for updated data
                 }
 
                 break;
@@ -86,8 +107,12 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
     initializeDomObserver();
 
     const classNamesWithStatus = classNames.map(name => ({ name, updated: false, removed: false }));
+    const childrenWithStatus = children.map(child => ({ ...child, updated: false, removed: false }));
 
-    setDomInfo({ ...domInfo, tag, classNames: classNamesWithStatus, parent, children, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement }) //set DOM info here...
+    window.store.DomInfoDialogBox.children = childrenWithStatus;
+
+
+    setDomInfo({ ...domInfo, tag, classNames: classNamesWithStatus, parent, children: childrenWithStatus, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement }) //set DOM info here...
 
     return () => {
       domObserver.disconnect();
@@ -121,7 +146,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
             <span className="dom-header-tag">{tag}</span>
             {id && <span className="dom-header-details">{id}</span>}
             {domInfo.classNames.filter(obj => obj.name !== ".focused-dom").map((val) => (
-              <span className={`dom-header-details ${val.updated ? 'dom-header-details--highlight' : ''}`}>{val.name}</span>
+              <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
             ))}
           </div>
           <div className="flex-row">
@@ -169,8 +194,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
             </div>
           )}
 
-          <ChildrenDetails children={children} />
-
+          <ChildrenDetails children={domInfo.children} />
         </div>
 
         <DomOptions 

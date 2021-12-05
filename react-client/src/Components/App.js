@@ -18,7 +18,11 @@ import useLocalStorageStore from "../hooks/useLocalStorageStore";
 window.store = {
   focusMode: false,
   switchExtensionFunctionality: true,
-  bookmarkBtnClicked: false //we can use this to set a guard to `onClick` event we wired up using plain javascript to prevent those logic from getting mixed up
+  bookmarkBtnClicked: false, //we can use this to set a guard to `onClick` event we wired up using plain javascript to prevent those logic from getting mixed up
+  DomInfoDialogBox: {
+    children: [],
+    classList: []
+  }
 };
 
 function App() {

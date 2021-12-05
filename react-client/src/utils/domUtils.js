@@ -70,6 +70,7 @@ function extractDomInfo(elTarget) {
       id: child.id ? "#" + child.id : null,
       class: child.className ? "." + child.className : null,
       tag: child.localName,
+      element: child
     };
   });
 
