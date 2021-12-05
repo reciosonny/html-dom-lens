@@ -3,11 +3,6 @@ import DomOptions from "../DomOptions";
 import ChildrenDetails from "./ChildrenDetails";
 import ParentDetails from "./ParentDetails";
 
-// window.store.DomInfoDialogBox = {
-//   children: [],
-//   classList: []
-// }
-
 const FontColorDetails = ({ textcolor }) => {
 
   return (
