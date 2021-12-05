@@ -127,6 +127,11 @@ $DialogDetailPadding: 10px 0px 0px 0px;
     display: inline-block !important;
     font-size: $Domheaderfontsize;
     width: fit-content;
+
+    &--highlight {
+      background-color: #F6ECAA;
+      color: #000;
+    }
   }
   .dom-details-tag {
     font-size: 12px;

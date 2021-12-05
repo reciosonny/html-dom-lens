@@ -63,9 +63,7 @@ const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "
 
 function extractDomInfo(elTarget) {
   
-  const clsArr = [...elTarget.classList].map((cls) => ({
-    clsName: `.${cls}`,
-  }));
+  const classNames = [...elTarget.classList].map((name) => `.${name}`);
 
   const children = [...elTarget.children].map((child) => {
     return {
@@ -112,8 +110,8 @@ function extractDomInfo(elTarget) {
   return {
     id: elTarget.id !== "" && `#${elTarget.id.trim()}`,
     domElement: elTarget,
-    clstag: elTarget.localName,
-    clsname: clsArr,
+    tag: elTarget.localName,
+    classNames,
     children: children,
     parent,
     size: elComputedStyle["font-size"],

@@ -1,5 +1,6 @@
 import React, { useeffect, useState } from "react";
-import DomOptions from "./DomOptions";
+import DomOptions from "../DomOptions";
+import ParentDetails from "./ParentDetails";
 
 const FontColorDetails = ({ textcolor }) => {
 
@@ -17,10 +18,10 @@ const FontColorDetails = ({ textcolor }) => {
 }
 
 let domObserver;
-const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark, ...rest  }) => {
+const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, left, onClose, fontsize,
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark }) => {
 
-  const [domInfo, setDomInfo] = useState({ clstag: '', clsname: '', parent: '', children: '', fontsize: '',
+  const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '',
     fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
 
   const [seemoreAttr, setseemoreAttr] = useState(true);
@@ -36,11 +37,6 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
     setseemoreAttr(!seemoreAttr);
   };
 
-  const numChildrenToDisplay = !seemoreChild ? children.length : 2 ;
-  const numAttibToDisplay = !seemoreAttr ? dataAttributes.length : 2 ;
-  const leftover = children.length  - 3;
-  const attrleftover = dataAttributes.length - 2;
-
   const initializeDomObserver = async () => {
 
     const targetNode = domElement;
@@ -49,32 +45,54 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
     const config = { attributes: true, childList: true, subtree: true };
 
     // Callback function to execute when mutations are observed
-    const callback = function(mutationsList, observer) {
+    const callback = (mutationsList, observer) => {
         console.log(mutationsList);
-        
-        // TODO: if mutation happens, re-update the dialogbox information
-        // Bonus: highlight class names and data attributes that was newly added in dialogbox when changes in DOM is observed(Use this color: #F6ECAA)
 
+        // TODO: if mutation happens, re-update the dialogbox information
         // Use traditional 'for loops' for IE 11
-        // for(const mutation of mutationsList) {
-        //   if (mutation.type === 'childList') {
-        //       console.log('A child node has been added or removed.');
-        //   }
-        //   else if (mutation.type === 'attributes') {
-        //       console.log('The ' + mutation.attributeName + ' attribute was modified.');
-        //   }
-        // }
+        for(const mutation of mutationsList) {
+          if (mutation.type === 'childList') {
+              console.log('A child node has been added or removed.');
+          }
+          else if (mutation.type === 'attributes') {
+
+            switch (mutation.attributeName) {
+              case 'class':
+                if (domElement === mutation.target) {
+                  const newClassList = [...mutation.target.classList].map(name => {
+                    const updated = !classNames.some(existingClass => existingClass.slice(1) === name); //slice/remove the dot(.)
+                    return {
+                      name: `.${name}`, 
+                      updated
+                    }
+                  });
+  
+                  setDomInfo({ ...domInfo, classNames: newClassList })                  
+                }
+
+                break;
+            }
+
+          }
+        }
     };
 
     domObserver = new MutationObserver(callback);
     domObserver.observe(targetNode, config);
   }
 
+  const numChildrenToDisplay = !seemoreChild ? children.length : 2 ;
+  const numAttibToDisplay = !seemoreAttr ? dataAttributes.length : 2 ;
+  const leftover = children.length  - 3;
+  const attrleftover = dataAttributes.length - 2;
+
   React.useEffect(() => {
     
     initializeDomObserver();
 
-    // setDomInfo({  }) //set DOM info here...
+    const classNamesWithStatus = classNames.map(name => ({ name, updated: false }));
+
+    setDomInfo({ ...domInfo, tag, classNames: classNamesWithStatus, parent, children, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement }) //set DOM info here...
 
     return () => {
       domObserver.disconnect();
@@ -109,10 +127,10 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
         </button>
         <div>
           <div className="dom-header">
-            <span className="dom-header-tag">{clstag}</span>
+            <span className="dom-header-tag">{tag}</span>
             {id && <span className="dom-header-details">{id}</span>}
-            {clsname.filter(clsnames => clsnames.clsName !== ".focused-dom").map((val) => (
-              <span className="dom-header-details">{val.clsName}</span>
+            {domInfo.classNames.filter(obj => obj.name !== ".focused-dom").map((val) => (
+              <span className={`dom-header-details ${val.updated ? 'dom-header-details--highlight' : ''}`}>{val.name}</span>
             ))}
           </div>
           <div className="flex-row">
@@ -129,25 +147,27 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
           </div>
           <div className="dom-styles-details">{fontfamily}</div>
           <div className="dom-styles">Font Family</div>
-          <div className="dom-dialog">Parent</div>
-          <div className="dom-dialog-parent-details">
-            <div className="dom-details-tag">{parent.tag}</div>
-            {parent.id}
-            {parent.classes.map(val => `.${val}`)}
-          </div>
+          
+          <ParentDetails 
+            tag={parent.tag}
+            id={parent.id}
+            classes={parent.classes}
+          />
+
           <div className="dom-dialog">data-* attributes </div>             
-            <div className="dom-dialog-child-details">   
-              {dataAttributes.slice(0, numAttibToDisplay).map((val) => (
-                <div className="attributecontainer">              
-                  <div className="attributeitems">                 
-                    {val.key}                
-                  </div>
-                  <div className="attributeitems">
-                    {val.value}
-                  </div>
+          <div className="dom-dialog-child-details">   
+            {dataAttributes.slice(0, numAttibToDisplay).map((val) => (
+              <div className="attributecontainer">              
+                <div className="attributeitems">                 
+                  {val.key}                
                 </div>
-              ))}                             
-            </div>                 
+                <div className="attributeitems">
+                  {val.value}
+                </div>
+              </div>
+            ))}                             
+          </div>
+
           {dataAttributes.length > 2 &&(            
             <div
               id="closedompeeker"

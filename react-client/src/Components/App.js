@@ -340,11 +340,8 @@ function App() {
                 key={idx}
                 idx={idx}
                 id={domInfo.id}
-                clstag={domInfo.clstag}
-                clsname={domInfo.clsname}
-                parenttag={domInfo.parenttag}
-                parentId={domInfo.parentID}
-                parentClass={domInfo.parentClass}
+                tag={domInfo.tag}
+                classNames={domInfo.classNames}
                 parent={domInfo.parent}
                 children={domInfo.children}
                 top={domInfo.y}
