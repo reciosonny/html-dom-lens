@@ -1,5 +1,6 @@
 import React, { useeffect, useState } from "react";
 import DomOptions from "../DomOptions";
+import ChildrenDetails from "./ChildrenDetails";
 import ParentDetails from "./ParentDetails";
 
 const FontColorDetails = ({ textcolor }) => {
@@ -25,13 +26,8 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
     fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
 
   const [seemoreAttr, setseemoreAttr] = useState(true);
-  const [seemoreChild, setseemoreChild] = useState(true);
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
 
-
-  const handleSeeMoreChild = () => {
-    setseemoreChild(!seemoreChild);
-  };
 
   const handleSeeMoreAttr = () => {   
     setseemoreAttr(!seemoreAttr);
@@ -52,7 +48,8 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
         // Use traditional 'for loops' for IE 11
         for(const mutation of mutationsList) {
           if (mutation.type === 'childList') {
-              console.log('A child node has been added or removed.');
+              // console.log('A child node has been added or removed.');
+
           }
           else if (mutation.type === 'attributes') {
 
@@ -81,16 +78,14 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
     domObserver.observe(targetNode, config);
   }
 
-  const numChildrenToDisplay = !seemoreChild ? children.length : 2 ;
   const numAttibToDisplay = !seemoreAttr ? dataAttributes.length : 2 ;
-  const leftover = children.length  - 3;
   const attrleftover = dataAttributes.length - 2;
 
   React.useEffect(() => {
     
     initializeDomObserver();
 
-    const classNamesWithStatus = classNames.map(name => ({ name, updated: false }));
+    const classNamesWithStatus = classNames.map(name => ({ name, updated: false, removed: false }));
 
     setDomInfo({ ...domInfo, tag, classNames: classNamesWithStatus, parent, children, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement }) //set DOM info here...
 
@@ -118,11 +113,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
           border: `3px solid ${borderclr}`,
         }}
       >
-        <button
-          id="closedompeeker"
-          className="close-btn-style"
-          onClick={() => onClose(idx, id, uniqueID)}
-        >
+        <button id="closedompeeker" className="close-btn-style" onClick={() => onClose(idx, id, uniqueID)}>
           x
         </button>
         <div>
@@ -176,27 +167,10 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
             >
               {seemoreAttr  ? `... ${attrleftover} more` : `... see less`}
             </div>
-          ) }                    
-          <div className="dom-dialog">Children[{children.length-1}]</div>
-          <div className="dom-dialog-child-details">
-            {children.filter(clsname => clsname.id !== "#domInfoHighlight" ).slice(0, numChildrenToDisplay).map((val) => (              
-              <div>
-                <div className="dom-details-tag">{val.tag}</div>
-                {val.id}                             
-                {val.class && val.class.replace(/  /g, ".").replace(/ /g, ".")  }        
-                <br />
-              </div>
-            ))}         
-          </div>          
-          {children.length - 1 > 2 && (            
-            <div
-              id="closedompeeker"
-              className="see-more"
-              onClick={handleSeeMoreChild}
-            >                        
-              {seemoreChild  ? `... ${leftover} more` : `... see less`}
-            </div>
-          ) }
+          )}
+
+          <ChildrenDetails children={children} />
+
         </div>
 
         <DomOptions 
