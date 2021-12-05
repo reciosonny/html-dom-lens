@@ -13,12 +13,16 @@ import * as domUtils from "../utils/domUtils";
 import BookmarkPanel from "./BookmarkPanel";
 import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 
-import useBookmarksStore from '../hooks/useBookmarksStore';
+import useLocalStorageStore from "../hooks/useLocalStorageStore";
 
 window.store = {
   focusMode: false,
   switchExtensionFunctionality: true,
-  bookmarkBtnClicked: false //we can use this to set a guard to `onClick` event we wired up using plain javascript to prevent those logic from getting mixed up
+  bookmarkBtnClicked: false, //we can use this to set a guard to `onClick` event we wired up using plain javascript to prevent those logic from getting mixed up
+  DomInfoDialogBox: {
+    children: [],
+    classList: []
+  }
 };
 
 function App() {
@@ -36,7 +40,7 @@ function App() {
   const [selectedElem, setSelectedElem] = useState({});
   const [switchExtensionFunctionality, setExtensionFunctionality] = useState(true);
 
-  const bookmarksStore = useBookmarksStore();
+  const [bookmarksStore, setBookmarksStore] = useLocalStorageStore('bookmarks', []);
   
 
   const onTurnOffExtension = () => {
@@ -340,11 +344,8 @@ function App() {
                 key={idx}
                 idx={idx}
                 id={domInfo.id}
-                clstag={domInfo.clstag}
-                clsname={domInfo.clsname}
-                parenttag={domInfo.parenttag}
-                parentId={domInfo.parentID}
-                parentClass={domInfo.parentClass}
+                tag={domInfo.tag}
+                classNames={domInfo.classNames}
                 parent={domInfo.parent}
                 children={domInfo.children}
                 top={domInfo.y}

@@ -4,18 +4,27 @@ const useBookmarksStore = () => {
   
   const [state, setState] = React.useState([]);
 
-  const storeBookmarks = localStorage.getItem("bookmarks");
   
   React.useEffect(() => {
+    
+    const storedBookmarks = localStorage.getItem("bookmarks");
 
-    setState(JSON.parse(storeBookmarks) ?? []);
+    if (storedBookmarks) {
+      setState(JSON.parse(storedBookmarks) ?? []);    
+    }
 
     return () => {
       
     }
-  }, [storeBookmarks]);
+  }, []);
 
-  return state;
+
+  const setBookmarksStore = (value) => {
+    
+    localStorage.setItem('bookmarks', value);
+  }
+
+  return [state, setBookmarksStore];
 }
 
 export default useBookmarksStore
