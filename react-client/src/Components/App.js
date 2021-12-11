@@ -11,6 +11,7 @@ import {forEach} from 'lodash'
 
 import * as domUtils from "../utils/domUtils";
 import BookmarkPanel from "./BookmarkPanel";
+import AnnotationPanel from "./AnnotationPanel";
 import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 
 import useBookmarksStore from '../hooks/useBookmarksStore';
@@ -29,7 +30,10 @@ function App() {
   const [stateConfigOptions, setStateConfigOptions] = useState({ showAddBookmarkPanel: false, focusMode: false, addBookmarkModeEnabled: false });
 
   const [selectedAddBookmarkDomElIdx, setSelectedAddBookmarkDomElIdx] = useState(null);
+  const [selectedAddAnnotationDomElIdx, setSelectedAddAnnotationDomElIdx] = useState(null);
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
+  
+  const [showAddAnnotationPanel, setshowAddAnnotationPanel] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   // If this is enabled, disable events like mouse hover. If user clicks outside of add bookmark component, then set `add bookmark mode` to false.
   
@@ -130,13 +134,14 @@ function App() {
       
       if (!window.store.switchExtensionFunctionality) return;
 
-      if(!containsBookmarkModule(e)) {
-        
+      if(!containsBookmarkModule(e) ) {
+     
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
         const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");
   
-        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked)
+        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || containsAnnotationModule(e))
+        
           return;
 
         //capture all classes of the dom for bookmark module
@@ -220,15 +225,16 @@ function App() {
 
     document.addEventListener("mouseover", async (e) => {
       if (!containsBookmarkModule(e)) {
-        if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
+        if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
 
 
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
         const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
+        const isNotSelectedDomFromAnnotation = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
         
 
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode) {
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode && !containsAnnotationModule(e)) {
           const domType = e.target.nodeName?.toLowerCase();
           await setDomLeanDetails({
             ...domLeanDetails,
@@ -244,7 +250,7 @@ function App() {
 
     document.addEventListener("mouseout", e => {
       if(!containsBookmarkModule(e)) {
-        if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
+        if (!window.store.switchExtensionFunctionality || window.store.focusMode || containsAnnotationModule(e) ) return;
   
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
@@ -294,6 +300,13 @@ function App() {
     return isBookmarkPanel;
   }
 
+  const containsAnnotationModule = (e) => {
+    
+    const isAnnotationPanel = domUtils.ancestorExistsByClassName(e.target, 'annotation-panel');
+
+    return isAnnotationPanel;
+  }
+
   const onClickOption = (e) => {
     setShowAddBookmarkPanel(true)
   }
@@ -305,7 +318,15 @@ function App() {
     window.store.bookmarkBtnClicked = false; //set the store to false afterwards
   }
 
+  const onCloseAddAnnotation = (e) => {//hnbm
+    setSelectedAddBookmarkDomElIdx(null);
+    setShowAddBookmarkPanel(false);
+
+    // window.store.bookmarkBtnClicked = false; //set the store to false afterwards
+  }
+
   const onClickAddBookmark = (idx) => {
+    
     setSelectedAddBookmarkDomElIdx(idx);
     setShowAddBookmarkPanel(!showAddBookmarkPanel);
   }
@@ -313,6 +334,12 @@ function App() {
   const onClickFocus = (elTarget) => {
     setFocusMode(!focusMode);
     elTarget.classList.toggle('focused-targeted-element');
+  }
+
+  
+  const onClickAddAnnotation = (idx) => {   
+    // setSelectedAddAnnotationDomElIdx(idx);
+    setshowAddAnnotationPanel(!showAddAnnotationPanel);
   }
 
   return (
@@ -361,6 +388,7 @@ function App() {
                 onClickFocus={onClickFocus}
                 focusMode={focusMode}
                 onClickBookmarkEmit={onClickAddBookmark}
+                onClickAnnotationEmit={onClickAddAnnotation}
                 hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark}
               />
             );
@@ -374,7 +402,7 @@ function App() {
             domType={domLeanDetails.domType}
             show={true}
           />
-
+             
           <BookmarkPanel
             elClassNames={selectedElem.elClassNames}
             domType={selectedElem.domType}
@@ -383,6 +411,17 @@ function App() {
             domId={selectedElem.domId}
             showAddBookmarkPanel={showAddBookmarkPanel}
             onCloseAddBookmark={onCloseAddBookmark}
+            domTarget={selectedElem.domTarget}
+          />
+           
+          <AnnotationPanel
+            elClassNames={selectedElem.elClassNames}
+            domType={selectedElem.domType}
+            x={selectedElem.x}
+            y={selectedElem.y}
+            domId={selectedElem.domId}
+            showAddAnnotationPanel={showAddAnnotationPanel}
+            onCloseAddAnnotation={onCloseAddAnnotation}
             domTarget={selectedElem.domTarget}
           />
         </div>

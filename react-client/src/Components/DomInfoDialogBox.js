@@ -17,12 +17,13 @@ const FontColorDetails = ({ textcolor }) => {
 }
 
 const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, onClickAnnotationEmit, hasExistingBookmark }) => {
 
   
   const [childrenArray, setchildrenArray] = useState("2");
   const [attributeArray, setattributeArray] = useState("2");
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
+  const [showAddAnnotationPanel, setshowAddAnnotationPanel] = useState(false);
 
   const handleSeemore = () => {
     setchildrenArray(children.length);
@@ -37,13 +38,17 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
     setattributeArray("2");
   };
 
-  const onClickBookmark = () => {
-
+  const onClickBookmark = () => {    
     // still need to fix this a bit...can introduce spaghetti code
     window.store.bookmarkBtnClicked = true;
 
     setShowAddBookmarkPanel(!showAddBookmarkPanel);
     onClickBookmarkEmit(idx);
+  }
+
+  const onClickAnnotation = (idx) => {
+    setshowAddAnnotationPanel(!showAddAnnotationPanel);
+    onClickAnnotationEmit(idx);
   }
 
   const leftover = children.length - childrenArray - 1;
@@ -173,7 +178,9 @@ const DomInfoDialogBox = ({ id, idx, clstag, clsname, parent, children, top, lef
           focusMode={focusMode} 
           onClickFocus={() => onClickFocus(domElement)} 
           onClickBookmark={onClickBookmark} 
+          onClickAnnotation={onClickAnnotation} 
           showAddBookmarkPanel={showAddBookmarkPanel} 
+          showAddAnnotationPanel={showAddAnnotationPanel}
         />
 
       </div>

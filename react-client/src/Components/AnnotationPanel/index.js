@@ -5,16 +5,18 @@ import { v4 as uuidv4 } from "uuid";
 
 import * as domUtils from "../../utils/domUtils";
 
-import AddBookmarkPanel from "./AddBookmarkPanel";
-import BookmarkInfo from "./BookmarkInfo";
-import SelectedDomFromBookmark from "./SelectedDomFromBookmark";
+import AddAnnotationPanel from "./AddAnnotationPanel";
+
+// import AddBookmarkPanel from "./AddBookmarkPanel";
+// import BookmarkInfo from "./BookmarkInfo";
+// import SelectedDomFromBookmark from "./SelectedDomFromBookmark";
 import useBookmarksStore from "../../hooks/useBookmarksStore";
 import { RiH1 } from "react-icons/ri";
 
-const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAddBookmark, x, y, domId, domTarget }) => {
-    
-  const [bookmarkHidden, setBookmarkHidden] = useState(true);
-  const [btnBookmarkHidden, setBtnBookmarkHidden] = useState(true);
+const AnnotationPanel = ({ elClassNames, domType, showAddAnnotationPanel, onCloseAddAnnotation, x, y, domId, domTarget }) => {
+    // debugger
+  const [annotationHidden, setannotationHidden] = useState(true);
+  // const [btnBookmarkHidden, setBtnBookmarkHidden] = useState(true);
   const [bookmarks, setBookmarks] = useState([]);
   const [retrievedEl, setRetrievedEl] = useState({});
   const [savedElNode, setRetrievedElNode] = useState(null);
@@ -23,16 +25,16 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
 
   const bookmarksStore = useBookmarksStore();
 
-  const onOpenBookmark = (e) => {
-    setBookmarkHidden(false);
-    setBtnBookmarkHidden(true);
+  const onOpenAnnotation = (e) => {
+    setannotationHidden(false);
+    // setBtnBookmarkHidden(true);
   };
 
-  const onCloseBookmark = (e) => {
-    setBookmarkHidden(true);
-    setBtnBookmarkHidden(false);
+  const onCloseAnnotation = (e) => {
+    setannotationHidden(true);
+    // setBtnBookmarkHidden(false);
 
-    onCloseAddBookmark();
+    onCloseAddAnnotation();
   };
 
   const onRemoveBookmark = (e) => {
@@ -45,52 +47,52 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
       localStorage.setItem("bookmarks", JSON.stringify(bookmarksStore));
 
       if (bookmarks.length === 0 || bookmarksStore.length === 0) {
-        setBookmarkHidden(true);
-        setBtnBookmarkHidden(false);
-        localStorage.removeItem("bookmarks");
+        // setBookmarkHidden(true);
+        // setBtnBookmarkHidden(false);
+        // localStorage.removeItem("bookmarks");
       }
     }
   };
 
-  const saveBookmark = async (e) => {
+  const saveAnnotation = async (e) => {
     e.preventDefault();
 
-    const domIdentifier =
-      domUtils.getUniqueElementIdentifierByTagAndIndex(domTarget);
+    // const domIdentifier =
+    //   domUtils.getUniqueElementIdentifierByTagAndIndex(domTarget);
 
-    const element =
-      e.target.parentElement.querySelector(".lbl-element").innerText;
-    const classes =
-      e.target.parentElement.querySelector(".lbl-classes").innerText;
-    const elId = domTarget.id;
-    const randomCode = uuidv4();
+    // const element =
+    //   e.target.parentElement.querySelector(".lbl-element").innerText;
+    // const classes =
+    //   e.target.parentElement.querySelector(".lbl-classes").innerText;
+    // const elId = domTarget.id;
+    // const randomCode = uuidv4();
 
-    let txtVal = e.target.querySelector("input").value;
+    // let txtVal = e.target.querySelector("input").value;
 
-    let bookmarkObj = {
-      id: randomCode,
-      title: txtVal,
-      elem: domIdentifier.elType,
-      elId,
-      classes,
-      domIndex: domIdentifier.index,
-    };
+    // let bookmarkObj = {
+    //   id: randomCode,
+    //   title: txtVal,
+    //   elem: domIdentifier.elType,
+    //   elId,
+    //   classes,
+    //   domIndex: domIdentifier.index,
+    // };
 
-    if (!isEmpty(txtVal)) {
-      bookmarkObj.title = txtVal;
-    } else {
-      bookmarkObj.title = element + classes;
-    }
+    // if (!isEmpty(txtVal)) {
+    //   bookmarkObj.title = txtVal;
+    // } else {
+    //   bookmarkObj.title = element + classes;
+    // }
 
-    bookmarksStore.push(bookmarkObj);
+    // bookmarksStore.push(bookmarkObj);
 
-    await setBookmarks((oldBookmarks) => [...oldBookmarks, bookmarksStore]);
+    // await setBookmarks((oldBookmarks) => [...oldBookmarks, bookmarksStore]);
 
-    localStorage.setItem("bookmarks", JSON.stringify(bookmarksStore));
+    // localStorage.setItem("bookmarks", JSON.stringify(bookmarksStore));
 
-    e.target.querySelector("input").value = "";
+    // e.target.querySelector("input").value = "";
 
-    onCloseAddBookmark();
+    onCloseAddAnnotation();
   };
 
   const onClickBookmarkList = async (e) => {
@@ -128,47 +130,30 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
       : [];
     setBookmarks(savedBookmarks);
 
-    if (savedBookmarks.length !== 0 && bookmarkHidden) {
-      setBtnBookmarkHidden(false);
-      setBookmarkHidden(true);
+    if (savedBookmarks.length !== 0 && annotationHidden) {
+      // setBtnBookmarkHidden(false);
+      setannotationHidden(true);
     } else {
-      setBtnBookmarkHidden(true);
+      // setBtnBookmarkHidden(true);
     }
   }, [bookmarks.length]);
 
   return (
-    <div class="bookmark-panel">
-      {showAddBookmarkPanel && (
-        <AddBookmarkPanel
+    <div class="annotation-panel">
+      
+     {showAddAnnotationPanel && (
+        <AddAnnotationPanel
           domType={domType}
           elClassNames={elClassNames}
-          saveBookmark={saveBookmark}
-          onClose={onCloseAddBookmark}
+          saveAnnotation={saveAnnotation}
+          onClose={onCloseAddAnnotation}
           x={x}
           y={y}
           domId={domId}
         />
       )}
-  
-      <SelectedDomFromBookmark ref={refSelectedDom} selectedDom={retrievedEl} />
-
-      <BookmarkInfo
-        bookmarkHidden={bookmarkHidden}
-        onCloseBookmark={onCloseBookmark}
-        bookmarks={bookmarks}
-        onRemove={onRemoveBookmark}
-        onClickBookmarkList={onClickBookmarkList}
-      />
-      <button
-        className="bookmark-btn"
-        onClick={onOpenBookmark}
-        hidden={btnBookmarkHidden}
-      >
-        <BsFillBookmarkFill />
-        &nbsp; Bookmarks
-      </button>
     </div>
   );
 };
 
-export default BookmarkPanel;
+export default AnnotationPanel;
