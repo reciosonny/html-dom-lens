@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useEffect} from "react";
 
 import { AiOutlineClose } from "react-icons/ai";
 
-const AddBookmarkPanel = ({ domType, elClassNames, saveBookmark, onClose, x, y, domId }) => (
-  <div className='add__bookmark-panel' style={{ top: y + 270, left: x + 15 }}>
-    <span className='header'>
+const AddBookmarkPanel = ({ domType, elClassNames, saveBookmark, onClose, dialogSize, x, y, domId }) => (
+  // <div className='add__bookmark-panel' style={{ top: y + 270, left: x + 15 }}> 
+  //New formula for coordinates to target bottom dialog box {bottomofdialogbox = dialogsize + selectedelementcoordinate}
+   <div className='add__bookmark-panel' style={{ top: ((dialogSize + y) - 20) , left: x + 15 }}>  
+    <span className='add__bookmark-panel-header'>
       <h3 className='header-text'>Save Bookmark</h3>
       <button className='header__close-btn' type='button' onClick={onClose}>
         <AiOutlineClose size={14} />

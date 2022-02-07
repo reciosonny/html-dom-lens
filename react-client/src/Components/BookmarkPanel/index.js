@@ -11,14 +11,24 @@ import SelectedDomFromBookmark from "./SelectedDomFromBookmark";
 
 import useLocalStorageStore from "../../hooks/useLocalStorageStore";
 
-const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAddBookmark, x, y, domId, domTarget }) => {
+const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAddBookmark,  x, y, domId, domTarget }) => {
     
   const [bookmarkHidden, setBookmarkHidden] = useState(true);
   const [btnBookmarkHidden, setBtnBookmarkHidden] = useState(true);
   const [retrievedEl, setRetrievedEl] = useState({});
   const [savedElNode, setRetrievedElNode] = useState(null);
+  const [latestDialogSize, setLatestDialogSize] = useState(null);
 
   const refSelectedDom = React.useRef(null);
+
+  // modified current implementation getting the latest size of dom-info-dialog-box
+  let dialogboxCount = document.querySelectorAll('.dom-info-dialog-box').length;
+  if (dialogboxCount > 0)
+  {
+    let getLatestDialogBox = document.querySelectorAll('.dom-info-dialog-box')[dialogboxCount - 1]
+    let data = getLatestDialogBox.offsetHeight;
+    setLatestDialogSize(data);
+  }
 
   const [bookmarksStore, setBookmarksStore] = useLocalStorageStore('bookmarks', []);
 
@@ -139,6 +149,7 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
           elClassNames={elClassNames}
           saveBookmark={saveBookmark}
           onClose={onCloseAddBookmark}
+          dialogSize={latestDialogSize}
           x={x}
           y={y}
           domId={domId}

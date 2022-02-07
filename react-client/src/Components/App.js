@@ -40,7 +40,9 @@ function App() {
   const [selectedElem, setSelectedElem] = useState({});
   const [switchExtensionFunctionality, setExtensionFunctionality] = useState(true);
 
+
   const [bookmarksStore, setBookmarksStore] = useLocalStorageStore('bookmarks', []);
+  // let latestDialogSize = "" ;
   
 
   const onTurnOffExtension = () => {
@@ -76,6 +78,8 @@ function App() {
        * https://web.archive.org/web/20131014212210/http://stackoverflow.com/
        */
       getPageContent('https://www.redfin.com/');
+      // getPageContent('https://www.duckduckgo.com/');
+      // getPageContent('https://ph.yahoo.com/?p=us');
       // getPageContent(
       //   "https://web.archive.org/web/20131014212210/http://stackoverflow.com/"
       // );
@@ -216,10 +220,10 @@ function App() {
               });
             }, 10);
           }(pageYcoordinate));
-
-
+       
         }
       }
+
     });
 
     document.addEventListener("mouseover", async (e) => {
@@ -349,7 +353,7 @@ function App() {
                 parent={domInfo.parent}
                 children={domInfo.children}
                 top={domInfo.y}
-                left={domInfo.x}
+                left={domInfo.x}                
                 onClose={handleRemoveDialogBox}
                 fontsize={domInfo.size}
                 fontfamily={domInfo.family}
@@ -378,7 +382,7 @@ function App() {
 
           <BookmarkPanel
             elClassNames={selectedElem.elClassNames}
-            domType={selectedElem.domType}
+            domType={selectedElem.domType}            
             x={selectedElem.x}
             y={selectedElem.y}
             domId={selectedElem.domId}

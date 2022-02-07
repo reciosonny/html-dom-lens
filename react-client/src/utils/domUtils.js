@@ -114,7 +114,7 @@ function extractDomInfo(elTarget) {
     tag: elTarget.localName,
     classNames,
     children: children,
-    parent,
+    parent,    
     size: elComputedStyle["font-size"],
     textcolor: colorhex,
     family: elComputedStyle["font-family"].replaceAll('"', ''),
