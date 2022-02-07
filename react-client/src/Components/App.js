@@ -177,7 +177,7 @@ function App() {
                 domBorder: {
                   border: `3px solid ${extractedDomInfo.bordercolor}`,
                   'border-radius': '8px'
-                }
+                }               
               }
             )
             .attach();

@@ -132,15 +132,16 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
           left: `${left}px`,
           border: `3px solid ${borderclr}`,
         }}
-      >
+      >        
         <button id="closedompeeker" className="close-btn-style" onClick={() => onClose(idx, id, uniqueID)}>
           x
         </button>
+       
         <div>
           <div className="dom-header">
             <span className="dom-header-tag">{tag}</span>
-            {id && <span className="dom-header-details">{id}</span>}
-            {domInfo.classNames.filter(obj => obj.name !== ".focused-dom").map((val) => (
+            {id && <span className="dom-header-details">{id}</span>}           
+            {domInfo.classNames.filter(obj => obj.name !== ".focused-dom"  && !obj.name.includes("c00")).map((val) => (              
               <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
             ))}
           </div>
