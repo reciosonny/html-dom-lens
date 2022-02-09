@@ -165,7 +165,7 @@ function App() {
   
         const elTarget = e.target;
   
-        if (elTarget.id !== "closedompeeker") {
+        if (elTarget.id !== "closeDom") {
           e.preventDefault();
   
           const extractedDomInfo = domUtils.extractDomInfo(elTarget);

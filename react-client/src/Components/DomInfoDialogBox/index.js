@@ -133,7 +133,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
           border: `3px solid ${borderclr}`,
         }}
       >
-        <button id="closedompeeker" className="close-btn-style" onClick={() => onClose(idx, id, uniqueID)}>
+        <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, id, uniqueID)}>
           x
         </button>
         <div>
@@ -181,7 +181,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
 
           {dataAttributes.length > 2 &&(            
             <div
-              id="closedompeeker"
+              id="closeDom"
               className="see-more"
               onClick={handleSeeMoreAttr}
             >

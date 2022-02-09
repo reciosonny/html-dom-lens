@@ -40,7 +40,7 @@ const ChildrenDetails = ({ children }) => {
       </div>
       {filteredChildren.length > 2 && (            
         <div
-          id="closedompeeker"
+          id="closeDom"
           className="see-more"
           onClick={handleSeeMoreChild}
         >                        
