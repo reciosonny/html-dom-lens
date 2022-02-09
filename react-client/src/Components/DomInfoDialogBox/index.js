@@ -141,7 +141,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
           <div className="dom-header">
             <span className="dom-header-tag">{tag}</span>
             {id && <span className="dom-header-details">{id}</span>}           
-            {domInfo.classNames.filter(obj => obj.name !== ".focused-dom"  && !obj.name.includes("c00")).map((val) => (              
+            {domInfo.classNames.filter(obj => obj.name !== ".focused-dom"  && !obj.name.includes("custom-css")).map((val) => (              
               <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
             ))}
           </div>
@@ -163,7 +163,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
           <ParentDetails 
             tag={parent.tag}
             id={parent.id}
-            classes={parent.classes}
+            classes={parent.classes.filter(parentClass => !parentClass.includes('custom-css'))}
           />
 
           <div className="dom-dialog">data-* attributes </div>             

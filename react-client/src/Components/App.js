@@ -178,7 +178,8 @@ function App() {
                   border: `3px solid ${extractedDomInfo.bordercolor}`,
                   'border-radius': '8px'
                 }               
-              }
+              },
+              {classNamePrefix :'custom-css'}
             )
             .attach();
  
