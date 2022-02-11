@@ -64,17 +64,16 @@ const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "
 function extractDomInfo(elTarget) {
   
   const classNames = [...elTarget.classList].map((name) => `.${name}`);
-
+  
   const children = [...elTarget.children].map((child) => {
     return {
       id: child.id ? "#" + child.id : null,
-      class: child.className ? "." + child.className : null,
+      class: child.className && "." + child.className,
       tag: child.localName,
       element: child
     };
   });
-
-
+  
   const dataAttributes = Object.entries(elTarget.dataset).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
     
   const elComputedStyle = ["font-size", "color", "font-family"].reduce(
@@ -98,11 +97,12 @@ function extractDomInfo(elTarget) {
   );
   
   const elParent = elTarget.parentElement;
+  
   const parent = {
     id: elParent.id && `#${elParent.id.trim()}`,
-    tag: elParent.localName,
-    class: elParent.className && `.${elParent.className.trim()}`,
-    classes: [...elParent.classList]
+    tag: elParent.localName,    
+    class: elParent.className && `.${elParent.className}`,
+    classes: [...elParent.classList.value.split(" ").filter(customFilter => !customFilter.includes('custom-css'))]
   };
 
   const randomcolor = Math.floor(Math.random() * colorselection.length);

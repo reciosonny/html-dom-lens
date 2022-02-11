@@ -36,23 +36,24 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
   const initializeDomObserver = async () => {
 
     const targetNode = domElement;
-
+    
     // Options for the observer (which mutations to observe)
     const config = { attributes: true, childList: true, subtree: true };
 
     // Callback function to execute when mutations are observed
     const callback = (mutationsList, observer) => {
-
+      
         for(const mutation of mutationsList) {
+          
           if (mutation.type === 'childList') {
               
             if (domElement !== mutation.target) return;
 
-            const newChildren = [...mutation.target.children].map((child) => {
-
+            // const newChildren = [...mutation.target.children].map((child) => {
+            const newChildren = [...mutation.target.children].map((child) => {  
               // If it doesn't exist in existing children the first time dialogbox shows up, then it's a new child
               const updated = !children.some(val => val.element === child);
-
+              
               return {
                 id: child.id ? "#" + child.id : null,
                 class: child.className ? "." + child.className : null,
@@ -62,8 +63,8 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
             });
 
             window.store.DomInfoDialogBox.children = newChildren; //need to put it inside window.store so it gets the updated children (see mutation type attributes)
-
-            setDomInfo({ ...domInfo, classNames: window.store.DomInfoDialogBox.classList, children: newChildren });
+       
+            setDomInfo({ ...domInfo, classNames: window.store.DomInfoDialogBox.classList, children: children });
           }
           else if (mutation.type === 'attributes') {
 
@@ -162,9 +163,10 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
           
           <ParentDetails 
             tag={parent.tag}
-            id={parent.id}
-            classes={parent.classes.filter(parentClass => !parentClass.includes('custom-css'))}
+            id={parent.id}            
+            classes={parent.classes}
           />
+
 
           <div className="dom-dialog">data-* attributes </div>             
           <div className="dom-dialog-child-details">   
