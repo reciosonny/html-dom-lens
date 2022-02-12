@@ -2,6 +2,7 @@ import React, { useeffect, useState } from "react";
 import DomOptions from "../DomOptions";
 import ChildrenDetails from "./ChildrenDetails";
 import ParentDetails from "./ParentDetails";
+import * as domUtils from "../../utils/domUtils";
 
 const FontColorDetails = ({ textcolor }) => {
 
@@ -63,8 +64,8 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
             });
 
             window.store.DomInfoDialogBox.children = newChildren; //need to put it inside window.store so it gets the updated children (see mutation type attributes)
-       
-            setDomInfo({ ...domInfo, classNames: window.store.DomInfoDialogBox.classList, children: children });
+            setDomInfo({ ...domInfo, classNames: window.store.DomInfoDialogBox.classList, children: domUtils.customChildFilter(newChildren) });
+            
           }
           else if (mutation.type === 'attributes') {
 
