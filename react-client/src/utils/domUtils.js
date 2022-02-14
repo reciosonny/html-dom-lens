@@ -84,16 +84,18 @@ function customClassFilter(toFilter) {
 // removes all customed css from children
 function customChildFilter(toFilter) {  
 
-  toFilter.map(
+  const filteredChild = toFilter.map(
     (val) =>
-      (                           
-        val.class = val.class !== " " && val.class !== "undefined" && val.class !== null ? val.class
+      {                           
+        const isFiltered = val.class !== " " && val.class !== "undefined" && val.class !== null ? val.class
         .split(" ")
-        .filter((customFilter) => !customFilter.includes("custom-css")).toString()  : null     
-      )
+        .filter((customFilter) => !customFilter.includes("custom-css")).toString()  : null    
+        
+        return {...val, class: isFiltered}
+      }
   );
 
-  return toFilter;
+  return filteredChild;
 }
 
 const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "#7E57C2", "#9575CD", "#B39DDB", "#D1C4E9", "#EDE7F6", "#E91E63", "#D81B60", "#C2185B", "#AD1457", "#880E4F", "#EC407A", "#F06292", "#F48FB1", "#F8BBD0", "#FCE4EC", "#263238", "#37474F", "#455A64", "#546E7A", "#607D8B", "#78909C", "#90A4AE", "#B0BEC5", "#CFD8DC", "#ECEFF1"];
@@ -101,7 +103,7 @@ const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "
 
 function extractDomInfo(elTarget) {
   
-  const classNames = [...elTarget.classList].filter(customFilter => !customFilter.includes('custom-css')).map((name) => `.${name}`);  
+  const classNames = [...elTarget.classList].map((name) => `.${name}`);  
 
   const children = [...elTarget.children].map((child) => {
     return {
