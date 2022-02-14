@@ -33,7 +33,7 @@ const ChildrenDetails = ({ children }) => {
           <div className={val.updated && 'highlight-div'}>
             <div className="dom-details-tag">{val.tag}</div>           
             {val.id}          
-            {val.class && val.class.replace(/  /g, ".").replace(/ /g, ".")  } 
+            {val.class && val.class.replace(/  /g, ".").replace(/ /g, ".").replace(/,,/g, ".")  } 
             <br />
           </div>
         ))}

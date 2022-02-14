@@ -58,13 +58,39 @@ function getElementByTagAndIndex(elType, idxToFind) {
   return retrievedElement;
 }
 
+// removes all customed css from classnames in widget
+function customWidgetFilter(toFilter) {
+  if (toFilter != "") {
+    const isFiltered = toFilter
+      .split(".")
+      .filter((customFilter) => !customFilter.includes("custom-css"))
+      .toString();
+
+    return isFiltered.replace(/,/g, ".");
+  } else {
+    return toFilter;
+  }
+}
+
+// removes all customed css from classnames array
+function customClassFilter(toFilter) {
+ 
+ const isFiltered = toFilter.filter(
+    (obj) => obj.name !== ".focused-dom" && !obj.name.includes("custom-css")
+  );
+  return isFiltered;
+}
+
 // removes all customed css from children
-function customChildFilter(toFilter) {
+function customChildFilter(toFilter) {  
+
   toFilter.map(
     (val) =>
-      (val.class = val.class
+      (                           
+        val.class = val.class !== " " && val.class !== "undefined" && val.class !== null ? val.class
         .split(" ")
-        .filter((customFilter) => !customFilter.includes("custom-css")))
+        .filter((customFilter) => !customFilter.includes("custom-css")).toString()  : null     
+      )
   );
 
   return toFilter;
@@ -75,8 +101,8 @@ const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "
 
 function extractDomInfo(elTarget) {
   
-  const classNames = [...elTarget.classList].map((name) => `.${name}`);
-  
+  const classNames = [...elTarget.classList].filter(customFilter => !customFilter.includes('custom-css')).map((name) => `.${name}`);  
+
   const children = [...elTarget.children].map((child) => {
     return {
       id: child.id ? "#" + child.id : null,
@@ -144,5 +170,7 @@ export {
   extractDomInfo,
   getElementByTagAndIndex,
   getUniqueElementIdentifierByTagAndIndex,
-  customChildFilter
+  customChildFilter,
+  customClassFilter,
+  customWidgetFilter
 }

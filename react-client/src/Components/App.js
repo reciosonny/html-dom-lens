@@ -371,9 +371,9 @@ function App() {
           {/* Note: This component is used to inject this into DOM element once we hover and display minimal details the DOM needs */}
           <DomMinimalDetailsWidget
             ref={refDomHighlight}
-            elId={domLeanDetails.elId}
+            elId={domLeanDetails.elId}            
             elClassNames={domLeanDetails.elClassNames}
-            domType={domLeanDetails.domType}
+            domType={domLeanDetails.domType}          
             show={true}
           />
 

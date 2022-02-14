@@ -64,7 +64,8 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
             });
 
             window.store.DomInfoDialogBox.children = newChildren; //need to put it inside window.store so it gets the updated children (see mutation type attributes)
-            setDomInfo({ ...domInfo, classNames: window.store.DomInfoDialogBox.classList, children: domUtils.customChildFilter(newChildren) });
+            
+            setDomInfo({ ...domInfo, classNames: window.store.DomInfoDialogBox.classList, children: newChildren });
             
           }
           else if (mutation.type === 'attributes') {
@@ -109,7 +110,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
     window.store.DomInfoDialogBox.children = childrenWithStatus;
 
 
-    setDomInfo({ ...domInfo, tag, classNames: classNamesWithStatus, parent, children: childrenWithStatus, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement }) //set DOM info here...
+    setDomInfo({ ...domInfo, tag, classNames:  classNamesWithStatus, parent, children: childrenWithStatus, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement }) //set DOM info here...
 
     return () => {
       domObserver.disconnect();
@@ -142,10 +143,10 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
         <div>
           <div className="dom-header">
             <span className="dom-header-tag">{tag}</span>
-            {id && <span className="dom-header-details">{id}</span>}           
-            {domInfo.classNames.filter(obj => obj.name !== ".focused-dom"  && !obj.name.includes("custom-css")).map((val) => (              
+            {id && <span className="dom-header-details">{id}</span>}                       
+              {domUtils.customClassFilter(domInfo.classNames).map((val) => (    
               <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
-            ))}
+            ))}            
           </div>
           <div className="flex-row">
             <div className="flex-column">
@@ -193,7 +194,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
             </div>
           )}
 
-          <ChildrenDetails children={domInfo.children} />
+          <ChildrenDetails children={domUtils.customChildFilter(domInfo.children)} />
         </div>
 
         <DomOptions 
