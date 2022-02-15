@@ -2,6 +2,7 @@ import React, { useeffect, useState } from "react";
 import DomOptions from "../DomOptions";
 import ChildrenDetails from "./ChildrenDetails";
 import ParentDetails from "./ParentDetails";
+import * as domUtils from "../../utils/domUtils";
 
 const FontColorDetails = ({ textcolor }) => {
 
@@ -36,23 +37,24 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
   const initializeDomObserver = async () => {
 
     const targetNode = domElement;
-
+    
     // Options for the observer (which mutations to observe)
     const config = { attributes: true, childList: true, subtree: true };
 
     // Callback function to execute when mutations are observed
     const callback = (mutationsList, observer) => {
-
+      
         for(const mutation of mutationsList) {
+          
           if (mutation.type === 'childList') {
               
             if (domElement !== mutation.target) return;
 
-            const newChildren = [...mutation.target.children].map((child) => {
-
+            // const newChildren = [...mutation.target.children].map((child) => {
+            const newChildren = [...mutation.target.children].map((child) => {  
               // If it doesn't exist in existing children the first time dialogbox shows up, then it's a new child
               const updated = !children.some(val => val.element === child);
-
+              
               return {
                 id: child.id ? "#" + child.id : null,
                 class: child.className ? "." + child.className : null,
@@ -62,8 +64,9 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
             });
 
             window.store.DomInfoDialogBox.children = newChildren; //need to put it inside window.store so it gets the updated children (see mutation type attributes)
-
+            
             setDomInfo({ ...domInfo, classNames: window.store.DomInfoDialogBox.classList, children: newChildren });
+            
           }
           else if (mutation.type === 'attributes') {
 
@@ -107,7 +110,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
     window.store.DomInfoDialogBox.children = childrenWithStatus;
 
 
-    setDomInfo({ ...domInfo, tag, classNames: classNamesWithStatus, parent, children: childrenWithStatus, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement }) //set DOM info here...
+    setDomInfo({ ...domInfo, tag, classNames:  classNamesWithStatus, parent, children: childrenWithStatus, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement }) //set DOM info here...
 
     return () => {
       domObserver.disconnect();
@@ -136,13 +139,14 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
         <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, id, uniqueID)}>
           x
         </button>
+       
         <div>
           <div className="dom-header">
             <span className="dom-header-tag">{tag}</span>
-            {id && <span className="dom-header-details">{id}</span>}
-            {domInfo.classNames.filter(obj => obj.name !== ".focused-dom").map((val) => (
+            {id && <span className="dom-header-details">{id}</span>}                       
+              {domUtils.customClassFilter(domInfo.classNames).map((val) => (    
               <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
-            ))}
+            ))}            
           </div>
           <div className="flex-row">
             <div className="flex-column">
@@ -161,9 +165,10 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
           
           <ParentDetails 
             tag={parent.tag}
-            id={parent.id}
+            id={parent.id}            
             classes={parent.classes}
           />
+
 
           <div className="dom-dialog">data-* attributes </div>             
           <div className="dom-dialog-child-details">   
@@ -189,7 +194,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
             </div>
           )}
 
-          <ChildrenDetails children={domInfo.children} />
+          <ChildrenDetails children={domUtils.customChildFilter(domInfo.children)} />
         </div>
 
         <DomOptions 

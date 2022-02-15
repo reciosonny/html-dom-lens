@@ -17,7 +17,7 @@ const ChildrenDetails = ({ children }) => {
     
     const filteredList = children.filter(clsname => clsname.id !== "#domInfoHighlight");
 
-    setFilteredChildren(filteredList);
+    setFilteredChildren(filteredList);    
 
     return () => {
       
@@ -31,9 +31,9 @@ const ChildrenDetails = ({ children }) => {
       <div className="dom-dialog-child-details">
         {filteredChildren.slice(0, numChildrenToDisplay).map((val) => (              
           <div className={val.updated && 'highlight-div'}>
-            <div className="dom-details-tag">{val.tag}</div>
-            {val.id}
-            {val.class && val.class.replace(/  /g, ".").replace(/ /g, ".")  }        
+            <div className="dom-details-tag">{val.tag}</div>           
+            {val.id}          
+            {val.class && val.class.replace(/  /g, ".").replace(/ /g, ".").replace(/,,/g, ".")  } 
             <br />
           </div>
         ))}
