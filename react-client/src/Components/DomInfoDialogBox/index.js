@@ -194,7 +194,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
             </div>
           )}
 
-          <ChildrenDetails children={domUtils.customChildFilter(domInfo.children)} />
+          <ChildrenDetails children={domUtils.customChildrenFilter(domInfo.children)} />
         </div>
 
         <DomOptions 
