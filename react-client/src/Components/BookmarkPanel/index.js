@@ -51,6 +51,7 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
     }
   };
 
+  // TODO: Follow the logic here and put it inside DomInfoDialogBox.js. This code is a mess.
   const saveBookmark = async (e) => {
     e.preventDefault();
 
@@ -131,9 +132,10 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
 
   }, [bookmarksStore]);
 
+
   return (
     <div class="bookmark-panel">
-      {showAddBookmarkPanel && (
+      {/* {showAddBookmarkPanel && (
         <AddBookmarkPanel
           domType={domType}
           elClassNames={elClassNames}
@@ -143,7 +145,7 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
           y={y}
           domId={domId}
         />
-      )}
+      )} */}
 
       <SelectedDomFromBookmark ref={refSelectedDom} selectedDom={retrievedEl} />
 

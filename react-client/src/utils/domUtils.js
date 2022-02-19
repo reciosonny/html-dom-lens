@@ -101,7 +101,8 @@ const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "
 
 function extractDomInfo(elTarget) {
   
-  const classNames = [...elTarget.classList].map((name) => `.${name}`);  
+  const classNames = [...elTarget.classList].map((name) => `.${name}`);
+  const classNamesString = classNames.reduce((init, curr) => init+curr, '');
 
   const children = [...elTarget.children].map((child) => {
     return {
@@ -151,6 +152,7 @@ function extractDomInfo(elTarget) {
     domElement: elTarget,
     tag: elTarget.localName,
     classNames,
+    classNamesString,
     children: children,
     parent,
     size: elComputedStyle["font-size"],

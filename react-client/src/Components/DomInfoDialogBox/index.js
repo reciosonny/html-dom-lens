@@ -3,6 +3,7 @@ import DomOptions from "../DomOptions";
 import ChildrenDetails from "./ChildrenDetails";
 import ParentDetails from "./ParentDetails";
 import * as domUtils from "../../utils/domUtils";
+import AddBookmarkPanel from "../BookmarkPanel/AddBookmarkPanel";
 
 const FontColorDetails = ({ textcolor }) => {
 
@@ -20,18 +21,20 @@ const FontColorDetails = ({ textcolor }) => {
 }
 
 let domObserver;
-const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, left, onClose, fontsize,
+const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize,
   fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark }) => {
 
-  const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '',
-    fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
+  const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
 
-  const [seemoreAttr, setseemoreAttr] = useState(true);
+  const [seeMoreAttr, setSeeMoreAttr] = useState(true);
+
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
+  const [stateHasExistingBookmark, setStateHasExistingBookmark] = useState(false);
+  const [selectedAddBookmarkDomElIdx, setSelectedAddBookmarkDomElIdx] = useState(null);
 
 
   const handleSeeMoreAttr = () => {   
-    setseemoreAttr(!seemoreAttr);
+    setSeeMoreAttr(!seeMoreAttr);
   };
 
   const initializeDomObserver = async () => {
@@ -97,7 +100,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
     domObserver.observe(targetNode, config);
   }
 
-  const numAttibToDisplay = !seemoreAttr ? dataAttributes.length : 2 ;
+  const numAttibToDisplay = !seeMoreAttr ? dataAttributes.length : 2 ;
   const attrleftover = dataAttributes.length - 2;
 
   React.useEffect(() => {
@@ -119,12 +122,60 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
 
   React.useEffect(() => {
     // if the DOM has existing bookmark, enable it by default.
-    setShowAddBookmarkPanel(hasExistingBookmark);
+    setStateHasExistingBookmark(hasExistingBookmark);
 
     return () => {
       
     }
   }, [hasExistingBookmark]);
+
+  const onClickAddBookmark = () => { 
+    setSelectedAddBookmarkDomElIdx(idx);
+    setShowAddBookmarkPanel(!showAddBookmarkPanel);
+
+    console.log('data: ', idx);
+  };
+
+  // Note: This code is a MESS
+  const onSaveBookmark = async (e) => {
+    e.preventDefault();
+
+    const elParent = e.target.parentElement;
+    const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(domTarget);
+
+    const [element, classes] = ['.lbl-element', '.lbl-classes']
+      .reduce((acc, curr) => [...acc, elParent.querySelector(curr).innerText], []);
+    
+    const elId = domTarget.id;
+    const randomCode = uuidv4();
+
+    let txtVal = e.target.querySelector("input").value;
+
+    let bookmarkObj = {
+      id: randomCode,
+      title: txtVal,
+      elem: domIdentifier.elType,
+      elId,
+      classes,
+      domIndex: domIdentifier.index,
+    };
+
+    if (!isEmpty(txtVal)) {
+      bookmarkObj.title = txtVal;
+    } else {
+      bookmarkObj.title = element + classes;
+    }
+
+    const newBookmarks = [...bookmarksStore, bookmarkObj];
+
+    await setBookmarksStore(newBookmarks);
+
+    e.target.querySelector("input").value = "";
+
+    onCloseAddBookmark();
+  };
+
+
 
   return (
     <React.Fragment>
@@ -190,7 +241,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
               className="see-more"
               onClick={handleSeeMoreAttr}
             >
-              {seemoreAttr  ? `... ${attrleftover} more` : `... see less`}
+              {seeMoreAttr  ? `... ${attrleftover} more` : `... see less`}
             </div>
           )}
 
@@ -200,9 +251,20 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, parent, children, top, lef
         <DomOptions 
           focusMode={focusMode} 
           onClickFocus={() => onClickFocus(domElement)} 
-          onClickBookmark={onClickBookmarkEmit} 
-          showAddBookmarkPanel={showAddBookmarkPanel} 
+          // onClickBookmark={onClickBookmarkEmit} 
+          onClickBookmark={onClickAddBookmark} 
+          showAddBookmarkPanel={stateHasExistingBookmark} 
         />
+        
+        {showAddBookmarkPanel && 
+          <AddBookmarkPanel 
+            domType={tag}
+            elClassNames={classNamesString}
+            domId={uniqueID}
+            onSaveBookmark={() => alert('saving new bookmark name')}
+            onClose={() => setShowAddBookmarkPanel(false)}
+          />
+        }
 
       </div>
     </React.Fragment>

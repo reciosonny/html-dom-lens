@@ -347,6 +347,7 @@ function App() {
                 id={domInfo.id}
                 tag={domInfo.tag}
                 classNames={domInfo.classNames}
+                classNamesString={domInfo.classNamesString}
                 parent={domInfo.parent}
                 children={domInfo.children}
                 top={domInfo.y}
