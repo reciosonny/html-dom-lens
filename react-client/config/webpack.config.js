@@ -25,10 +25,10 @@ module.exports = (env, { mode, presets } = { mode: "", presets: [] }) => {
             filename: "[name].js"
         },
         resolve: {
-            alias: {
-                'react': 'preact/compat',
-                'react-dom': 'preact/compat'
-            }
+            // alias: {
+            //     'react': 'preact/compat',
+            //     'react-dom': 'preact/compat'
+            // }
         },
         module: {
             rules: [

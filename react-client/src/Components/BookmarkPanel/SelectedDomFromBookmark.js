@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SelectedDomFromBookmark = ({ selectedDom, ref }) => (
+const SelectedDomFromBookmark = React.forwardRef(({ selectedDom }, ref) => (
   <React.Fragment>
     <div id="" className="selected__dom-bookmark" ref={ref}>
       <span className="dom-info-domtype">{selectedDom.elem}</span>
@@ -10,7 +10,7 @@ const SelectedDomFromBookmark = ({ selectedDom, ref }) => (
       <span>{selectedDom.elClassNames}</span>
     </div>
   </React.Fragment>
-);
+));
 
 
 export default SelectedDomFromBookmark

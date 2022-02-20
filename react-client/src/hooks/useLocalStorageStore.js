@@ -53,7 +53,17 @@ const useLocalStorageStore = (storeName, defaultValue, isNotJSON) => {
     setState(value);
   }
 
-  return [state, setLocalStorage];
+  // we can use this to update the hooks state coming from localstorage
+  const getLocalStorageData = () => {
+    
+    let finalValue = getFinalValue();
+
+    if (finalValue) {
+      setState(finalValue);      
+    }
+  }
+
+  return [state, setLocalStorage, getLocalStorageData];
 }
 
 export default useLocalStorageStore

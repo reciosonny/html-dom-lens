@@ -14,6 +14,7 @@ import BookmarkPanel from "./BookmarkPanel";
 import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 
 import useLocalStorageStore from "../hooks/useLocalStorageStore";
+import GlobalContext from "../store/global-context";
 
 window.store = {
   focusMode: false,
@@ -40,7 +41,8 @@ function App() {
   const [selectedElem, setSelectedElem] = useState({});
   const [switchExtensionFunctionality, setExtensionFunctionality] = useState(true);
 
-  const [bookmarksStore, setBookmarksStore] = useLocalStorageStore('bookmarks', []);
+  const [bookmarksStore, setBookmarksStore, updateBookmarksStore] = useLocalStorageStore('bookmarks', []);
+  const [stateBookmarks, setStateBookmarks] = useState([]);
   
 
   const onTurnOffExtension = () => {
@@ -92,12 +94,19 @@ function App() {
           sendResponse({ status: "yes" });
         }
       });
-
     }
 
     return () => { };
   }, []);
 
+  React.useEffect(() => {
+    
+    setStateBookmarks(bookmarksStore);
+  
+    return () => {
+      
+    }
+  }, [bookmarksStore]);
 
   React.useEffect(() => {
 
@@ -242,7 +251,7 @@ function App() {
             elClassNames: [...e.target.classList],
           }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
           e.target.classList.toggle("focused-dom");
-          e.target.appendChild(refDomHighlight.current.base);
+          // e.target.appendChild(refDomHighlight.current); //TODO: restore this later
         }
       }
     });
@@ -257,7 +266,7 @@ function App() {
   
         if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
           e.target.classList.toggle("focused-dom");
-          e.target.removeChild(refDomHighlight.current.base);
+          // e.target.removeChild(refDomHighlight.current); //TODO: restore this later
         }
       }
     });
@@ -320,8 +329,17 @@ function App() {
     elTarget.classList.toggle('focused-targeted-element');
   }
 
+  // Re-render bookmarks list state here to update the bookmarks list
+  const onChangeBookmarks = () => {
+
+    setTimeout(() => {
+      updateBookmarksStore(); //needs to be called so that bookmarksStore will get the latest update from localStorage
+      setStateBookmarks(bookmarksStore);
+    }, 500);
+  }
+
   return (
-    <div>
+    <GlobalContext.Provider value={{ selectedDom: selectedElem.domTarget, onChangeBookmarks }}>
       <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>
 
       {/* website page renders here... */}
@@ -379,17 +397,12 @@ function App() {
           />
 
           <BookmarkPanel
-            elClassNames={selectedElem.elClassNames}
-            domType={selectedElem.domType}
-            x={selectedElem.x}
-            y={selectedElem.y}
-            domId={selectedElem.domId}
-            showAddBookmarkPanel={showAddBookmarkPanel}
-            onCloseAddBookmark={onCloseAddBookmark}
-            domTarget={selectedElem.domTarget}
+            bookmarks={stateBookmarks}
+            onRemoveBookmarkEmit={onChangeBookmarks}
           />
         </div>
       )}
+
 
       {/* 
       // TODO by Sonny: Build DevTools to change webpage inside localhost dynamically
@@ -400,8 +413,9 @@ function App() {
         <button onClick={() => getPageContent(txtFieldPageUrl)}>Enter</button>
       </div> 
       */}
-    </div>
+    </GlobalContext.Provider>
   );
 }
 
+// export default App;
 export default hot(module)(App);

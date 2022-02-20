@@ -5,13 +5,14 @@ import { v4 as uuidv4 } from "uuid";
 
 import * as domUtils from "../../utils/domUtils";
 
-import AddBookmarkPanel from "./AddBookmarkPanel";
 import BookmarkInfo from "./BookmarkInfo";
 import SelectedDomFromBookmark from "./SelectedDomFromBookmark";
 
 import useLocalStorageStore from "../../hooks/useLocalStorageStore";
+import GlobalContext from "../../store/global-context";
 
-const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAddBookmark, x, y, domId, domTarget }) => {
+
+const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
     
   const [bookmarkHidden, setBookmarkHidden] = useState(true);
   const [btnBookmarkHidden, setBtnBookmarkHidden] = useState(true);
@@ -20,7 +21,7 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
 
   const refSelectedDom = React.useRef(null);
 
-  const [bookmarksStore, setBookmarksStore] = useLocalStorageStore('bookmarks', []);
+  const [bookmarksStore, setBookmarksStore, getBookmarksStoreUpdates] = useLocalStorageStore('bookmarks', []);
 
   const onOpenBookmark = (e) => {
     setBookmarkHidden(false);
@@ -30,8 +31,6 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
   const onCloseBookmark = (e) => {
     setBookmarkHidden(true);
     setBtnBookmarkHidden(false);
-
-    onCloseAddBookmark();
   };
 
   const onRemoveBookmark = (e) => {
@@ -48,62 +47,24 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
         setBtnBookmarkHidden(false);
         setBookmarksStore(null);
       }
+      onRemoveBookmarkEmit();
     }
-  };
-
-  // TODO: Follow the logic here and put it inside DomInfoDialogBox.js. This code is a mess.
-  const saveBookmark = async (e) => {
-    e.preventDefault();
-
-    const elParent = e.target.parentElement;
-    const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(domTarget);
-
-    const [element, classes] = ['.lbl-element', '.lbl-classes']
-      .reduce((acc, curr) => [...acc, elParent.querySelector(curr).innerText], []);
-    
-    const elId = domTarget.id;
-    const randomCode = uuidv4();
-
-    let txtVal = e.target.querySelector("input").value;
-
-    let bookmarkObj = {
-      id: randomCode,
-      title: txtVal,
-      elem: domIdentifier.elType,
-      elId,
-      classes,
-      domIndex: domIdentifier.index,
-    };
-
-    if (!isEmpty(txtVal)) {
-      bookmarkObj.title = txtVal;
-    } else {
-      bookmarkObj.title = element + classes;
-    }
-
-    const newBookmarks = [...bookmarksStore, bookmarkObj];
-
-    await setBookmarksStore(newBookmarks);
-
-    e.target.querySelector("input").value = "";
-
-    onCloseAddBookmark();
   };
 
   const onClickBookmarkList = async (e) => {
 
     // note: We should remove the child first before querying the element in `retrievedElement` variable. Otherwise the query will go wrong because of indexing
-    if(savedElNode && savedElNode.contains(refSelectedDom.current.base)) {
-      savedElNode.removeChild(refSelectedDom.current.base);
+    if(savedElNode && savedElNode.contains(refSelectedDom.current)) {
+      savedElNode.removeChild(refSelectedDom.current);
     }
 
     const selectedBookmark = bookmarksStore.find((data) => e.currentTarget.getAttribute("data-bookmark-id") === data.id);
 
-    const focusedDomLength = document.querySelectorAll(".selected-dom").length;
-    var elType = selectedBookmark.elem;
-
+    const elType = selectedBookmark.elem;
+    
     const retrievedElement = domUtils.getElementByTagAndIndex(elType, selectedBookmark.domIndex);
-
+    
+    const focusedDomLength = document.querySelectorAll(".selected-dom").length;
     for (let i = 0; i < focusedDomLength; i++) {
       document.querySelectorAll(".selected-dom")[i].classList.remove("selected-dom");
     }
@@ -113,13 +74,13 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
     retrievedElement.classList.add("selected-dom");
     retrievedElement.scrollIntoView({ block: "center" });
 
-    if(retrievedElement.parentElement !== refSelectedDom.current.base) {
-        retrievedElement.appendChild(refSelectedDom.current.base);
+    if(retrievedElement.parentElement !== refSelectedDom.current) {
+      retrievedElement.appendChild(refSelectedDom.current);
     }
 
     await setRetrievedElNode(retrievedElement);
   };
-
+  
   useEffect(() => {
 
     if (bookmarksStore.length !== 0 && bookmarkHidden) {
@@ -129,23 +90,21 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
       setBtnBookmarkHidden(true);
     }
 
-
   }, [bookmarksStore]);
+
+  // get localStorage updates for bookmarks when bookmarks data is changed in App.js
+  useEffect(() => {
+    
+    getBookmarksStoreUpdates();
+
+    return () => {
+      
+    }
+  }, [bookmarks]);
 
 
   return (
     <div class="bookmark-panel">
-      {/* {showAddBookmarkPanel && (
-        <AddBookmarkPanel
-          domType={domType}
-          elClassNames={elClassNames}
-          saveBookmark={saveBookmark}
-          onClose={onCloseAddBookmark}
-          x={x}
-          y={y}
-          domId={domId}
-        />
-      )} */}
 
       <SelectedDomFromBookmark ref={refSelectedDom} selectedDom={retrievedEl} />
 
@@ -156,13 +115,13 @@ const BookmarkPanel = ({ elClassNames, domType, showAddBookmarkPanel, onCloseAdd
         onRemove={onRemoveBookmark}
         onClickBookmarkList={onClickBookmarkList}
       />
+
       <button
         className="bookmark-btn"
         onClick={onOpenBookmark}
         hidden={btnBookmarkHidden}
       >
-        <BsFillBookmarkFill />
-        &nbsp; Bookmarks
+        <BsFillBookmarkFill /> &nbsp; Bookmarks
       </button>
     </div>
   );

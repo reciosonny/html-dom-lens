@@ -30,8 +30,6 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
 
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
   const [stateHasExistingBookmark, setStateHasExistingBookmark] = useState(false);
-  const [selectedAddBookmarkDomElIdx, setSelectedAddBookmarkDomElIdx] = useState(null);
-
 
   const handleSeeMoreAttr = () => {   
     setSeeMoreAttr(!seeMoreAttr);
@@ -130,52 +128,10 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
   }, [hasExistingBookmark]);
 
   const onClickAddBookmark = () => { 
-    setSelectedAddBookmarkDomElIdx(idx);
+
+    setStateHasExistingBookmark(!stateHasExistingBookmark);
     setShowAddBookmarkPanel(!showAddBookmarkPanel);
-
-    console.log('data: ', idx);
   };
-
-  // Note: This code is a MESS
-  const onSaveBookmark = async (e) => {
-    e.preventDefault();
-
-    const elParent = e.target.parentElement;
-    const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(domTarget);
-
-    const [element, classes] = ['.lbl-element', '.lbl-classes']
-      .reduce((acc, curr) => [...acc, elParent.querySelector(curr).innerText], []);
-    
-    const elId = domTarget.id;
-    const randomCode = uuidv4();
-
-    let txtVal = e.target.querySelector("input").value;
-
-    let bookmarkObj = {
-      id: randomCode,
-      title: txtVal,
-      elem: domIdentifier.elType,
-      elId,
-      classes,
-      domIndex: domIdentifier.index,
-    };
-
-    if (!isEmpty(txtVal)) {
-      bookmarkObj.title = txtVal;
-    } else {
-      bookmarkObj.title = element + classes;
-    }
-
-    const newBookmarks = [...bookmarksStore, bookmarkObj];
-
-    await setBookmarksStore(newBookmarks);
-
-    e.target.querySelector("input").value = "";
-
-    onCloseAddBookmark();
-  };
-
-
 
   return (
     <React.Fragment>
@@ -251,9 +207,8 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
         <DomOptions 
           focusMode={focusMode} 
           onClickFocus={() => onClickFocus(domElement)} 
-          // onClickBookmark={onClickBookmarkEmit} 
           onClickBookmark={onClickAddBookmark} 
-          showAddBookmarkPanel={stateHasExistingBookmark} 
+          showAddBookmarkIcon={stateHasExistingBookmark} 
         />
         
         {showAddBookmarkPanel && 
@@ -261,7 +216,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
             domType={tag}
             elClassNames={classNamesString}
             domId={uniqueID}
-            onSaveBookmark={() => alert('saving new bookmark name')}
+            onSaveBookmark={() => setShowAddBookmarkPanel(false)}
             onClose={() => setShowAddBookmarkPanel(false)}
           />
         }

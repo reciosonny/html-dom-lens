@@ -2,7 +2,9 @@ import React from 'react'
 import * as domUtils from '../utils/domUtils'
 
 // This component is used to inject this into DOM element once we hover and display minimal details the DOM needs
-const DomMinimalDetailsWidget = ({ ref, elId, elClassNames, domType, show }) => {
+const DomMinimalDetailsWidget = React.forwardRef(({ elId, elClassNames, domType, show }, ref) => {
+
+
   const reducedClassNames = elClassNames.reduce((init, currVal) => {
     if (currVal)
     {
@@ -18,7 +20,7 @@ const DomMinimalDetailsWidget = ({ ref, elId, elClassNames, domType, show }) => 
       </div>
     </React.Fragment>
   )
-}
+});
 
 
 export default DomMinimalDetailsWidget
