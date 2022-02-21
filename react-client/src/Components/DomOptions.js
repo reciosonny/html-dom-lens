@@ -15,15 +15,15 @@ function DomOptions({ onClickBookmark, onClickFocus, showAddBookmarkPanel, focus
           <BsBookmark color="#673ab7" />
         )}
       </button>
-      <button style={{ fontSize: "20px" }}>
-        <GrTree />
+      <button style={{ fontSize: "20px" }} className="grDesign">
+        <GrTree />        
       </button>
       <button style={{ fontSize: "20px" }}>
-        <BiComment />
+        <BiComment color="#673ab7" />
       </button>
       <button style={{ fontSize: '20px' }} onClick={onClickFocus}>
-        {!focusMode && <MdCenterFocusStrong />}
-        {focusMode && <MdCenterFocusWeak />}
+        {!focusMode && <MdCenterFocusStrong color="#673ab7"  />}
+        {focusMode && <MdCenterFocusWeak color="#673ab7"  />}
       </button>
     </div>
   );

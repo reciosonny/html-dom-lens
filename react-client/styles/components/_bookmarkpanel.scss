@@ -1,6 +1,8 @@
 
 
 .bookmark-panel {
+    color: #263238 !important; 
+    font-family: Roboto monospace;
     .card-bookmark {
         width: 301px;
         height: 330px;
@@ -13,6 +15,7 @@
         border-radius: 8px 0px 0px 8px;
         border-width: 0;
         font-weight: 600;
+        
     
         .bookmark-header {
             display: flex;
@@ -51,18 +54,19 @@
                 }
 
                 .list__item-details {
-                    color: #263238;
                     text-overflow: ellipsis;
                     overflow-x: hidden;
                     white-space: nowrap;
-                    width: 80%;
-                    font-size: 13px;
-
-                    h3 {
+                    width: 100%;
+                    .item-title {
+                        display: flex;
+                        font-size: 14px !important; 
+                        font-family: 'Roboto';                                          
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
                     }
+                
                 }
 
                 .edit__txt-title {
@@ -74,22 +78,24 @@
                 }
 
                 .lbl-elem {
-                    font-size: 12px;
+                    font-size: 10px;
                     font-weight: 600;
                 }
 
                 .lbl-classes {
-                    font-size: 12px;
+                    font-size: 10px;
                     font-weight: 300;
                 }
 
                 .list__item-options {
+                    display: flex;                         
                     button {
-                        background-color: inherit;
-                        margin-inline: 5px;
-                        border: none;
-                        z-index: 999;
-
+                        background-color: inherit;                        
+                        // margin-inline: 5px;
+                        margin-right: 7px;
+                        padding: 0px;
+                        border: none;                   
+                        z-index: 999;                        
                         &:hover {
                             cursor: pointer;
                         }
@@ -104,6 +110,7 @@
             width: 100%;
             display: flex;
             padding-block: 20px;
+            font-family: 'Roboto Medium';
 
             a {
                 color: #607D8B;
@@ -127,7 +134,10 @@
         box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px rgba(0, 0, 0, 0.12), 0px 1px 5px rgba(0, 0, 0, 0.2);
         border-radius: 8px 0px 0px 8px;
         border-width: 0;
-        font-weight: 600;
+        font-weight: 600;        
+        font-family: 'Roboto Medium';
+        font-size: 14px !important;
+        color: #263238 !important;
     }
 
     .add__bookmark-panel {
@@ -142,7 +152,7 @@
         border-radius: 8px;
         padding: 10px 20px;
 
-        .header {
+        .add__bookmark-header { //switched from header to avoid injection on header key word 
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -150,6 +160,7 @@
             margin-bottom: 10px;
 
             .header-text {
+                font-family: 'Roboto Medium';
                 font-style: normal;
                 font-weight: 500;
                 font-size: 12px;
@@ -178,6 +189,9 @@
             font-size: 24px;
             line-height: 24px;
             background: transparent;
+            color: #B0BEC5 !important; //according to figma
+            outline: none;
+            font-family: 'Roboto';
 
             &:focus {
                 border: none;

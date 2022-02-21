@@ -187,8 +187,8 @@ $DialogDetailPadding: 10px 0px 0px 0px;
 }
 
 .dom-switch {
-  height: auto;
-  width: auto;
+  height: 17px;
+  width: 110px;
   background-color: #ede7f6;
   color: #455a64;
   border: 3px ;
@@ -198,9 +198,11 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   right: 0px;
   cursor: pointer;
   padding: 15px 15px 15px 15px;
+  padding: 15px 15px 15px 15px;
   font-family: Roboto monospace;
   font: 10px;
   z-index: 99999;
+  font-size: 14px !important;
 }
 
 .dom-info-details-lean {
