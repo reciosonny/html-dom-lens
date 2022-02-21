@@ -85,4 +85,6 @@ const AddBookmarkPanel = React.memo(({ domType, elClassNames, onSaveBookmark, on
   );
 });
 
+AddBookmarkPanel.displayName = 'AddBookmarkPanel';
+
 export default AddBookmarkPanel;
