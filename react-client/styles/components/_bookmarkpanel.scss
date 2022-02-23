@@ -1,4 +1,5 @@
 .bookmark-panel {
+  color: #263238;
   .card-bookmark {
     width: 301px;
     height: 330px;
@@ -22,7 +23,9 @@
       margin-bottom: 10px;
 
       .header-text {
-        font-size: 14px;
+        font-size: 12px;
+        font-family: 'Roboto Medium';
+        font-weight: 500;
       }
 
       .header__close-btn {
@@ -43,7 +46,6 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-
         &:hover,
         &.selected {
           background: #cfd8dc;
@@ -62,6 +64,15 @@
             text-overflow: ellipsis;
             white-space: nowrap;
           }
+
+          .lbl-title {
+            display: flex;
+            font-size: 14px !important;
+            font-family: 'Roboto' !important;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
         }
 
         .edit__txt-title {
@@ -73,19 +84,23 @@
         }
 
         .lbl-elem {
-          font-size: 12px;
+          font-size: 10px !important;
           font-weight: 600;
+          font-family: 'Roboto Mono' !important;
         }
 
         .lbl-classes {
-          font-size: 12px;
+          font-size: 10px !important;
           font-weight: 300;
+          font-family: 'Roboto Mono' !important;
         }
 
         .list__item-options {
           button {
             background-color: inherit;
-            margin-inline: 5px;
+            // margin-inline: 5px;
+            margin-right: 5px;
+            padding: 0px;      
             border: none;
             z-index: 999;
 
@@ -108,9 +123,10 @@
         color: #607d8b;
         font-weight: 300;
         margin: 0 auto;
-        font-size: 11px;
+        font-size: 10px;
         text-align: center;
         cursor: pointer;
+        font-family: 'Roboto Medium';
       }
     }
   }
@@ -127,6 +143,8 @@
     border-radius: 8px 0px 0px 8px;
     border-width: 0;
     font-weight: 600;
+    color: #263238;
+    font-size: 14px;
   }
 }
 
@@ -141,8 +159,9 @@
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px rgba(0, 0, 0, 0.12), 0px 1px 5px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   padding: 10px 20px;
+  color : #546E7A;
 
-  .header {
+  .add__bookmark-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -150,6 +169,7 @@
     margin-bottom: 10px;
 
     .header-text {
+      font-family: 'Roboto Medium';
       font-style: normal;
       font-weight: 500;
       font-size: 12px;
@@ -177,16 +197,23 @@
     font-size: 24px;
     line-height: 24px;
     background: transparent;
+    color: #455a64 !important;
+    border: none;
+    outline: none;
 
     &:focus {
       border: none;
+    }
+
+    &::placeholder {
+      color: #B0BEC5
     }
   }
 
 }
 
 .element-description {
-  font-size: 12px;
+  font-size: 10px;
   display: block;
   margin-top: 5px;
 
