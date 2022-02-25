@@ -63,7 +63,7 @@ const AddBookmarkPanel = React.memo(({ domType, elClassNames, onSaveBookmark, on
       <span className='add__bookmark-header'>
         <h3 className='header-text'>Save Bookmark</h3>
         <button className='header__close-btn' type='button' onClick={onClose}>
-          <AiOutlineClose size={14} />
+          <AiOutlineClose size={14} color="#546E7A" />
         </button>
       </span>
       <form className='frm-panel' data-id={domId} onSubmit={onSubmitBookmark}>

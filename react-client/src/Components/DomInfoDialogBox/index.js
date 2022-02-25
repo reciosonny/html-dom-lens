@@ -146,7 +146,14 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
         <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, id, uniqueID)}>
           x
         </button>
-       
+
+        <DomOptions 
+          focusMode={focusMode} 
+          onClickFocus={() => onClickFocus(domElement)} 
+          onClickBookmark={onClickAddBookmark} 
+          showAddBookmarkIcon={stateHasExistingBookmark} 
+        /> 
+        
         <div>
           <div className="dom-header">
             <span className="dom-header-tag">{tag}</span>
@@ -203,13 +210,6 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
 
           <ChildrenDetails children={domUtils.customChildrenFilter(domInfo.children)} />
         </div>
-
-        <DomOptions 
-          focusMode={focusMode} 
-          onClickFocus={() => onClickFocus(domElement)} 
-          onClickBookmark={onClickAddBookmark} 
-          showAddBookmarkIcon={stateHasExistingBookmark} 
-        />
         
         {showAddBookmarkPanel && 
           <AddBookmarkPanel 

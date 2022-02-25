@@ -9,7 +9,7 @@ const BookmarkInfo = ({ bookmarkHidden, onCloseBookmark, onEdit, onRemove, bookm
       <span className='bookmark-header'>
         <label className='header-text'>Bookmarks from this page</label>
         <button id='btnClose' className='header__close-btn' type='button' onClick={onCloseBookmark}>
-          <AiOutlineClose size={14} />
+          <AiOutlineClose size={14} color="#263238" />
         </button>
       </span>
       <div className='bookmark-body'>

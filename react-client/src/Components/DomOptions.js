@@ -22,7 +22,7 @@ function DomOptions({ onClickBookmark, onClickFocus, showAddBookmarkIcon, focusM
       <button style={{ fontSize: '20px' }} onClick={onClickFocus}>
         {!focusMode && <MdCenterFocusStrong color="#673ab7"/>}
         {focusMode && <MdCenterFocusWeak color="#673ab7"/>}
-      </button>
+      </button>    
     </div>
   );
 }
