@@ -148,7 +148,7 @@
   }
 }
 
-.add__bookmark-panel {
+.add-bookmark-panel {
   position: absolute;
   width: 301px;
   height: auto;
@@ -163,22 +163,21 @@
   padding: 10px 20px;
   color : #546E7A;
 
-  .add__bookmark-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 40px;
-    margin-bottom: 10px;
-
-    .header-text {
+    &__header{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 40px;
+      margin-bottom: 10px;      
       font-family: 'Roboto Medium';
       font-style: normal;
       font-weight: 500;
       font-size: 12px;
       line-height: 12px;
       color: #546e7a;
+      margin: 3px 0px 10px 0px;
     }
-
+  
     button {
       background-color: transparent;
       margin-inline: 5px;
@@ -188,8 +187,6 @@
         cursor: pointer;
       }
     }
-  }
-
 
   .txt__bookmark-name {
     width: 100%;
