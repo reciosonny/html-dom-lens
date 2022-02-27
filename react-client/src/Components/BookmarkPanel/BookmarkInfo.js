@@ -9,7 +9,7 @@ const BookmarkInfo = ({ bookmarkHidden, onCloseBookmark, onEdit, onRemove, bookm
       <span className='bookmark-header'>
         <label className='header-text'>Bookmarks from this page</label>
         <button id='btnClose' className='header__close-btn' type='button' onClick={onCloseBookmark}>
-          <AiOutlineClose size={14} />
+          <AiOutlineClose size={14} color="#263238" />
         </button>
       </span>
       <div className='bookmark-body'>
@@ -39,8 +39,8 @@ const BookmarkItem = ({ data, index, onRemove, onClickBookmarkList }) => {
 
   return (
     <li className='bookmark__list-item' key={index} data-bookmark-id={data.id} onClick={onClickBookmarkList}>
-      <div className='list__item-details'>
-        <h3>{data.title}</h3>
+      <div className='list__item-details'>        
+        <label className='lbl-title'>{data.title}</label>
         <label className='lbl-elem'>{data.elem}</label>
         <label className='lbl-classes' style={{ fontSize: "12px" }}>
           {data.classes}
@@ -48,10 +48,10 @@ const BookmarkItem = ({ data, index, onRemove, onClickBookmarkList }) => {
       </div>
       <span className='list__item-options'>
         <button>
-          <RiPencilFill data-bookmark-id={data.id} onClick={onEdit} />
+          <RiPencilFill data-bookmark-id={data.id} onClick={onEdit} color="#607D8B"/>
         </button>
         <button data-bookmark-id={data.id} onClick={onRemove}>
-          <FaTrash />
+          <FaTrash  color="#607D8B"/>
         </button>
       </span>
     </li>
@@ -59,7 +59,7 @@ const BookmarkItem = ({ data, index, onRemove, onClickBookmarkList }) => {
 };
 
 const BookmarkList = ({ bookmarks, onEdit, onRemove, onClickBookmarkList }) => (
-  <ul>
+  <ul style={{ padding: "0px" }}>
     {bookmarks.map((data, index) => (
       <BookmarkItem
         data={data}

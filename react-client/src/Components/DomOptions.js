@@ -13,16 +13,16 @@ function DomOptions({ onClickBookmark, onClickFocus, showAddBookmarkIcon, focusM
         {showAddBookmarkIcon && <BsFillBookmarkFill color="#673ab7" />}
         {!showAddBookmarkIcon && <BsBookmark color="#673ab7" />}
       </button>
-      <button style={{ fontSize: "20px" }}>
+      <button style={{ fontSize: "20px" }} className= "grDesign">
         <GrTree />
       </button>
-      <button style={{ fontSize: "20px" }}>
-        <BiComment />
+      <button  style={{ fontSize: "20px"}} >
+        <BiComment color="#673ab7"/>
       </button>
       <button style={{ fontSize: '20px' }} onClick={onClickFocus}>
-        {!focusMode && <MdCenterFocusStrong />}
-        {focusMode && <MdCenterFocusWeak />}
-      </button>
+        {!focusMode && <MdCenterFocusStrong color="#673ab7"/>}
+        {focusMode && <MdCenterFocusWeak color="#673ab7"/>}
+      </button>    
     </div>
   );
 }

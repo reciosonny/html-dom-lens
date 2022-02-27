@@ -2,18 +2,24 @@
     display: flex;
     flex-direction: column;
     position: absolute;
+    margin: 0px -15px;
     top: 0;
-    left: -30px;
+    left: -30px !important;
     z-index: 999999999999 !important;
     background-color: #fff;
     border: 1px solid #e4d8f7;
     padding-block: 5px;
     border-radius: 5px;
+    width: 34px;
 
     button {
         padding-block: 4px;
         cursor: pointer;
         border: none;
         background-color: inherit;
+    }
+
+    .grDesign path{
+        stroke: rgb(103, 58, 183) !important;
     }
 }
