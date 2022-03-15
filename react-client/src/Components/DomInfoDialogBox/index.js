@@ -1,9 +1,11 @@
-import React, { useeffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import DomOptions from "../DomOptions";
 import ChildrenDetails from "./ChildrenDetails";
 import ParentDetails from "./ParentDetails";
 import * as domUtils from "../../utils/domUtils";
 import AddBookmarkPanel from "../BookmarkPanel/AddBookmarkPanel";
+import AddAnnotationPanel from "../AnnotationPanel/AddAnnotationPanel";
+import useLocalStorageStore from "../../hooks/useLocalStorageStore";
 
 const FontColorDetails = ({ textcolor }) => {
 
@@ -22,7 +24,7 @@ const FontColorDetails = ({ textcolor }) => {
 
 let domObserver;
 const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark, hasExistingAnnotations }) => {
 
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
 
@@ -30,10 +32,15 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
 
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
   const [stateHasExistingBookmark, setStateHasExistingBookmark] = useState(false);
+  const [stateHasExistingAnnotation, setStateHasExistingAnnotation] = useState(false);
+  const [showAddAnnotationsPanel, setShowAddAnnotationsPanel] = useState(false);
+
+  const [annotationStore, setAnnotationStore, getAnnotationStoreUpdates] = useLocalStorageStore('annotation', []);
 
   const handleSeeMoreAttr = () => {   
     setSeeMoreAttr(!seeMoreAttr);
   };
+
 
   const initializeDomObserver = async () => {
 
@@ -121,18 +128,47 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
   React.useEffect(() => {
     // if the DOM has existing bookmark, enable it by default.
     setStateHasExistingBookmark(hasExistingBookmark);
-
     return () => {
-      
     }
   }, [hasExistingBookmark]);
 
+  React.useEffect(() => {
+    setStateHasExistingAnnotation(hasExistingAnnotations);
+    return () => {      
+    }
+  }, [hasExistingAnnotations]);  
+  
+  useEffect(() => {
+    hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, domElement);
+    setStateHasExistingAnnotation(hasExistingAnnotations);                  
+    return () => {      
+    }
+  }, [annotationStore])
+  
   const onClickAddBookmark = () => { 
-
     setStateHasExistingBookmark(!stateHasExistingBookmark);
     setShowAddBookmarkPanel(!showAddBookmarkPanel);
+    setShowAddAnnotationsPanel(false);
   };
 
+  const onClickAddAnnotation = () => { 
+    if (stateHasExistingAnnotation === false) {
+      setStateHasExistingAnnotation(!stateHasExistingAnnotation);
+    }
+    getAnnotationStoreUpdates();
+    setShowAddAnnotationsPanel(!showAddAnnotationsPanel);
+    setShowAddBookmarkPanel(false);  
+  };
+
+  function onRemoveAnnotation(){
+    setStateHasExistingAnnotation(false);
+    setShowAddAnnotationsPanel(false);
+  }
+
+  function onUpdatedAnnotation(){    
+    setStateHasExistingAnnotation(true);
+  }
+  
   return (
     <React.Fragment>
       <div
@@ -151,11 +187,13 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
           focusMode={focusMode} 
           onClickFocus={() => onClickFocus(domElement)} 
           onClickBookmark={onClickAddBookmark} 
+          onClickAnnotation={onClickAddAnnotation}
           showAddBookmarkIcon={stateHasExistingBookmark} 
+          showAddAnnotationIcon={stateHasExistingAnnotation} 
         /> 
         
         <div>
-          <div className="dom-header">
+          <div className="dom-header">           
             <span className="dom-header-tag">{tag}</span>
             {id && <span className="dom-header-details">{id}</span>}                       
               {domUtils.customClassFilter(domInfo.classNames).map((val) => (    
@@ -182,8 +220,6 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
             id={parent.id}            
             classes={parent.classes}
           />
-
-
           <div className="dom-dialog">data-* attributes </div>             
           <div className="dom-dialog-child-details">   
             {dataAttributes.slice(0, numAttibToDisplay).map((val) => (
@@ -197,7 +233,6 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
               </div>
             ))}                             
           </div>
-
           {dataAttributes.length > 2 &&(            
             <div
               id="closeDom"
@@ -207,20 +242,24 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
               {seeMoreAttr  ? `... ${attrleftover} more` : `... see less`}
             </div>
           )}
-
           <ChildrenDetails children={domUtils.customChildrenFilter(domInfo.children)} />
-        </div>
-        
-        {showAddBookmarkPanel && 
-          <AddBookmarkPanel 
-            domType={tag}
-            elClassNames={classNamesString}
-            domId={uniqueID}
-            onSaveBookmark={() => setShowAddBookmarkPanel(false)}
-            onClose={() => setShowAddBookmarkPanel(false)}
-          />
-        }
-
+        </div>       
+            {showAddBookmarkPanel && 
+              <AddBookmarkPanel 
+                domType={tag}
+                elClassNames={classNamesString}
+                domId={uniqueID}
+                onSaveBookmark={() => setShowAddBookmarkPanel(false)}
+                onClose={() => setShowAddBookmarkPanel(false)}                                
+              />
+            }
+            {showAddAnnotationsPanel && 
+              <AddAnnotationPanel 
+                onRemoveAnnotation={onRemoveAnnotation} 
+                targetElement={domElement} 
+                onUpdatedAnnotation={onUpdatedAnnotation}
+              />
+            }        
       </div>
     </React.Fragment>
   );

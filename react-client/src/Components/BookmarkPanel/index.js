@@ -41,7 +41,7 @@ const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
       const newBookmarks = bookmarksStore.filter((x, idx) => idx !== selectedBookmarkIdx);
 
       setBookmarksStore(newBookmarks);
-
+      debugger
       if (newBookmarks.length === 0) {
         setBookmarkHidden(true);
         setBtnBookmarkHidden(false);
@@ -79,6 +79,7 @@ const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
     }
 
     await setRetrievedElNode(retrievedElement);
+    
   };
   
   useEffect(() => {

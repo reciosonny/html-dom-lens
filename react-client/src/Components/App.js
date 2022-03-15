@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, useEffect, useState, useContext } from "react";
 import { hot } from "react-hot-loader";
 import jss from 'jss';
 
@@ -42,8 +42,9 @@ function App() {
   const [switchExtensionFunctionality, setExtensionFunctionality] = useState(true);
 
   const [bookmarksStore, setBookmarksStore, updateBookmarksStore] = useLocalStorageStore('bookmarks', []);
+  const [annotationStore, setAnnotationStore] = useLocalStorageStore('annotation', []);
   const [stateBookmarks, setStateBookmarks] = useState([]);
-  
+
 
   const onTurnOffExtension = () => {
 
@@ -148,8 +149,8 @@ function App() {
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
         const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");
-  
-        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked)
+        
+        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || e.target.localName === 'path')
           return;
 
         //capture all classes of the dom for bookmark module
@@ -158,7 +159,7 @@ function App() {
             strClassList += `.${domClass}`
           }
         }
-        
+    
         //get the least properties for bookmark module
         setSelectedElem({
           elClassNames: strClassList,
@@ -230,6 +231,7 @@ function App() {
 
         }
       }
+      
     });
 
     document.addEventListener("mouseover", async (e) => {
@@ -331,7 +333,6 @@ function App() {
 
   // Re-render bookmarks list state here to update the bookmarks list
   const onChangeBookmarks = () => {
-
     setTimeout(() => {
       updateBookmarksStore(); //needs to be called so that bookmarksStore will get the latest update from localStorage
       setStateBookmarks(bookmarksStore);
@@ -344,7 +345,7 @@ function App() {
 
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
-
+      <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>
       <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
 
       {switchExtensionFunctionality && (
@@ -357,7 +358,9 @@ function App() {
 
             const elBookmarks = bookmarksStore.map(({ elem, domIndex }) => domUtils.getElementByTagAndIndex(elem, domIndex));
             const hasExistingBookmark = elBookmarks.some(el => el === domInfo.domElement);
-
+            
+            const hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, domInfo.domElement);
+              
             return (
               <DomInfoDialogBox
                 key={idx}
@@ -369,7 +372,7 @@ function App() {
                 parent={domInfo.parent}
                 children={domInfo.children}
                 top={domInfo.y}
-                left={domInfo.x}
+                left={domInfo.x}                          
                 onClose={handleRemoveDialogBox}
                 fontsize={domInfo.size}
                 fontfamily={domInfo.family}
@@ -382,7 +385,8 @@ function App() {
                 onClickFocus={onClickFocus}
                 focusMode={focusMode}
                 onClickBookmarkEmit={onClickAddBookmark}
-                hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark}
+                hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark} 
+                hasExistingAnnotations={hasExistingAnnotations}
               />
             );
           })}
@@ -403,7 +407,7 @@ function App() {
         </div>
       )}
 
-
+  
       {/* 
       // TODO by Sonny: Build DevTools to change webpage inside localhost dynamically
       <div id="divDevTools" style={{ padding: '10px', position: 'fixed', right: '50px', bottom: '50px', background: '#fff', border: '2px solid #000', height: '250px', width: '250px' }}>

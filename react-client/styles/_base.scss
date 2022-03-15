@@ -167,7 +167,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
     font-size: 12px;
     color: #546e7a;
     align: left;
-    // display: flex;
+    word-wrap: break-word;
     padding: 10px 0px 0px 0px;
   }
   .see-more {
@@ -175,6 +175,9 @@ $DialogDetailPadding: 10px 0px 0px 0px;
     font-size: 10px;
     color: #78909c;
   }
+}
+.widgets{
+  flex-direction: column;
 }
 
 .display-dot {

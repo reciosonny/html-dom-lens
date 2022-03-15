@@ -1,0 +1,63 @@
+.add-annotation-panel {
+  position: absolute;
+  width: 301px;
+  height: 102px;
+  // min-height: 120px;
+  left: 0;
+  margin-top: 30px;  
+  bottom: auto;
+  z-index: 99999;
+  background: #ede7f6;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px rgba(0, 0, 0, 0.12), 0px 1px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 10px 20px;
+  color : #546E7A;
+
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 40px;
+      margin-bottom: 10px;      
+      font-family: 'Roboto Medium';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 12px;
+      color: #546e7a;
+      margin: 3px 0px 10px 0px;
+    }
+  
+    button {
+      background-color: transparent;
+      margin-inline: 5px;
+      border: none;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+  .txt__annotation-name {
+    width: 100%;
+    height: 24px;
+    border: none !important;
+    font-weight: 400 !important;
+    font-size: 14px;
+    line-height: 24px;
+    background: transparent;
+    color: #455a64 !important;
+    border: none;
+    outline: none;
+    margin-top: 20px;
+    &:focus {
+      border: none;
+    }
+
+    &::placeholder {
+      color: #B0BEC5;
+      font-family: 'Roboto';
+    }
+  }
+
+}
