@@ -138,8 +138,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
     }
   }, [hasExistingAnnotations]);  
   
-  useEffect(() => {
-    debugger
+  useEffect(() => {    
     hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, domElement);
     setStateHasExistingAnnotation(hasExistingAnnotations);                  
     return () => {      
