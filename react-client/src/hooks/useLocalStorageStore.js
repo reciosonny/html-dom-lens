@@ -51,6 +51,7 @@ const useLocalStorageStore = (storeName, defaultValue, isNotJSON) => {
     localStorage.setItem(storeName, finalValue); //if state changes, sync it on localStorage
 
     setState(value);
+    
   }
 
   // we can use this to update the hooks state coming from localstorage

@@ -4,6 +4,7 @@ import { RiPencilFill } from "react-icons/ri";
 import { FaTrash } from "react-icons/fa";
 
 const BookmarkInfo = ({ bookmarkHidden, onCloseBookmark, onEdit, onRemove, bookmarks, onClickBookmarkList }) => (
+  
   <React.Fragment>
     <div className='card-bookmark' hidden={bookmarkHidden}>
       <span className='bookmark-header'>
