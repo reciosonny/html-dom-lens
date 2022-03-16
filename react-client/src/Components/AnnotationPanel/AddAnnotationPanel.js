@@ -27,9 +27,8 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
       let existingAnnotation = annotationStore.filter(
         (obj) =>obj.domIndex == domIdentifier.index && obj.elem == domIdentifier.elType
       );
-
-      setTxtInput(hasExistingAnnotations === true ? existingAnnotation[0].title : null);
-      setDisplayInput(hasExistingAnnotations === true ? true : false);
+      setTxtInput(existingAnnotation[0].title);
+      setDisplayInput(hasExistingAnnotations);
     }
 
     return () => {};

@@ -139,6 +139,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
   }, [hasExistingAnnotations]);  
   
   useEffect(() => {
+    debugger
     hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, domElement);
     setStateHasExistingAnnotation(hasExistingAnnotations);                  
     return () => {      
@@ -151,11 +152,8 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
     setShowAddAnnotationsPanel(false);
   };
 
-  const onClickAddAnnotation = () => { 
-    if (stateHasExistingAnnotation === false) {
-      setStateHasExistingAnnotation(!stateHasExistingAnnotation);
-    }
-    getAnnotationStoreUpdates();
+  const onClickAddAnnotation = () => {     
+    !stateHasExistingAnnotation ? setStateHasExistingAnnotation(!stateHasExistingAnnotation) : getAnnotationStoreUpdates();    
     setShowAddAnnotationsPanel(!showAddAnnotationsPanel);
     setShowAddBookmarkPanel(false);  
   };
