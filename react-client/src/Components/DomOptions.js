@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MdCenterFocusStrong, MdCenterFocusWeak, MdOutlineCommentBank, MdCommentBank } from "react-icons/md";
 import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
-import { BiComment } from "react-icons/bi";
 import { GrTree } from "react-icons/gr";
 import "../../styles/domoptions.scss";
 
@@ -16,7 +15,6 @@ function DomOptions({ onClickBookmark, onClickAnnotation, onClickFocus, showAddB
         <GrTree />
       </button>
       <button  style={{ fontSize: "20px"}} onClick={onClickAnnotation}  >
-        {/* <BiComment color="#673ab7" /> */}
         {showAddAnnotationIcon && <MdCommentBank color="#673ab7" />}
         {!showAddAnnotationIcon && <MdOutlineCommentBank color="#673ab7" />}
       </button>

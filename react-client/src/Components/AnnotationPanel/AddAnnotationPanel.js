@@ -21,14 +21,14 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
   
   useEffect(() => {      
     const hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, targetElement);
-    if (hasExistingAnnotations === true) {
+    if (hasExistingAnnotations) {
       const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(targetElement);
 
       let existingAnnotation = annotationStore.filter(
         (obj) =>obj.domIndex == domIdentifier.index && obj.elem == domIdentifier.elType
       );
 
-      setTxtInput( hasExistingAnnotations === true ? existingAnnotation[0].title : null);
+      setTxtInput(hasExistingAnnotations === true ? existingAnnotation[0].title : null);
       setDisplayInput(hasExistingAnnotations === true ? true : false);
     }
 
@@ -69,7 +69,7 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
     await onUpdatedAnnotation();
   }
 
-  const updateAnnotation = async (duplicateIndex, e) =>{
+  const updateAnnotation = async (duplicateIndex, e) => {
     e.preventDefault();
     const duplicateAnnotation =  annotationStore.find((value,idx) => idx === duplicateIndex);
     duplicateAnnotation.title = txtInput
@@ -77,14 +77,14 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
     await onUpdatedAnnotation();
   }
 
-  const removeAnnotation = async (duplicateIndex, e) =>{
+  const removeAnnotation = async (duplicateIndex, e) => {
     e.preventDefault();
     const filteredAnnotation =  annotationStore.filter((value,idx) => idx !== duplicateIndex);
     setAnnotationStore(filteredAnnotation);
     await onRemoveAnnotation();
   }
 
-  const onClickAnnotation = () =>{
+  const onClickAnnotation = () => {
     setDisplayInput(false)
   }  
    

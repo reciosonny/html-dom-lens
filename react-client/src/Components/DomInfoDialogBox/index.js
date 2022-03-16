@@ -160,12 +160,12 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
     setShowAddBookmarkPanel(false);  
   };
 
-  function onRemoveAnnotation(){
+  function onRemoveAnnotation() {
     setStateHasExistingAnnotation(false);
     setShowAddAnnotationsPanel(false);
   }
 
-  function onUpdatedAnnotation(){    
+  function onUpdatedAnnotation() {    
     setStateHasExistingAnnotation(true);
   }
   
