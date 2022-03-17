@@ -45,6 +45,8 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   height: 100%;
   width: 100%;
   position: fixed;
+  top: 0px;
+  left: 0px; 
   z-index: -9999;
   opacity: 0;
   transition: all .3s;
@@ -59,7 +61,6 @@ $DialogDetailPadding: 10px 0px 0px 0px;
 .focused-targeted-element {
   z-index: 9999;
   position: relative;
-  background: #FFFFFF;
 }
 
 

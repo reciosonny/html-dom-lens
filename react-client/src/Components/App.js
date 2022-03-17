@@ -341,8 +341,6 @@ function App() {
 
   return (
     <GlobalContext.Provider value={{ selectedDom: selectedElem.domTarget, onChangeBookmarks }}>
-      <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>
-
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
       <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>
