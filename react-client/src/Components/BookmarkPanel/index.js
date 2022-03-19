@@ -51,6 +51,13 @@ const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
     }
   };
 
+  const onEditBookmark = (e, updatedTitle, bookmarkID) =>{
+    e.preventDefault();
+    const duplicateBookmark =  bookmarksStore.find((obj) => obj.id === bookmarkID);    
+    duplicateBookmark.title = updatedTitle
+    setBookmarksStore(bookmarksStore);
+  }
+
   const onClickBookmarkList = async (e) => {
 
     // note: We should remove the child first before querying the element in `retrievedElement` variable. Otherwise the query will go wrong because of indexing
@@ -115,6 +122,7 @@ const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
         bookmarks={bookmarksStore}
         onRemove={onRemoveBookmark}
         onClickBookmarkList={onClickBookmarkList}
+        onEdit={onEditBookmark}
       />
 
       <button
