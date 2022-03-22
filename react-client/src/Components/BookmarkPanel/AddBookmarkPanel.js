@@ -9,7 +9,7 @@ import * as domUtils from "../../utils/domUtils";
 
 
 // Note: I used React memo to avoid the expensive "re-rendering" components
-const AddBookmarkPanel = React.memo(({ domType, elClassNames, onSaveBookmark, onClose, domId }) => {
+const AddBookmarkPanel = React.memo(({ domType, elClassNames, onSaveBookmark, onClose, domId, targetElement }) => {
   const [txtInput, setTxtInput] = useState("");
   const [capturedSelectedDom, setCapturedSelectedDom] = useState(null);
 
@@ -31,10 +31,10 @@ const AddBookmarkPanel = React.memo(({ domType, elClassNames, onSaveBookmark, on
   const onSubmitBookmark = async (e) => {
     e.preventDefault();
 
-    
-    const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(capturedSelectedDom);
+    const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(targetElement);
 
-    const elId = capturedSelectedDom.id;
+    const elId = targetElement.id;
+
     const randomCode = uuidv4();
 
     let bookmarkObj = {

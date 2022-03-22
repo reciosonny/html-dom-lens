@@ -322,6 +322,7 @@ function App() {
   }
 
   const onClickAddBookmark = (idx) => {
+    onChangeBookmarks();
     setSelectedAddBookmarkDomElIdx(idx);
     setShowAddBookmarkPanel(!showAddBookmarkPanel);
   }
@@ -335,19 +336,17 @@ function App() {
   const onChangeBookmarks = () => {
     setTimeout(() => {
       updateBookmarksStore(); //needs to be called so that bookmarksStore will get the latest update from localStorage
-      setStateBookmarks(bookmarksStore);
+      setStateBookmarks(bookmarksStore);      
     }, 500);
   }
 
   return (
     <GlobalContext.Provider value={{ selectedDom: selectedElem.domTarget, onChangeBookmarks }}>
-      <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>
 
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
       <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>
       <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
-
       {switchExtensionFunctionality && (
         <div>
           {/* TODO:
@@ -387,6 +386,7 @@ function App() {
                 onClickBookmarkEmit={onClickAddBookmark}
                 hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark} 
                 hasExistingAnnotations={hasExistingAnnotations}
+                onRemoveBookmarkEmit={onClickAddBookmark}
               />
             );
           })}
