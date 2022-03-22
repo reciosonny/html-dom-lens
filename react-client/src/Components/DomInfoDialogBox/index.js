@@ -21,10 +21,9 @@ const FontColorDetails = ({ textcolor }) => {
     </React.Fragment>
   )
 }
-
 let domObserver;
 const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark, hasExistingAnnotations }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit }) => {
 
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
 
@@ -35,6 +34,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
   const [stateHasExistingAnnotation, setStateHasExistingAnnotation] = useState(false);
   const [showAddAnnotationsPanel, setShowAddAnnotationsPanel] = useState(false);
 
+  const [bookmarksStore, setBookmarksStore, updateBookmarksStore] = useLocalStorageStore('bookmarks', []);
   const [annotationStore, setAnnotationStore, getAnnotationStoreUpdates] = useLocalStorageStore('annotation', []);
 
   const handleSeeMoreAttr = () => {   
@@ -144,10 +144,19 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
     return () => {      
     }
   }, [annotationStore])
+
+  const removeExistingBookmark = () => {
+    const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(domElement);
+    const duplicateIndex =  bookmarksStore.findIndex((obj) => obj.domIndex === domIdentifier.index && obj.elem === domIdentifier.elType);    
+    const filteredBookmark =  bookmarksStore.filter((value,idx) => idx !== duplicateIndex);
+    setBookmarksStore(filteredBookmark);
+    setShowAddBookmarkPanel(false);
+    onRemoveBookmarkEmit();
+  }
   
-  const onClickAddBookmark = () => { 
-    setStateHasExistingBookmark(!stateHasExistingBookmark);
-    setShowAddBookmarkPanel(!showAddBookmarkPanel);
+  const onClickAddBookmark = () => {   
+    stateHasExistingBookmark ? removeExistingBookmark() : setShowAddBookmarkPanel(!showAddBookmarkPanel);    
+    setStateHasExistingBookmark(!stateHasExistingBookmark) 
     setShowAddAnnotationsPanel(false);
   };
 
@@ -247,7 +256,8 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
                 elClassNames={classNamesString}
                 domId={uniqueID}
                 onSaveBookmark={() => setShowAddBookmarkPanel(false)}
-                onClose={() => setShowAddBookmarkPanel(false)}                                
+                onClose={() => setShowAddBookmarkPanel(false)}  
+                targetElement={domElement} 
               />
             }
             {showAddAnnotationsPanel && 
