@@ -23,7 +23,7 @@ const FontColorDetails = ({ textcolor }) => {
 }
 let domObserver;
 const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark, hasExistingAnnotations,onRemoveBookmarkEmit }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit }) => {
 
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
 
@@ -258,8 +258,6 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
                 onSaveBookmark={() => setShowAddBookmarkPanel(false)}
                 onClose={() => setShowAddBookmarkPanel(false)}  
                 targetElement={domElement} 
-
-                // forceDelete={}                              
               />
             }
             {showAddAnnotationsPanel && 
