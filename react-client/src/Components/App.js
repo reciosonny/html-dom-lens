@@ -35,7 +35,7 @@ function App() {
 
   const [selectedAddBookmarkDomElIdx, setSelectedAddBookmarkDomElIdx] = useState(null);
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
-  const [focusMode, setFocusMode] = useState(false);
+  const [focusMode, setFocusMode] = useState(false);  
   // If this is enabled, disable events like mouse hover. If user clicks outside of add bookmark component, then set `add bookmark mode` to false.
   
   const [selectedElem, setSelectedElem] = useState({});
@@ -78,13 +78,13 @@ function App() {
        * Note: swap the urls for testing different websites. Sample websites for testing:
        * https://web.archive.org/web/20131014212210/http://stackoverflow.com/
        */
-      getPageContent('https://www.redfin.com/');
+      // getPageContent('https://www.redfin.com/');
       // getPageContent(
       //   "https://web.archive.org/web/20131014212210/http://stackoverflow.com/"
       // );
-      // getPageContent(
-      //   "https://facebook.com"
-      // );
+      getPageContent(
+        "https://www.thefreedictionary.com/"
+      );
     } else {
       injectDOMEventInBody();
 
@@ -149,6 +149,10 @@ function App() {
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
         const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");
+        const isFocused = document.getElementsByClassName("focused-element");
+
+        if (isFocused.length > 0)
+        return;
         
         if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || e.target.localName === 'path')
           return;
@@ -186,7 +190,7 @@ function App() {
               {
                 domBorder: {
                   border: `3px solid ${extractedDomInfo.bordercolor}`,
-                  'border-radius': '8px'
+                  'border-radius': '8px',                  
                 }               
               },
               {classNamePrefix :'custom-css'}
@@ -288,19 +292,20 @@ function App() {
   };
 
   const handleRemoveDialogBox = (idx, id, uniqueID) => {
-
+    if (focusMode === false){ 
     const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
-
 
     const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
 
     if(currentEl) 
       currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-      
 
-    setFocusMode(false);
-    setDomInfo(newDomInfo);
+      setDomInfo(newDomInfo);
+      document.querySelector(".focused-targeted-element").style.visibility =  "hidden";
+      document.querySelector(".focused-element").classList.remove("focused-element");
+      setFocusMode(false);
+    }  
   };
 
   const containsBookmarkModule = (e) => {
@@ -328,8 +333,30 @@ function App() {
   }
 
   const onClickFocus = (elTarget) => {
+    const existingFocus = document.getElementsByClassName("focused-element");
+    const cutoutTarget = document.querySelector(".focused-targeted-element");
+
+    if (existingFocus[0] === elTarget) {
+      setFocusMode(false);
+      existingFocus[0].classList.remove("focused-element");
+      cutoutTarget.style.visibility = "hidden";
+    } else {
+      if (existingFocus.length === 0) {
+        focusConfig(elTarget, cutoutTarget);
+        cutoutTarget.style.visibility = "visible";
+      }
+    }
+  }
+
+  const focusConfig = (elTarget, cutoutTarget) => {
     setFocusMode(!focusMode);
-    elTarget.classList.toggle('focused-targeted-element');
+    elTarget.classList.toggle("focused-element");
+    const elProperties = elTarget.getBoundingClientRect();
+    cutoutTarget.style.left = `${elProperties.x + window.scrollX}px`;
+    cutoutTarget.style.top = `${elProperties.y + window.scrollY}px`;
+    cutoutTarget.style.height = `${elProperties.height}px`;
+    cutoutTarget.style.width = `${elProperties.width}px`;
+    cutoutTarget.style.position = "absolute";
   }
 
   // Re-render bookmarks list state here to update the bookmarks list
@@ -345,7 +372,10 @@ function App() {
 
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
-      <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div>
+      {/* <div id="dimmer" className={`${focusMode && 'dimmer-show'}`}></div> */}
+
+      <div className="focused-targeted-element"></div>
+
       <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
       {switchExtensionFunctionality && (
         <div>
