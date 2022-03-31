@@ -138,13 +138,6 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
     }
   }, [hasExistingAnnotations]);  
   
-  useEffect(() => {    
-    hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, domElement);
-    setStateHasExistingAnnotation(hasExistingAnnotations);                  
-    return () => {      
-    }
-  }, [annotationStore])
-
   const removeExistingBookmark = () => {
     const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(domElement);
     const duplicateIndex =  bookmarksStore.findIndex((obj) => obj.domIndex === domIdentifier.index && obj.elem === domIdentifier.elType);    
@@ -160,18 +153,20 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
     setShowAddAnnotationsPanel(false);
   };
 
-  const onClickAddAnnotation = () => {     
-    !stateHasExistingAnnotation ? setStateHasExistingAnnotation(!stateHasExistingAnnotation) : getAnnotationStoreUpdates();    
+  const onClickAddAnnotation = () => {         
+    !stateHasExistingAnnotation ? setStateHasExistingAnnotation(!stateHasExistingAnnotation) :  setStateHasExistingAnnotation(domUtils.hasAnnotations(annotationStore, domElement));   
     setShowAddAnnotationsPanel(!showAddAnnotationsPanel);
     setShowAddBookmarkPanel(false);  
   };
 
   function onRemoveAnnotation() {
+    getAnnotationStoreUpdates(); 
     setStateHasExistingAnnotation(false);
     setShowAddAnnotationsPanel(false);
   }
 
   function onUpdatedAnnotation() {    
+    getAnnotationStoreUpdates(); 
     setStateHasExistingAnnotation(true);
   }
   
