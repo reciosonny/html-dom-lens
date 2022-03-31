@@ -47,6 +47,10 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   position: fixed;
   z-index: -9999;
   opacity: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   transition: all .3s;
 }
 
@@ -57,9 +61,10 @@ $DialogDetailPadding: 10px 0px 0px 0px;
 
 
 .focused-targeted-element {
-  z-index: 9999;
-  position: relative;
-  background: #FFFFFF;
+  z-index: 9999 !important;  
+  box-shadow: 999vmax 999vmax  999vmax 9999vmax rgba(0, 0, 0, 0.95);
+  border-radius: 8px;
+  visibility: hidden;
 }
 
 
