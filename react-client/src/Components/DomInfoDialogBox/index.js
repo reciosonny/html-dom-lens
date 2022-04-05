@@ -43,7 +43,8 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
 
 
   const initializeDomObserver = async () => {
-
+    
+    if (targetNode !== domElement) return;
     const targetNode = domElement;
     
     // Options for the observer (which mutations to observe)
@@ -197,7 +198,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
           <div className="dom-header">           
             <span className="dom-header-tag">{tag}</span>
             {id && <span className="dom-header-details">{id}</span>}                       
-              {domUtils.customClassFilter(domInfo.classNames).map((val) => (    
+              {domUtils.customClassFilter(domInfo.classNames).map((val) => (  
               <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
             ))}            
           </div>
@@ -243,7 +244,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
               {seeMoreAttr  ? `... ${attrleftover} more` : `... see less`}
             </div>
           )}
-          <ChildrenDetails children={domUtils.customChildrenFilter(domInfo.children)} />
+          <ChildrenDetails children={domInfo.children} />         
         </div>       
             {showAddBookmarkPanel && 
               <AddBookmarkPanel 

@@ -72,11 +72,31 @@ function customWidgetFilter(toFilter) {
   }
 }
 
+// funtion for clearing all dialogbox would only trigger if all existing dialog boxes are hidden
+function clearDialogBoxIndex(dialogboxList) {
+  
+  const dialogBoxCount = dialogboxList.length;
+  let verifyCount = 0;
+  for (let object of dialogboxList) {
+    if (object.style.visibility === "hidden") {
+      verifyCount += 1;
+    }
+    if (dialogBoxCount === verifyCount) {      
+      for (var index = 0; index < dialogBoxCount; index) {      
+        dialogboxList[index].remove();
+      }
+      index = 0;
+    }
+  }
+  return index;  
+}
+
 // removes all customed css from classnames array
 function customClassFilter(toFilter) {
  
+if (toFilter.length < 0) return;
  const isFiltered = toFilter.filter(
-    (obj) => obj.name !== ".focused-dom" && !obj.name.includes("custom-css")
+    (obj) => obj.name !== ".focused-dom" && obj.name !== ".focused-element" && !obj.name.includes("custom-css")
   );
   return isFiltered;
 }
@@ -95,7 +115,7 @@ function customChildrenFilter(toFilter) {
 
   return filteredChildren;
 }
-
+ 
 // Check if Annotation is existing on Element
 function hasAnnotations(annotationStore, captureElement){
   const elAnnotation = annotationStore.map(({ elem, domIndex }) => getElementByTagAndIndex(elem, domIndex));
@@ -108,7 +128,6 @@ const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "
 
 
 function extractDomInfo(elTarget) {
-  
   const classNames = [...elTarget.classList].map((name) => `.${name}`);
   const classNamesString = classNames.reduce((init, curr) => init+curr, '');
 
@@ -169,7 +188,7 @@ function extractDomInfo(elTarget) {
     bordercolor: colorselection[randomcolor],
     uniqueID: dataId,
     dataId: dataId,
-    attributes: dataAttributes                         
+    attributes: dataAttributes.filter( obj => !obj.key.includes('domLensInjected') ).filter( obj => !obj.key.includes('id') )                         
   };
 }
 
@@ -181,7 +200,8 @@ export {
   getElementByTagAndIndex,
   getUniqueElementIdentifierByTagAndIndex,
   customChildrenFilter,
-  customClassFilter,
+  customClassFilter,  
   customWidgetFilter,
-  hasAnnotations
+  hasAnnotations,
+  clearDialogBoxIndex
 }
