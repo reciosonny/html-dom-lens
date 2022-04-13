@@ -22,7 +22,7 @@ window.store = {
   bookmarkBtnClicked: false, //we can use this to set a guard to `onClick` event we wired up using plain javascript to prevent those logic from getting mixed up
   DomInfoDialogBox: {
     children: [],
-    classList: []
+    classList: [],
   }
 };
 
@@ -141,7 +141,6 @@ function App() {
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
       let strClassList = '';
-      
       if (!window.store.switchExtensionFunctionality || e.target.className.includes('custom-css')) return;
 
       if(!containsBookmarkModule(e)) {
@@ -236,13 +235,9 @@ function App() {
       
     });
 
-    document.addEventListener("mouseover", async (e) => {
-      const prevHighlight =  document.getElementsByClassName("focused-dom");
-      if (prevHighlight.length > 0){
-        prevHighlight[0].classList.toggle("focused-dom");
-      }
+    document.addEventListener("mouseover", async (e) => {    
       if (!containsBookmarkModule(e)) {        
-        if (!window.store.switchExtensionFunctionality || window.store.focusMode || e.target.className.includes('custom-css')) return;
+        if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
 
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
@@ -263,13 +258,8 @@ function App() {
     });
 
     document.addEventListener("mouseout", e => {
-      const prevHighlight =  document.getElementsByClassName("focused-dom");
-      if (prevHighlight.length > 0){
-        prevHighlight[0].classList.toggle("focused-dom");
-      }
-
       if(!containsBookmarkModule(e)) {
-        if (!window.store.switchExtensionFunctionality || window.store.focusMode || e.target.className.includes('custom-css')) return;
+        if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
   
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
@@ -296,11 +286,12 @@ function App() {
     injectDOMEventInBody();
   };
 
-  const handleRemoveDialogBox = (idx, id, uniqueID) => {
+  const handleRemoveDialogBox = (idx, id, uniqueID) => {    
     // const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
     // const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
     // const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
-
+ 
+    // window.store.DomInfoDialogBox.deleteID = uniqueID
     // if (focusMode === true) {
     //   const focusedEl = document.querySelector(".focused-element");
     //   if (focusedEl === currentEl) {
@@ -338,6 +329,7 @@ function App() {
       dialogboxList[idx].style.visibility = "hidden";
       // setDomInfo(newDomInfo);      
     }
+    
   }   
 
   const containsBookmarkModule = (e) => {
@@ -447,6 +439,7 @@ function App() {
                 hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark} 
                 hasExistingAnnotations={hasExistingAnnotations}
                 onRemoveBookmarkEmit={onClickAddBookmark}
+                xdomInfo={domInfo}
               />
             );
           })}

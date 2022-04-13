@@ -23,10 +23,9 @@ const FontColorDetails = ({ textcolor }) => {
 }
 let domObserver;
 const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, xdomInfo }) => {
 
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
-
   const [seeMoreAttr, setSeeMoreAttr] = useState(true);
 
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
@@ -42,89 +41,60 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
   };
 
 
-  const initializeDomObserver = async () => {
-    
-    if (targetNode !== domElement) return;
-    const targetNode = domElement;
-    
-    // Options for the observer (which mutations to observe)
-    const config = { attributes: true, childList: true, subtree: true };
-
-    // Callback function to execute when mutations are observed
-    const callback = (mutationsList, observer) => {
-      
-        for(const mutation of mutationsList) {
-          
-          if (mutation.type === 'childList') {
-              
-            if (domElement !== mutation.target) return;
-
-            // const newChildren = [...mutation.target.children].map((child) => {
-            const newChildren = [...mutation.target.children].map((child) => {  
-              // If it doesn't exist in existing children the first time dialogbox shows up, then it's a new child
-              const updated = !children.some(val => val.element === child);
-              
-              return {
-                id: child.id ? "#" + child.id : null,
-                class: child.className ? "." + child.className : null,
-                tag: child.localName,
-                updated
-              };
-            });
-
-            window.store.DomInfoDialogBox.children = newChildren; //need to put it inside window.store so it gets the updated children (see mutation type attributes)
-            
-            setDomInfo({ ...domInfo, classNames: window.store.DomInfoDialogBox.classList, children: newChildren });
-            
-          }
-          else if (mutation.type === 'attributes') {
-
-            switch (mutation.attributeName) {
-              case 'class':
-                if (domElement === mutation.target) {
-                  const newClassList = [...mutation.target.classList].map(name => {
-                    const updated = !classNames.some(existingClass => existingClass.slice(1) === name); //slice/remove the dot(.)
-                    return {
-                      name: `.${name}`, 
-                      updated
-                    }
-                  });
-
-                  window.store.DomInfoDialogBox.classList = newClassList; //store inside window for later retrieval
-  
-                  setDomInfo({ ...domInfo, children: window.store.DomInfoDialogBox.children, classNames: newClassList }); //need to call window.store.children here for updated data
-                }
-
-                break;
+const initializeDomObserver = async () => {
+  const targetNode = domElement
+  const elIndex = idx
+  // Options for the observer (which mutations to observe)
+  const config = { attributes: true, childList: true, subtree: true };
+  // Callback function to execute when mutations are observed
+  const callback = (mutationsList, observer) => {      
+    for(const mutation of mutationsList) {                   
+      if (domElement === mutation.target) {
+          const newClassList = [...mutation.target.classList].map(name => {
+            const updated = !classNames.some(existingClass => existingClass.slice(1) === name); //slice/remove the dot(.)
+            return {
+              name: `.${name}`, 
+              updated
             }
+          }).filter(
+            (obj) => obj.name !== '.focused-dom' && obj.name !== '.focused-element' && !obj.name.includes('custom-css')
+          );            
+          const newChildren = [...mutation.target.children].map((child) => {  
+            // If it doesn't exist in existing children the first time dialogbox shows up, then it's a new child
+            const updated = !children.some(val => val.element === child);            
+            return {
+              id: child.id ? "#" + child.id : null,
+              class: child.className ? "." + child.className : null,
+              tag: child.localName,
+              updated
+            };
+          });
+          setDomInfo({ ...domInfo, children: newChildren, classNames: newClassList }); //need to call window.store.children here for updated data
+      }      
+    }
+  };
 
-          }
-        }
-    };
-
-    domObserver = new MutationObserver(callback);
-    domObserver.observe(targetNode, config);
-  }
-
+  domObserver = new MutationObserver(callback);
+  domObserver.observe(targetNode, config);
+}  
+  
   const numAttibToDisplay = !seeMoreAttr ? dataAttributes.length : 2 ;
   const attrleftover = dataAttributes.length - 2;
 
   React.useEffect(() => {
-    
-    initializeDomObserver();
-
     const classNamesWithStatus = classNames.map(name => ({ name, updated: false, removed: false }));
     const childrenWithStatus = children.map(child => ({ ...child, updated: false, removed: false }));
 
     window.store.DomInfoDialogBox.children = childrenWithStatus;
-
+    window.store.DomInfoDialogBox.classList = classNamesWithStatus;
 
     setDomInfo({ ...domInfo, tag, classNames:  classNamesWithStatus, parent, children: childrenWithStatus, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement }) //set DOM info here...
+    initializeDomObserver();
 
     return () => {
       domObserver.disconnect();
     }
-  }, []);
+  }, [classNames,children]);
 
   React.useEffect(() => {
     // if the DOM has existing bookmark, enable it by default.
@@ -192,13 +162,12 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
           onClickAnnotation={onClickAddAnnotation}
           showAddBookmarkIcon={stateHasExistingBookmark} 
           showAddAnnotationIcon={stateHasExistingAnnotation} 
-        /> 
-        
+        />          
         <div>
           <div className="dom-header">           
             <span className="dom-header-tag">{tag}</span>
-            {id && <span className="dom-header-details">{id}</span>}                       
-              {domUtils.customClassFilter(domInfo.classNames).map((val) => (  
+            {id && <span className="dom-header-details">{id}</span>}                                     
+              {domInfo.classNames.map((val) => (  
               <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
             ))}            
           </div>
