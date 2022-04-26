@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import DomOptions from "../DomOptions";
 import ChildrenDetails from "./ChildrenDetails";
 import ParentDetails from "./ParentDetails";
@@ -6,6 +6,8 @@ import * as domUtils from "../../utils/domUtils";
 import AddBookmarkPanel from "../BookmarkPanel/AddBookmarkPanel";
 import AddAnnotationPanel from "../AnnotationPanel/AddAnnotationPanel";
 import useLocalStorageStore from "../../hooks/useLocalStorageStore";
+import useDraggable from "../../hooks/useDraggable";
+
 
 const FontColorDetails = ({ textcolor }) => {
 
@@ -169,6 +171,9 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
     getAnnotationStoreUpdates(); 
     setStateHasExistingAnnotation(true);
   }
+
+  const dragRef = useRef(null);
+  useDraggable(dragRef);
   
   return (
     <React.Fragment>
@@ -179,6 +184,7 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
           left: `${left}px`,
           border: `3px solid ${borderclr}`,
         }}
+        ref = {dragRef}
       >
         <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, id, uniqueID)}>
           x
