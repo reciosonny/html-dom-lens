@@ -286,28 +286,7 @@ function App() {
     injectDOMEventInBody();
   };
 
-  const handleRemoveDialogBox = (idx, id, uniqueID) => {    
-    // const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
-    // const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
-    // const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
- 
-    // window.store.DomInfoDialogBox.deleteID = uniqueID
-    // if (focusMode === true) {
-    //   const focusedEl = document.querySelector(".focused-element");
-    //   if (focusedEl === currentEl) {
-    //     if (currentEl)
-    //       currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-    //     setDomInfo(newDomInfo);
-    //     document.querySelector(".focused-targeted-element").style.visibility = "hidden";
-    //     document.querySelector(".focused-element").classList.remove("focused-element");
-    //     setFocusMode(false);
-    //   }
-    // } 
-    // else {
-    //   currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-    //   setDomInfo(newDomInfo);
-    // }
-
+  const handleRemoveDialogBox = (idx, id, uniqueID) => {        
     const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
     const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
@@ -327,7 +306,6 @@ function App() {
     else {     
       currentEl.classList.remove(currDomInfo.cssClassesAssigned);
       dialogboxList[idx].style.visibility = "hidden";
-      // setDomInfo(newDomInfo);      
     }
     
   }   
