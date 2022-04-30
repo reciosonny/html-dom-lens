@@ -71,31 +71,7 @@ function customWidgetFilter(toFilter) {
     return toFilter;
   }
 }
-
-// removes all customed css from classnames array
-function customClassFilter(toFilter) {
  
- const isFiltered = toFilter.filter(
-    (obj) => obj.name !== ".focused-dom" && !obj.name.includes("custom-css")
-  );
-  return isFiltered;
-}
-
-// removes all customed css from children
-function customChildrenFilter(toFilter) {  
-
-  const filteredChildren = toFilter.map((val) => {           
-
-    const filterCustomCss = val.class ? val.class.split(" ")
-      .filter((customFilter) => !customFilter.includes("custom-css")).toString() : null;
-    
-    return {...val, class: filterCustomCss}
-  });
-
-
-  return filteredChildren;
-}
-
 // Check if Annotation is existing on Element
 function hasAnnotations(annotationStore, captureElement){
   const elAnnotation = annotationStore.map(({ elem, domIndex }) => getElementByTagAndIndex(elem, domIndex));
@@ -108,10 +84,9 @@ const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "
 
 
 function extractDomInfo(elTarget) {
+  const classNames = [...elTarget.classList].map((name) => `.${name}`).filter((val, idx) => val !== ".focused-dom" && val !== ".focused-element");
+  const classNamesString = classNames.reduce((init, curr) => init+curr, '');  
   
-  const classNames = [...elTarget.classList].map((name) => `.${name}`);
-  const classNamesString = classNames.reduce((init, curr) => init+curr, '');
-
   const children = [...elTarget.children].map((child) => {
     return {
       id: child.id ? "#" + child.id : null,
@@ -169,7 +144,7 @@ function extractDomInfo(elTarget) {
     bordercolor: colorselection[randomcolor],
     uniqueID: dataId,
     dataId: dataId,
-    attributes: dataAttributes                         
+    attributes: dataAttributes.filter( obj => !obj.key.includes('domLensInjected') ).filter( obj => !obj.key.includes('id') )                         
   };
 }
 
@@ -179,9 +154,7 @@ export {
   ancestorExistsByClassName,
   extractDomInfo,
   getElementByTagAndIndex,
-  getUniqueElementIdentifierByTagAndIndex,
-  customChildrenFilter,
-  customClassFilter,
+  getUniqueElementIdentifierByTagAndIndex,    
   customWidgetFilter,
-  hasAnnotations
+  hasAnnotations  
 }

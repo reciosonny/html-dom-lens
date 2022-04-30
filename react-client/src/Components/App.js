@@ -22,7 +22,7 @@ window.store = {
   bookmarkBtnClicked: false, //we can use this to set a guard to `onClick` event we wired up using plain javascript to prevent those logic from getting mixed up
   DomInfoDialogBox: {
     children: [],
-    classList: []
+    classList: [],
   }
 };
 
@@ -141,8 +141,7 @@ function App() {
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
       let strClassList = '';
-      
-      if (!window.store.switchExtensionFunctionality) return;
+      if (!window.store.switchExtensionFunctionality || e.target.className.includes('custom-css')) return;
 
       if(!containsBookmarkModule(e)) {
         
@@ -213,8 +212,7 @@ function App() {
             }
             ]
           });
-          
-  
+            
           // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
           (function (pageYcoordinate) {
             setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
@@ -232,22 +230,19 @@ function App() {
             }, 10);
           }(pageYcoordinate));
 
-
         }
       }
       
     });
 
-    document.addEventListener("mouseover", async (e) => {
-      if (!containsBookmarkModule(e)) {
-        if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
-
+    document.addEventListener("mouseover", async (e) => {    
+      if (!containsBookmarkModule(e)) {        
+        if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
 
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
         const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
         
-
         if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode) {
           const domType = e.target.nodeName?.toLowerCase();
           await setDomLeanDetails({
@@ -257,14 +252,14 @@ function App() {
             elClassNames: [...e.target.classList],
           }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
           e.target.classList.toggle("focused-dom");
-          // e.target.appendChild(refDomHighlight.current); //TODO: restore this later
+          // e.target.appendChild(refDomHighlight.current); //TODO: restore this later // Uncomment to allow domLean 
         }
       }
     });
 
     document.addEventListener("mouseout", e => {
       if(!containsBookmarkModule(e)) {
-        if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
+        if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
   
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
@@ -272,7 +267,7 @@ function App() {
   
         if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
           e.target.classList.toggle("focused-dom");
-          // e.target.removeChild(refDomHighlight.current); //TODO: restore this later
+          // e.target.removeChild(refDomHighlight.current); //TODO: restore this later // Uncomment to allow domLean 
         }
       }
     });
@@ -291,27 +286,29 @@ function App() {
     injectDOMEventInBody();
   };
 
-  const handleRemoveDialogBox = (idx, id, uniqueID) => {
+  const handleRemoveDialogBox = (idx, id, uniqueID) => {        
     const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
     const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
     const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
+    const dialogboxList = document.getElementsByClassName('dom-info-dialog-box');
 
     if (focusMode === true) {
       const focusedEl = document.querySelector(".focused-element");
       if (focusedEl === currentEl) {
         if (currentEl)
-          currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-        setDomInfo(newDomInfo);
+        dialogboxList[idx].style.visibility = "hidden";
+        currentEl.classList.remove(currDomInfo.cssClassesAssigned);
         document.querySelector(".focused-targeted-element").style.visibility = "hidden";
         document.querySelector(".focused-element").classList.remove("focused-element");
-        setFocusMode(false);
+        setFocusMode(false);        
       }
     } 
-    else {
+    else {     
       currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-      setDomInfo(newDomInfo);
+      dialogboxList[idx].style.visibility = "hidden";
     }
-  };
+    
+  }   
 
   const containsBookmarkModule = (e) => {
     
@@ -327,7 +324,7 @@ function App() {
   const onCloseAddBookmark = (e) => {
     setSelectedAddBookmarkDomElIdx(null);
     setShowAddBookmarkPanel(false);
-
+ 
     window.store.bookmarkBtnClicked = false; //set the store to false afterwards
   }
 
@@ -420,6 +417,7 @@ function App() {
                 hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark} 
                 hasExistingAnnotations={hasExistingAnnotations}
                 onRemoveBookmarkEmit={onClickAddBookmark}
+                xdomInfo={domInfo}
               />
             );
           })}
@@ -437,7 +435,7 @@ function App() {
             bookmarks={stateBookmarks}
             onRemoveBookmarkEmit={onChangeBookmarks}
           />
-        </div>
+        </div> 
       )}
 
   
