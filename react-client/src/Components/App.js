@@ -346,7 +346,7 @@ function App() {
   const onCloseAddBookmark = (e) => {
     setSelectedAddBookmarkDomElIdx(null);
     setShowAddBookmarkPanel(false);
-
+ 
     window.store.bookmarkBtnClicked = false; //set the store to false afterwards
   }
 
