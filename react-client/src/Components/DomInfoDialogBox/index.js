@@ -25,10 +25,12 @@ const FontColorDetails = ({ textcolor }) => {
 }
 let domObserver;
 const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, onClickFocus, domElement, focusMode, onClickBookmarkEmit, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, xdomInfo }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement, focusedState, onClickBookmarkEmit, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, xdomInfo }) => {
 
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
   const [seeMoreAttr, setSeeMoreAttr] = useState(true);
+  const [focusMode, setFocusMode] = useState(false);  
+
 
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
   const [stateHasExistingBookmark, setStateHasExistingBookmark] = useState(false);
@@ -143,11 +145,43 @@ const initializeDomObserver = async () => {
     setStateHasExistingAnnotation(true);
   }
 
+  const onClickFocus = (elTarget) => {
+    const existingFocus = document.getElementsByClassName("focused-element");
+    const cutoutTarget = document.querySelector(".focused-targeted-element");
+
+    if (existingFocus[0] === elTarget) {      
+      existingFocus[0].classList.remove("focused-element");
+      cutoutTarget.style.visibility = "hidden";
+      focusedState(false);
+      setFocusMode(false);
+
+    } else {
+      if (existingFocus.length === 0) {
+        focusConfig(elTarget, cutoutTarget);
+        cutoutTarget.style.visibility = "visible";
+        focusedState(true);
+      }
+    }
+  }
+
+  const focusConfig = (elTarget, cutoutTarget) => {
+    setFocusMode(!focusMode);
+    elTarget.classList.toggle("focused-element");
+    const elProperties = elTarget.getBoundingClientRect();
+    cutoutTarget.style.left = `${elProperties.x + window.scrollX}px`;
+    cutoutTarget.style.top = `${elProperties.y + window.scrollY}px`;
+    cutoutTarget.style.height = `${elProperties.height}px`;
+    cutoutTarget.style.width = `${elProperties.width}px`;
+    cutoutTarget.style.position = "absolute ";
+  }
+
   const dragRef = useRef(null);
   useDraggable(dragRef);
   
   return (
     <React.Fragment>
+      <div className="focused-targeted-element"></div>
+
       <div
         className="dom-info-dialog-box"
         style={{

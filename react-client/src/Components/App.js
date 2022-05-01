@@ -147,11 +147,7 @@ function App() {
         
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
-        const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");
-        const isFocused = document.getElementsByClassName("focused-element");
-
-        if (isFocused.length > 0)
-        return;
+        const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");        
         
         if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || e.target.localName === 'path')
           return;
@@ -180,7 +176,10 @@ function App() {
   
         if (elTarget.id !== "closeDom") {
           e.preventDefault();
-  
+
+          if (document.getElementsByClassName("focused-element").length > 0)
+          return;
+
           const extractedDomInfo = domUtils.extractDomInfo(elTarget);
           const pageYcoordinate = e.pageY;
   
@@ -236,8 +235,9 @@ function App() {
     });
 
     document.addEventListener("mouseover", async (e) => {    
-      if (!containsBookmarkModule(e)) {        
+      if (!containsBookmarkModule(e)) { 
         if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
+        if (focusMode) return;
 
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
@@ -250,8 +250,8 @@ function App() {
             elId: e.target.id,
             domType,
             elClassNames: [...e.target.classList],
-          }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
-          e.target.classList.toggle("focused-dom");
+          }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.         
+           e.target.classList.toggle("focused-dom");         
           // e.target.appendChild(refDomHighlight.current); //TODO: restore this later // Uncomment to allow domLean 
         }
       }
@@ -334,31 +334,8 @@ function App() {
     setShowAddBookmarkPanel(!showAddBookmarkPanel);
   }
 
-  const onClickFocus = (elTarget) => {
-    const existingFocus = document.getElementsByClassName("focused-element");
-    const cutoutTarget = document.querySelector(".focused-targeted-element");
-
-    if (existingFocus[0] === elTarget) {
-      setFocusMode(false);
-      existingFocus[0].classList.remove("focused-element");
-      cutoutTarget.style.visibility = "hidden";
-    } else {
-      if (existingFocus.length === 0) {
-        focusConfig(elTarget, cutoutTarget);
-        cutoutTarget.style.visibility = "visible";
-      }
-    }
-  }
-
-  const focusConfig = (elTarget, cutoutTarget) => {
-    setFocusMode(!focusMode);
-    elTarget.classList.toggle("focused-element");
-    const elProperties = elTarget.getBoundingClientRect();
-    cutoutTarget.style.left = `${elProperties.x + window.scrollX}px`;
-    cutoutTarget.style.top = `${elProperties.y + window.scrollY}px`;
-    cutoutTarget.style.height = `${elProperties.height}px`;
-    cutoutTarget.style.width = `${elProperties.width}px`;
-    cutoutTarget.style.position = "absolute";
+  const onClickFocus = (focusedState) => {
+   setFocusMode(focusedState)
   }
 
   // Re-render bookmarks list state here to update the bookmarks list
@@ -411,7 +388,7 @@ function App() {
                 uniqueID={domInfo.uniqueID}
                 dataAttributes={domInfo.attributes}
                 onClickOption={onClickOption}
-                onClickFocus={onClickFocus}
+                focusedState={onClickFocus}
                 focusMode={focusMode}
                 onClickBookmarkEmit={onClickAddBookmark}
                 hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark} 
