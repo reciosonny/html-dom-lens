@@ -151,14 +151,14 @@ const initializeDomObserver = async () => {
 
     if (existingFocus[0] === elTarget) {      
       existingFocus[0].classList.remove("focused-element");
-      cutoutTarget.style.visibility = "hidden";
+      cutoutTarget.style.opacity = 0;
+      
       focusedState(false);
       setFocusMode(false);
-
     } else {
       if (existingFocus.length === 0) {
         focusConfig(elTarget, cutoutTarget);
-        cutoutTarget.style.visibility = "visible";
+        cutoutTarget.style.opacity = 1;
         focusedState(true);
       }
     }

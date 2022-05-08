@@ -64,7 +64,8 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   z-index: 9999 !important;  
   box-shadow: 999vmax 999vmax  999vmax 9999vmax rgba(0, 0, 0, 0.95);
   border-radius: 8px;
-  visibility: hidden;
+  opacity: 0;
+  transition: all .3s;
 }
 
 
@@ -96,6 +97,10 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   
   transition: top .2s;
   animation: animShow .5s forwards;
+
+  &:active {
+    cursor: grab;
+  }
 
   .close-btn-style {
     position: absolute;
@@ -181,7 +186,8 @@ $DialogDetailPadding: 10px 0px 0px 0px;
     color: #78909c;
   }
 }
-.widgets{
+
+.widgets {
   flex-direction: column;
 }
 

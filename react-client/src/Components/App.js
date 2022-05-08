@@ -298,9 +298,9 @@ function App() {
         if (currentEl)
         dialogboxList[idx].style.visibility = "hidden";
         currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-        document.querySelector(".focused-targeted-element").style.visibility = "hidden";
+        document.querySelector(".focused-targeted-element").style.opacity = 0;
         document.querySelector(".focused-element").classList.remove("focused-element");
-        setFocusMode(false);        
+        setFocusMode(false);
       }
     } 
     else {     
