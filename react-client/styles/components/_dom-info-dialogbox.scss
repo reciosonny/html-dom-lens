@@ -17,7 +17,7 @@
   transition: top .2s;
   animation: animShow .5s forwards;
 
-  &:active {
+  &:active:hover, &:hover:active {
     cursor: grab;
   }
 

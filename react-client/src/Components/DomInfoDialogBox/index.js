@@ -7,6 +7,7 @@ import AddBookmarkPanel from "../BookmarkPanel/AddBookmarkPanel";
 import AddAnnotationPanel from "../AnnotationPanel/AddAnnotationPanel";
 import useLocalStorageStore from "../../hooks/useLocalStorageStore";
 import useDraggable from "../../hooks/useDraggable";
+import FocusedTargetedElement from "../FocusedTargetedElement";
 
 
 const FontColorDetails = ({ textcolor }) => {
@@ -25,7 +26,7 @@ const FontColorDetails = ({ textcolor }) => {
 }
 let domObserver;
 const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement, focusedState, onClickBookmarkEmit, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, xdomInfo }) => {
+  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit }) => {
 
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
   const [seeMoreAttr, setSeeMoreAttr] = useState(true);
@@ -40,6 +41,8 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
   const [bookmarksStore, setBookmarksStore, updateBookmarksStore] = useLocalStorageStore('bookmarks', []);
   const [annotationStore, setAnnotationStore, getAnnotationStoreUpdates] = useLocalStorageStore('annotation', []);
 
+  const [focusedTargetedElementStyles, setFocusedTargetedElementStyles] = useState({ leftPosition: '', topPosition: '', height: '', width: '', opacity: 0 });
+
   const handleSeeMoreAttr = () => {   
     setSeeMoreAttr(!seeMoreAttr);
   };
@@ -47,7 +50,6 @@ const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, 
 
 const initializeDomObserver = async () => {
   const targetNode = domElement
-  const elIndex = idx
   // Options for the observer (which mutations to observe)
   const config = { attributes: true, childList: true, subtree: true };
   // Callback function to execute when mutations are observed
@@ -151,28 +153,35 @@ const initializeDomObserver = async () => {
 
     if (existingFocus[0] === elTarget) {      
       existingFocus[0].classList.remove("focused-element");
-      cutoutTarget.style.opacity = 0;
-      
+
+      setFocusedTargetedElementStyles({ ...focusedTargetedElementStyles, opacity: 0 });
+
       focusedState(false);
       setFocusMode(false);
     } else {
       if (existingFocus.length === 0) {
-        focusConfig(elTarget, cutoutTarget);
-        cutoutTarget.style.opacity = 1;
+        updateFocusedTargetedElementStyles(elTarget, cutoutTarget);
+    
         focusedState(true);
       }
     }
   }
 
-  const focusConfig = (elTarget, cutoutTarget) => {
+
+  const updateFocusedTargetedElementStyles = (elTarget) => {
     setFocusMode(!focusMode);
-    elTarget.classList.toggle("focused-element");
+    
     const elProperties = elTarget.getBoundingClientRect();
-    cutoutTarget.style.left = `${elProperties.x + window.scrollX}px`;
-    cutoutTarget.style.top = `${elProperties.y + window.scrollY}px`;
-    cutoutTarget.style.height = `${elProperties.height}px`;
-    cutoutTarget.style.width = `${elProperties.width}px`;
-    cutoutTarget.style.position = "absolute ";
+
+    setFocusedTargetedElementStyles({ 
+      ...focusedTargetedElementStyles,
+      leftPosition: `${elProperties.x + window.scrollX}px`, 
+      topPosition: `${elProperties.y + window.scrollY}px`,
+      height: `${elProperties.height}px`,
+      width: `${elProperties.width}px`,
+      opacity: 1
+    });
+    elTarget.classList.toggle("focused-element");
   }
 
   const dragRef = useRef(null);
@@ -180,7 +189,7 @@ const initializeDomObserver = async () => {
   
   return (
     <React.Fragment>
-      <div className="focused-targeted-element"></div>
+      <FocusedTargetedElement {...focusedTargetedElementStyles} />
 
       <div
         className="dom-info-dialog-box"
