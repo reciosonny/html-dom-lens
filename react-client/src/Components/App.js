@@ -7,7 +7,7 @@ import DomInfoDialogBox from "./DomInfoDialogBox";
 import { PRODUCTION_MODE } from "../keys";
 import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
 import DomSwitch from "./DomSwitch";
-import {forEach} from 'lodash'
+import ErrorBoundary from "./ErrorBoundaryComponent";
 
 import * as domUtils from "../utils/domUtils";
 import BookmarkPanel from "./BookmarkPanel";
@@ -44,6 +44,8 @@ function App() {
   const [bookmarksStore, setBookmarksStore, updateBookmarksStore] = useLocalStorageStore('bookmarks', []);
   const [annotationStore, setAnnotationStore] = useLocalStorageStore('annotation', []);
   const [stateBookmarks, setStateBookmarks] = useState([]);
+
+  const [domMinimalDetailsStyles, setDomMinimalDetailsStyles] = useState({ width: 0, positionY: 100, positionX: 0 });
 
 
   const onTurnOffExtension = () => {
@@ -170,8 +172,6 @@ function App() {
           domLeanDetails
         });
         
-         
-  
         const elTarget = e.target;
   
         if (elTarget.id !== "closeDom") {
@@ -194,13 +194,13 @@ function App() {
               {classNamePrefix :'custom-css'}
             )
             .attach();
- 
+
           //for modifying style directly...
           e.target.classList.add(sheet.classes.domBorder);
           //sets data-id to the DOM
           e.target.setAttribute('data-id', extractedDomInfo.dataId);
           e.target.setAttribute('data-dom-lens-injected', true);         
-    
+
           await setDomInfo(value => {
             return [...value,
             {
@@ -211,7 +211,7 @@ function App() {
             }
             ]
           });
-            
+
           // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
           (function (pageYcoordinate) {
             setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
@@ -228,7 +228,7 @@ function App() {
               });
             }, 10);
           }(pageYcoordinate));
-
+          
         }
       }
       
@@ -251,8 +251,15 @@ function App() {
             domType,
             elClassNames: [...e.target.classList],
           }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.         
-           e.target.classList.toggle("focused-dom");         
-          // e.target.appendChild(refDomHighlight.current); //TODO: restore this later // Uncomment to allow domLean 
+          e.target.classList.toggle("focused-dom");
+          
+          const elBoundingRect = e.target.getBoundingClientRect();
+
+          setDomMinimalDetailsStyles({ 
+            width: `${Math.round(elBoundingRect.width-30)}px`,
+            positionY: Math.round(window.scrollY+(elBoundingRect.top-30)), 
+            positionX: Math.round(window.scrollX+elBoundingRect.left) 
+          });
         }
       }
     });
@@ -267,7 +274,6 @@ function App() {
   
         if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
           e.target.classList.toggle("focused-dom");
-          // e.target.removeChild(refDomHighlight.current); //TODO: restore this later // Uncomment to allow domLean 
         }
       }
     });
@@ -288,11 +294,10 @@ function App() {
 
   const handleRemoveDialogBox = (idx, id, uniqueID) => {        
     const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
-    const newDomInfo = domInfo.filter((x, currentIdx) => currentIdx !== idx);
     const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
     const dialogboxList = document.getElementsByClassName('dom-info-dialog-box');
 
-    if (focusMode === true) {
+    if (focusMode) {
       const focusedEl = document.querySelector(".focused-element");
       if (focusedEl === currentEl) {
         if (currentEl)
@@ -307,7 +312,6 @@ function App() {
       currentEl.classList.remove(currDomInfo.cssClassesAssigned);
       dialogboxList[idx].style.visibility = "hidden";
     }
-    
   }   
 
   const containsBookmarkModule = (e) => {
@@ -319,13 +323,6 @@ function App() {
 
   const onClickOption = (e) => {
     setShowAddBookmarkPanel(true)
-  }
-
-  const onCloseAddBookmark = (e) => {
-    setSelectedAddBookmarkDomElIdx(null);
-    setShowAddBookmarkPanel(false);
- 
-    window.store.bookmarkBtnClicked = false; //set the store to false afterwards
   }
 
   const onClickAddBookmark = (idx) => {
@@ -368,43 +365,47 @@ function App() {
             const hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, domInfo.domElement);
               
             return (
-              <DomInfoDialogBox
-                key={idx}
-                idx={idx}
-                id={domInfo.id}
-                tag={domInfo.tag}
-                classNames={domInfo.classNames}
-                classNamesString={domInfo.classNamesString}
-                parent={domInfo.parent}
-                children={domInfo.children}
-                top={domInfo.y}
-                left={domInfo.x}                          
-                onClose={handleRemoveDialogBox}
-                fontsize={domInfo.size}
-                fontfamily={domInfo.family}
-                textcolor={domInfo.textcolor}
-                borderclr={domInfo.bordercolor}
-                domElement={domInfo.domElement}
-                uniqueID={domInfo.uniqueID}
-                dataAttributes={domInfo.attributes}
-                onClickOption={onClickOption}
-                focusedState={onClickFocus}
-                focusMode={focusMode}
-                onClickBookmarkEmit={onClickAddBookmark}
-                hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark} 
-                hasExistingAnnotations={hasExistingAnnotations}
-                onRemoveBookmarkEmit={onClickAddBookmark}
-                xdomInfo={domInfo}
-              />
+              <ErrorBoundary>
+                <DomInfoDialogBox
+                  key={idx}
+                  idx={idx}
+                  id={domInfo.id}
+                  tag={domInfo.tag}
+                  classNames={domInfo.classNames}
+                  classNamesString={domInfo.classNamesString}
+                  parent={domInfo.parent}
+                  children={domInfo.children}
+                  top={domInfo.y}
+                  left={domInfo.x}                          
+                  onClose={handleRemoveDialogBox}
+                  fontsize={domInfo.size}
+                  fontfamily={domInfo.family}
+                  textcolor={domInfo.textcolor}
+                  borderclr={domInfo.bordercolor}
+                  domElement={domInfo.domElement}
+                  uniqueID={domInfo.uniqueID}
+                  dataAttributes={domInfo.attributes}
+                  onClickOption={onClickOption}
+                  focusedState={onClickFocus}
+                  focusMode={focusMode}
+                  onClickBookmarkEmit={onClickAddBookmark}
+                  hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark} 
+                  hasExistingAnnotations={hasExistingAnnotations}
+                  onRemoveBookmarkEmit={onClickAddBookmark}
+                />
+              </ErrorBoundary>
             );
           })}
 
-          {/* Note: This component is used to inject this into DOM element once we hover and display minimal details the DOM needs */}
+          {/* Note: This component is used to inject this to display minimal details the DOM has */}
           <DomMinimalDetailsWidget
             ref={refDomHighlight}
-            elId={domLeanDetails.elId}            
+            elId={domLeanDetails.elId}
             elClassNames={domLeanDetails.elClassNames}
-            domType={domLeanDetails.domType}          
+            domType={domLeanDetails.domType}
+            width={domMinimalDetailsStyles.width}
+            positionX={domMinimalDetailsStyles.positionX}
+            positionY={domMinimalDetailsStyles.positionY}
             show={true}
           />
 
