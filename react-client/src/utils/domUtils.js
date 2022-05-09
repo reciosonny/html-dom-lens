@@ -71,6 +71,26 @@ function customWidgetFilter(toFilter) {
     return toFilter;
   }
 }
+
+// Clears Array used in searching removes duplicate data and removes data that are from htmldominfo app
+  const clearSearchArray = (array) => {
+    var finalArr = [];
+    var arr = array.concat();
+    for (var i = 0; i < arr.length; ++i) {
+      for (var j = i + 1; j < arr.length; ++j) {
+        if (arr[i].value === arr[j].value) arr.splice(j--, 1);
+      }
+    }
+
+    arr.forEach(function (obj, idx) {           
+      if (!ancestorExistsByClassName(obj.value, 'search-panel') && !ancestorExistsByClassName(obj.value, "dom-info-dialog-box") && !ancestorExistsByClassName(obj.value, 'selected-dom') && !ancestorExistsByClassName(obj.value, "dom-switch") && !ancestorExistsByClassName(obj.value, "bookmark-panel") && !ancestorExistsByClassName(obj.value, "annotation-panel"))
+
+      finalArr.push(obj);
+    });       
+
+    return finalArr;
+  };
+
  
 // Check if Annotation is existing on Element
 function hasAnnotations(annotationStore, captureElement){
@@ -131,7 +151,7 @@ function extractDomInfo(elTarget) {
   const dataId = uuidv4();     
 
   return {
-    id: elTarget.id !== "" && `#${elTarget.id.trim()}`,
+    id: elTarget.id !== "" ? `#${elTarget.id.trim()}` : "",
     domElement: elTarget,
     tag: elTarget.localName,
     classNames,
@@ -156,5 +176,7 @@ export {
   getElementByTagAndIndex,
   getUniqueElementIdentifierByTagAndIndex,    
   customWidgetFilter,
-  hasAnnotations  
+  clearSearchArray,
+  hasAnnotations
+    
 }

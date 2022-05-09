@@ -16,6 +16,8 @@ import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 import useLocalStorageStore from "../hooks/useLocalStorageStore";
 import GlobalContext from "../store/global-context";
 
+import SearchPanel from "./SearchPanel";
+
 window.store = {
   focusMode: false,
   switchExtensionFunctionality: true,
@@ -23,7 +25,8 @@ window.store = {
   DomInfoDialogBox: {
     children: [],
     classList: [],
-  }
+  },
+  elementFilter: ''
 };
 
 function App() {
@@ -143,13 +146,16 @@ function App() {
       let strClassList = '';
       if (!window.store.switchExtensionFunctionality || e.target.className.includes('custom-css')) return;
 
-      if(!containsBookmarkModule(e)) {
+      if(!containsBookmarkModule(e) ) {
         
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
-        const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");        
+        const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");  
         
-        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || e.target.localName === 'path')
+        const isNotSearchPanel = !domUtils.ancestorExistsByClassName(e.target, 'search-panel');
+        const isNotSearchPanelDialog = !domUtils.ancestorExistsByClassName(e.target, 'search-panel__dialogbox');       
+       
+        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || e.target.localName === 'path' ||!isNotSearchPanel  || !isNotSearchPanelDialog )
           return;
 
         //capture all classes of the dom for bookmark module
@@ -239,11 +245,14 @@ function App() {
         if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
         if (focusMode) return;
 
+        e.target.classList.remove("focused-dom");
+
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
         const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
+        const isNotSearchPanel = !domUtils.ancestorExistsByClassName(e.target, 'search-panel');
         
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode) {
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode && isNotSearchPanel) {
           const domType = e.target.nodeName?.toLowerCase();
           await setDomLeanDetails({
             ...domLeanDetails,
@@ -264,8 +273,10 @@ function App() {
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
         const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
+        const isNotSearchPanel = !domUtils.ancestorExistsByClassName(e.target, 'search-panel');
+
   
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && isNotSearchPanel) {
           e.target.classList.toggle("focused-dom");
           // e.target.removeChild(refDomHighlight.current); //TODO: restore this later // Uncomment to allow domLean 
         }
@@ -315,6 +326,13 @@ function App() {
     const isBookmarkPanel = domUtils.ancestorExistsByClassName(e.target, 'bookmark-panel');
 
     return isBookmarkPanel;
+  }
+
+  const containsSearchModule = (e) => {
+
+    const isSearchPanel = domUtils.ancestorExistsByClassName(e.target, 'search-panel__dialogbox');
+
+    return isSearchPanel;
   }
 
   const onClickOption = (e) => {
@@ -407,6 +425,8 @@ function App() {
             domType={domLeanDetails.domType}          
             show={true}
           />
+
+          <SearchPanel />
 
           <BookmarkPanel
             bookmarks={stateBookmarks}
