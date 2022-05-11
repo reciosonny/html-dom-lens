@@ -64,9 +64,10 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   z-index: 9999 !important;  
   box-shadow: 999vmax 999vmax  999vmax 9999vmax rgba(0, 0, 0, 0.95);
   border-radius: 8px;
-  visibility: hidden;
+  opacity: 0;
+  transition: all .3s;
+  position: absolute;
 }
-
 
 .attributecontainer {
   display: flex;
@@ -77,111 +78,8 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   }  
 }
 
-.dom-info-dialog-box {
-  height: fit-content;
-  width: fit-content;
-  max-width: 400px;
-  z-index: 99999;
-  background-color: $MainDialogColor;
-  color: #455a64;
-  // border: 3px solid;
-  position: absolute;
-  border-radius: 8px;
-  top: 0px;
-  right: 0px;
-  text-align: left;
-  padding: $MainDialogPadding;
-  font-family: Roboto Mono;
-  font-size: 10px;
-  
-  transition: top .2s;
-  animation: animShow .5s forwards;
 
-  .close-btn-style {
-    position: absolute;
-    top: -10px;
-    right: -15px;
-    height: 30px;
-    width: 30px;
-    border-radius: 50%;
-    background: #546E7A;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 0px;
-    cursor: pointer;
-    transition: all .2s;
-
-    &:hover {
-      transform: scale(1.2);
-    }
-    &:focus {
-      transform: scale(1);
-    }
-  }
-
-  .dom-header {
-    font-size: $Domheaderfontsize;
-    // padding: $DialogDetailPadding;
-  }
-  .dom-header-tag {
-    font-size: $Domheaderfontsize;
-    color: #e91e63;
-    width: fit-content;
-    display: inline-block !important;
-  }
-  .dom-header-details {
-    color: #546E7A;
-    display: inline-block !important;
-    font-size: $Domheaderfontsize;
-    width: fit-content;
-  }
-  .dom-details-tag {
-    font-size: 12px;
-    color: #e91e63;
-    float: left;
-    width: fit-content;
-    // padding: 0px 5px 0px 0px;
-  }
-
-  .dom-styles {
-    font-size: 10px;
-    color: #78909c;
-    padding: 0px 0px 0px 0px;
-  }
-  .dom-styles-details {
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-    color: #455a64;
-    padding: 10px 10px 0px 0px;
-  }
-  .dom-dialog {
-    font-size: 10px;
-    color: #78909c;
-    padding: $DialogDetailPadding;
-  }
-  .dom-dialog-parent-details {
-    font-size: 12px;
-    color: #546e7a;
-    align: left;
-    padding: 0px 0px 15px 0px;
-  }
-  .dom-dialog-child-details {
-    font-size: 12px;
-    color: #546e7a;
-    align: left;
-    word-wrap: break-word;
-    padding: 10px 0px 0px 0px;
-  }
-  .see-more {
-    cursor: pointer;
-    font-size: 10px;
-    color: #78909c;
-  }
-}
-.widgets{
+.widgets {
   flex-direction: column;
 }
 
@@ -213,7 +111,6 @@ $DialogDetailPadding: 10px 0px 0px 0px;
 
 .dom-info-details-lean {
   position: absolute;
-  // width: 250px;
   display: block !important;
   height: 20px;
   z-index: 9999 !important;
