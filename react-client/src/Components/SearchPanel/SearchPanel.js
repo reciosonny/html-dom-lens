@@ -13,14 +13,18 @@ const SearchPanel = ({onCancelSearch}) => {
   }
 
   const searchElements = (input) => {   
-    if (input.trim() === "" || input.trim() === window.store.elementFilter) return;
-
-    window.store.elementFilter = input.trim();
+    if (input.trim() === "" || input.trim() === window.store.elementFilter) return;       
+    if (input.codePointAt(0) <= 95 || input.codePointAt(0) >= 122) return; //to prevent bug if first character is not from a-z
     
+    window.store.elementFilter = input.trim();
+
+    const generalFilter = Object.entries([...document.querySelectorAll(`body ${input} `)]).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
+
     const filteredElementsbyID = Object.entries([...document.querySelectorAll(`body [id^=${input} i]`)]).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
+    
     const filteredElementsbyClass = Object.entries([...document.querySelectorAll(`body [class^=${input} i]`)]).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
 
-    const filteredElements = domUtils.clearSearchArray([...filteredElementsbyID, ...filteredElementsbyClass]);
+    const filteredElements = domUtils.clearSearchArray([...generalFilter, ...filteredElementsbyID, ...filteredElementsbyClass]);
       
     setGeneratedEl(filteredElements);
   };

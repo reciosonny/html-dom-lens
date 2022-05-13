@@ -1,5 +1,8 @@
 import React from "react";
+import DomMinimalDetailsWidget from "../DomMinimalDetailsWidget";
+
 import * as domUtils from "../../utils/domUtils";
+
 
 
 const SearchResults = ({ results, closeSearchDialog }) => {

@@ -34,6 +34,22 @@ function ancestorExistsByClassNames(element, classNames) {
   return true;
 }
 
+function ancestorExistsByID(element, idName) {
+  
+  if(!element) return false;
+  if(element.id === idName) {
+    return true;
+  }
+  if(!element.parentElement) return false;
+
+
+  if (element.parentElement.id !== idName) {
+    return ancestorExistsByClassName(element.parentElement, idName);
+  }
+
+  return true;
+}
+
 // This algorithm gets the unique element identifier by using element tag(e.g. p, div, span, input), and the index where that particular element is located
 function getUniqueElementIdentifierByTagAndIndex(elTarget) {
   const result = [...document.querySelectorAll(elTarget.tagName.toLowerCase())]
@@ -83,8 +99,7 @@ function customWidgetFilter(toFilter) {
     }
 
     arr.forEach(function (obj, idx) {           
-      if (!ancestorExistsByClassName(obj.value, 'search-panel') && !ancestorExistsByClassName(obj.value, "dom-info-dialog-box") && !ancestorExistsByClassName(obj.value, 'selected-dom') && !ancestorExistsByClassName(obj.value, "dom-switch") && !ancestorExistsByClassName(obj.value, "bookmark-panel") && !ancestorExistsByClassName(obj.value, "annotation-panel"))
-
+      if (!ancestorExistsByID(obj.value, 'htmlDomInfoRoot') )
       finalArr.push(obj);
     });       
 
@@ -104,7 +119,7 @@ const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "
 
 
 function extractDomInfo(elTarget) {
-  const classNames = [...elTarget.classList].map((name) => `.${name}`).filter((val, idx) => val !== ".focused-dom" && val !== ".focused-element");
+  const classNames = [...elTarget.classList].map((name) => `.${name}`).filter((val, idx) => val !== ".focused-dom" && val !== ".focused-element" && val !== ".focused-targeted-element");
   const classNamesString = classNames.reduce((init, curr) => init+curr, '');  
   
   const children = [...elTarget.children].map((child) => {
@@ -172,6 +187,7 @@ function extractDomInfo(elTarget) {
 
 export {
   ancestorExistsByClassName,
+  ancestorExistsByID,
   extractDomInfo,
   getElementByTagAndIndex,
   getUniqueElementIdentifierByTagAndIndex,    

@@ -332,12 +332,6 @@ function App() {
     return isBookmarkPanel;
   }
 
-  const containsSearchModule = (e) => {
-
-    const isSearchPanel = domUtils.ancestorExistsByClassName(e.target, 'search-panel__dialogbox');
-
-    return isSearchPanel;
-  }
 
   const onClickOption = (e) => {
     setShowAddBookmarkPanel(true)
