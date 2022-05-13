@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 
-import SearchDialogBox from "./SearchDialogBox";
+import SearchPanel from "./SearchPanel";
 
 const index = () => {
   const [showSearchDialog, setShowSearchDialog] = useState(false);
@@ -17,7 +17,7 @@ const index = () => {
   return (      
     <div className="search-panel">
       {showSearchDialog &&
-       <SearchDialogBox
+       <SearchPanel
         onCancelSearch={onCancelSearch}
        />}
       <button className="search-panel__button-switch" onClick={switchSearch}>

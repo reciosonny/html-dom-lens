@@ -4,7 +4,7 @@ import * as domUtils from "../../utils/domUtils";
 
 import SearchResults from './SearchResults';
 
-const SearchDialogBox = ({onCancelSearch}) => {
+const SearchPanel = ({onCancelSearch}) => {
   const [txtInput, setTxtInput] = useState("");
   const [generatedEl, setGeneratedEl] = useState([]);
 
@@ -13,8 +13,7 @@ const SearchDialogBox = ({onCancelSearch}) => {
   }
 
   const searchElements = (input) => {   
-    if(input.trim() === "" || input.trim() === window.store.elementFilter)
-    return;
+    if (input.trim() === "" || input.trim() === window.store.elementFilter) return;
 
     window.store.elementFilter = input.trim();
     
@@ -33,17 +32,17 @@ const SearchDialogBox = ({onCancelSearch}) => {
         <div className = "header-style">
           <div className = "header-style__container-form">
             <button className="search-button" onClick={searchElements(txtInput)}>
-              <AiOutlineSearch size={14} color="#673ab7" />
+              <AiOutlineSearch size={14} color="#673ab7"/>
             </button>  
-            <form className='search-form' >
-                <input
-                  value={txtInput}          
-                  onChange={(e) => setTxtInput(e.target.value)}
-                  type='text'
-                  className='search-form__text-field'
-                  placeholder='Filter DOM Element Here...'
-                  autoFocus
-                />
+            <form className='search-form'>
+              <input
+                value={txtInput}          
+                onChange={(e) => setTxtInput(e.target.value)}
+                type='text'
+                className='search-form__text-field'
+                placeholder='Filter DOM Element Here...'
+                autoFocus
+              />
             </form>   
             <button className="clear-button" onClick={clearSearch}> X </button>  
           </div>
@@ -51,14 +50,14 @@ const SearchDialogBox = ({onCancelSearch}) => {
         </div>
         <div className="body-style">
           <div className="body-style__container-form"> 
-          {generatedEl.length > 0 && txtInput.trim() !== "" ? (
-              <SearchResults
-                results={generatedEl}
-                closeSearchDialog={onCancelSearch}
-              />
-            ) : (
-              <p> No Results for query</p>
-            )}
+            {generatedEl.length > 0 && txtInput.trim() !== "" ? (
+                <SearchResults
+                  results={generatedEl}
+                  closeSearchDialog={onCancelSearch}
+                />
+              ) : (
+                <p> No Results for query</p>
+              )}
           </div> 
         </div>
       </div>
@@ -66,4 +65,4 @@ const SearchDialogBox = ({onCancelSearch}) => {
   )
 }
 
-export default SearchDialogBox
+export default SearchPanel
