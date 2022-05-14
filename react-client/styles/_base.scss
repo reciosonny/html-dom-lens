@@ -1,4 +1,4 @@
-// @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,500;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,500;1,500&display=swap');
 
 /* latin */
 // @font-face {
@@ -96,16 +96,16 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   height: auto;
   width: auto;
   background-color: #ede7f6;
+  border: 3px solid #673ab7;
   color: #455a64;
-  border: 3px ;
   position: fixed;
   border-radius: 8px;
-  top: 0px;
-  right: 0px;
+  top: 20px;
+  right: 20px;
   cursor: pointer;
   padding: 15px 15px 15px 15px;
-  font-family: Roboto monospace;
-  font: 10px;
+  font-family: 'Roboto Mono', sans-serif;
+  font-size: 14px;
   z-index: 99999;
 }
 
@@ -123,7 +123,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   box-sizing: unset !important;
   font-size: 12px !important;
   font-weight: 500 !important;
-  font-family: "Roboto Mono", monospace !important;
+  font-family: "Roboto Mono", sans-serif !important;
 }
 
 .dom-info-lean {

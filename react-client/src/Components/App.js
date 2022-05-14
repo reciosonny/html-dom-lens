@@ -28,7 +28,7 @@ window.store = {
 
 function App() {
   const [domInfo, setDomInfo] = useState([]);
-  const [domLeanDetails, setDomLeanDetails] = useState({ elId: "", elClassNames: [], domType: "" });
+  const [domLeanDetails, setDomLeanDetails] = useState({ elId: "", elClassNames: [], domType: "", show: false });
 
   // TODO: Use this once we're done with fixing bookmarks feature...
   const [stateConfigOptions, setStateConfigOptions] = useState({ showAddBookmarkPanel: false, focusMode: false, addBookmarkModeEnabled: false });
@@ -250,6 +250,7 @@ function App() {
             elId: e.target.id,
             domType,
             elClassNames: [...e.target.classList],
+            show: true
           }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.         
           e.target.classList.toggle("focused-dom");
           
@@ -292,8 +293,8 @@ function App() {
     injectDOMEventInBody();
   };
 
-  const handleRemoveDialogBox = (idx, id, uniqueID) => {        
-    const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === idx);
+  const handleRemoveDialogBox = (selectedIdx, id, uniqueID) => {        
+    const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === selectedIdx);
     const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
     const dialogboxList = document.getElementsByClassName('dom-info-dialog-box');
 
@@ -301,17 +302,21 @@ function App() {
       const focusedEl = document.querySelector(".focused-element");
       if (focusedEl === currentEl) {
         if (currentEl)
-        dialogboxList[idx].style.visibility = "hidden";
-        currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-        document.querySelector(".focused-targeted-element").style.opacity = 0;
-        document.querySelector(".focused-element").classList.remove("focused-element");
+          currentEl.classList.remove(currDomInfo.cssClassesAssigned);
+
+        dialogboxList[selectedIdx].style.visibility = "hidden";
+        document.querySelector(".focused-element").classList.remove("focused-element");        
         setFocusMode(false);
       }
-    } 
-    else {     
+    } else {     
       currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-      dialogboxList[idx].style.visibility = "hidden";
+      dialogboxList[selectedIdx].style.visibility = "hidden";
     }
+
+
+    // This is causing a bug for some reason when there are dialogboxes overlapping with other dom (e.g. parent/child).....
+    const filterDomInfosClicked = domInfo.filter((val, idx) => idx !== selectedIdx);
+    setDomInfo(filterDomInfosClicked);
   }   
 
   const containsBookmarkModule = (e) => {
@@ -392,22 +397,23 @@ function App() {
                   hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark} 
                   hasExistingAnnotations={hasExistingAnnotations}
                   onRemoveBookmarkEmit={onClickAddBookmark}
+                  onHover={() => setDomLeanDetails({ ...domLeanDetails, show: false })}
                 />
               </ErrorBoundary>
             );
           })}
 
           {/* Note: This component is used to inject this to display minimal details the DOM has */}
-          <DomMinimalDetailsWidget
-            ref={refDomHighlight}
-            elId={domLeanDetails.elId}
-            elClassNames={domLeanDetails.elClassNames}
-            domType={domLeanDetails.domType}
-            width={domMinimalDetailsStyles.width}
-            positionX={domMinimalDetailsStyles.positionX}
-            positionY={domMinimalDetailsStyles.positionY}
-            show={true}
-          />
+          {domLeanDetails.show && (
+            <DomMinimalDetailsWidget
+              elId={domLeanDetails.elId}
+              elClassNames={domLeanDetails.elClassNames}
+              domType={domLeanDetails.domType}
+              width={domMinimalDetailsStyles.width}
+              positionX={domMinimalDetailsStyles.positionX}
+              positionY={domMinimalDetailsStyles.positionY}
+            />
+          )}
 
           <BookmarkPanel
             bookmarks={stateBookmarks}
