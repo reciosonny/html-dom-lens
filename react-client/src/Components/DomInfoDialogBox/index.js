@@ -24,8 +24,10 @@ const FontColorDetails = ({ textcolor }) => {
     </React.Fragment>
   )
 }
+
+
 let domObserver;
-const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, onHover }) => {
+const DomInfoDialogBox = ({ elementId, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, onHover }) => {
 
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
   const [seeMoreAttr, setSeeMoreAttr] = useState(true);
@@ -198,7 +200,7 @@ const initializeDomObserver = async () => {
         }}
         ref = {dragRef}
       >
-        <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, id, uniqueID)}>
+        <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, elementId, uniqueID)}>
           x
         </button>
 
@@ -213,7 +215,7 @@ const initializeDomObserver = async () => {
         <div>
           <div className="dom-header">           
             <span className="dom-header-tag">{tag}</span>
-            {id && <span className="dom-header-details">{id}</span>}                                     
+            {elementId && <span className="dom-header-details">{elementId}</span>}                                     
               {domInfo.classNames.map((val) => (  
               <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
             ))}            
@@ -267,6 +269,7 @@ const initializeDomObserver = async () => {
             domType={tag}
             elClassNames={classNamesString}
             domId={uniqueID}
+            elementId={elementId}
             onSaveBookmark={() => setShowAddBookmarkPanel(false)}
             onClose={() => setShowAddBookmarkPanel(false)}  
             targetElement={domElement} 

@@ -17,7 +17,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-    font-family: "Roboto-mono", sans-serif;
+    font-family: "Roboto", sans-serif;
     font-weight: 600;
     font-size: 14px;
     line-height: 12px;
@@ -34,7 +34,7 @@
     border-radius: 10px;
     border: 0;
     font-size: 14px;
-    font-family: 'Roboto Mono', sans-serif;    
+    font-family: 'Roboto', sans-serif;    
 
     &:hover {
       cursor: pointer;
@@ -48,7 +48,7 @@
 
   &__input {
     width: 100%;
-    height: 70%;
+    height: 100%;
     border: none !important;
     font-weight: 500 !important;
     font-size: 14px;
@@ -60,9 +60,7 @@
     margin: 0 !important;
     resize: none;
   
-    // font-family: 'Roboto-mono', sans-serif;
-    // This or the other roboto mono???
-    font-family: "Roboto Mono";
+    font-family: "Roboto";
   
     &:focus {
       border: none;
@@ -70,7 +68,7 @@
   
     &::placeholder {
       color: #b0bec5;
-      font-family: "Roboto Mono";
+      font-family: "Roboto";
     }
   }
 

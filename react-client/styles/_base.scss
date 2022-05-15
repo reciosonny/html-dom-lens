@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,500;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 
 /* latin */
 // @font-face {
@@ -144,17 +146,5 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   overflow: initial !important;
 
   &::before {
-  }
-  &::after {
-    // content: "";
-    // height: 100%;
-    // width: 100%;
-    // border: 3px solid #000;
-    // position: absolute;
-    // // background: rgba(0, 0, 0, 0.3);
-    // background: transparent !important;
-    // z-index: -10;
-    // top: 0;
-    // left: 0;
   }
 }

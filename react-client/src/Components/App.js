@@ -344,7 +344,7 @@ function App() {
   const onChangeBookmarks = () => {
     setTimeout(() => {
       updateBookmarksStore(); //needs to be called so that bookmarksStore will get the latest update from localStorage
-      setStateBookmarks(bookmarksStore);      
+      setStateBookmarks(bookmarksStore);
     }, 500);
   }
 
@@ -368,13 +368,13 @@ function App() {
             const hasExistingBookmark = elBookmarks.some(el => el === domInfo.domElement);
             
             const hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, domInfo.domElement);
-              
+            
             return (
               <ErrorBoundary>
                 <DomInfoDialogBox
                   key={idx}
                   idx={idx}
-                  id={domInfo.id}
+                  elementId={domInfo.id}
                   tag={domInfo.tag}
                   classNames={domInfo.classNames}
                   classNamesString={domInfo.classNamesString}
