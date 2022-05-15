@@ -10,24 +10,24 @@ import useDraggable from "../../hooks/useDraggable";
 import FocusedTargetedElement from "../FocusedTargetedElement";
 
 
-const FontColorDetails = ({ textcolor }) => {
+const ColorDetails = ({ color }) => {
 
   return (
     <React.Fragment>
       <div
         className="display-dot"
         style={{
-          background: textcolor,
+          background: color,
         }}
       ></div> {" "}
-      <span style={{ color: '#455A64' }}>{textcolor}</span>
+      <span style={{ color: '#455A64' }}>{color}</span>
     </React.Fragment>
   )
 }
 
 
 let domObserver;
-const DomInfoDialogBox = ({ elementId, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, onHover }) => {
+const DomInfoDialogBox = ({ elementId, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, backgroundColor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, onHover }) => {
 
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
   const [seeMoreAttr, setSeeMoreAttr] = useState(true);
@@ -227,9 +227,15 @@ const initializeDomObserver = async () => {
             </div>
             <div className="flex-column">
               <div className="dom-styles-details">
-                <FontColorDetails textcolor={textcolor} />
+                <ColorDetails color={textcolor} />
               </div>
-              <div className="dom-styles">Color</div>
+              <div className="dom-styles">Text-Color</div>
+            </div>
+            <div className="flex-column">
+              <div className="dom-styles-details">
+                <ColorDetails color={backgroundColor} />
+              </div>
+              <div className="dom-styles">Background-Color</div>
             </div>
           </div>
           <div className="dom-styles-details">{fontfamily}</div>

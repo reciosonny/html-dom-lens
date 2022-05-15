@@ -368,7 +368,7 @@ function App() {
             const hasExistingBookmark = elBookmarks.some(el => el === domInfo.domElement);
             
             const hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, domInfo.domElement);
-            
+
             return (
               <ErrorBoundary>
                 <DomInfoDialogBox
@@ -386,6 +386,7 @@ function App() {
                   fontsize={domInfo.size}
                   fontfamily={domInfo.family}
                   textcolor={domInfo.textcolor}
+                  backgroundColor={domInfo.backgroundColor}
                   borderclr={domInfo.bordercolor}
                   domElement={domInfo.domElement}
                   uniqueID={domInfo.uniqueID}
