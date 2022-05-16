@@ -111,10 +111,7 @@ function extractDomInfo(elTarget) {
     .slice(0, -1)
     .split(",");
 
-  const colorhex = rgbArr.reduce(
-    (init, curr) => (init += parseInt(curr).toString(16)),
-    "#"
-  );
+  const colorhex = rgbArr.reduce((init, curr) => (init += parseInt(curr).toString(16)), "#");
   
   const elParent = elTarget.parentElement;
   

@@ -160,6 +160,8 @@ function App() {
             strClassList += `.${domClass}`
           }
         }
+
+        e.target.classList.remove('focused-dom'); //Note: We removed focused-dom class after click so that domUtils can extract the background color from the element, not the color from focused-dom class
     
         //get the least properties for bookmark module
         setSelectedElem({

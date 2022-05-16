@@ -88,7 +88,8 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
   }
 
   const onClickAnnotation = () => {
-    setDisplayInput(false)
+    setDisplayInput(false);
+    setTextAreaHeight(`${txtInputRef.current.scrollHeight}px`);
   }
 
   const onChangeTextarea = (e) => {
@@ -103,7 +104,7 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
           {txtInput}          
         </label> :      
         <form className='add-annotation-panel__form' onSubmit={onSubmitAnnotation}>
-          <div style={{ height: textAreaHeight }}>
+          <div style={{ height: textAreaHeight, minHeight: '90px' }}>
             <textarea
               ref={txtInputRef}
               value={txtInput}          

@@ -70,6 +70,19 @@
       color: #b0bec5;
       font-family: "Roboto";
     }
+
+    &::-webkit-scrollbar {
+      width: 8px; /* width of the entire scrollbar */
+    }
+    &::-webkit-scrollbar-track {
+      // background: #B8BCBF;        /* color of the tracking area */
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #B8BCBF;    /* color of the scroll thumb */
+      border-radius: 20px;       /* roundness of the scroll thumb */
+      border: 3px solid #B8BCBF;  /* creates padding around scroll thumb */
+    }
+
   }
 
 }
