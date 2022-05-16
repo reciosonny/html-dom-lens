@@ -34,22 +34,6 @@ function ancestorExistsByClassNames(element, classNames) {
   return true;
 }
 
-function ancestorExistsByID(element, idName) {
-  
-  if(!element) return false;
-  if(element.id === idName) {
-    return true;
-  }
-  if(!element.parentElement) return false;
-
-
-  if (element.parentElement.id !== idName) {
-    return ancestorExistsByClassName(element.parentElement, idName);
-  }
-
-  return true;
-}
-
 // This algorithm gets the unique element identifier by using element tag(e.g. p, div, span, input), and the index where that particular element is located
 function getUniqueElementIdentifierByTagAndIndex(elTarget) {
   const result = [...document.querySelectorAll(elTarget.tagName.toLowerCase())]
@@ -99,12 +83,21 @@ function customWidgetFilter(toFilter) {
     }
 
     arr.forEach(function (obj, idx) {           
-      if (!ancestorExistsByID(obj.value, 'htmlDomInfoRoot') )
+      if (!ancestorExistsByClassName(obj.value, 'search-panel') && !ancestorExistsByClassName(obj.value, 'bookmark-panel') && !ancestorExistsByClassName(obj.value, 'annotation-panel'))
       finalArr.push(obj);
     });       
 
     return finalArr;
   };
+
+  const getElementParameters =(elTarget) => {
+    const elBoundingRect = elTarget.getBoundingClientRect();
+    return {
+      width: `${Math.round(elBoundingRect.width-30)}px`,
+      positionY: Math.round(window.scrollY+(elBoundingRect.top-30)), 
+      positionX: Math.round(window.scrollX+elBoundingRect.left) 
+    }
+  }
 
  
 // Check if Annotation is existing on Element
@@ -183,16 +176,14 @@ function extractDomInfo(elTarget) {
   };
 }
 
-
-
 export {
   ancestorExistsByClassName,
-  ancestorExistsByID,
   extractDomInfo,
   getElementByTagAndIndex,
   getUniqueElementIdentifierByTagAndIndex,    
   customWidgetFilter,
   clearSearchArray,
-  hasAnnotations
+  hasAnnotations,
+  getElementParameters
     
 }

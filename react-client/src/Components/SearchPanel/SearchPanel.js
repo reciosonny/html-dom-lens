@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
 import { AiOutlineSearch } from "react-icons/ai";
 import * as domUtils from "../../utils/domUtils";
-
 import SearchResults from './SearchResults';
 
-const SearchPanel = ({onCancelSearch}) => {
+const SearchPanel = ({onCancelSearch, onSelectedElement}) => {
   const [txtInput, setTxtInput] = useState("");
   const [generatedEl, setGeneratedEl] = useState([]);
 
@@ -30,7 +29,7 @@ const SearchPanel = ({onCancelSearch}) => {
   };
 
   return (
-    <div>
+    <div>      
       <div className="search-dimmer"></div>
       <div className="search-panel__dialogbox">
         <div className = "header-style">
@@ -57,8 +56,8 @@ const SearchPanel = ({onCancelSearch}) => {
             {generatedEl.length > 0 && txtInput.trim() !== "" ? (
                 <SearchResults
                   results={generatedEl}
-                  closeSearchDialog={onCancelSearch}
-                />
+                  onSelectedElement={onSelectedElement} 
+                  />
               ) : (
                 <p> No Results for query</p>
               )}

@@ -1,18 +1,12 @@
 import React from "react";
-import DomMinimalDetailsWidget from "../DomMinimalDetailsWidget";
-
 import * as domUtils from "../../utils/domUtils";
 
-
-
-const SearchResults = ({ results, closeSearchDialog }) => {
+const SearchResults = ({ results, onSelectedElement }) => {
   const handleFindSearchedElement = async(e) =>{
     const selectedIndex = e.currentTarget.getAttribute("idx");
     const selectedType = e.currentTarget.children[0].innerText;
-    const retrievedElement = domUtils.getElementByTagAndIndex(selectedType, parseInt(selectedIndex));
-    retrievedElement.classList.add("focused-dom");
-    retrievedElement.scrollIntoView({ block: "center" });
-    closeSearchDialog();
+    const retrievedElement = domUtils.getElementByTagAndIndex(selectedType, parseInt(selectedIndex));    
+    onSelectedElement(retrievedElement);
   }
 
   return (
