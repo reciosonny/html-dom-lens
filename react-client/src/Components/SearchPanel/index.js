@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import * as domUtils from "../../utils/domUtils";
 import DomMinimalDetailsWidget from "../DomMinimalDetailsWidget";
-import SearchPanel from "./SearchPanel";
+import SearchPanelDialogBox from "./SearchPanelDialogBox";
 
-const index = () => {
+const SearchPanel = () => {
   const [showSearchDialog, setShowSearchDialog] = useState(false);
   const [domMinimalDetailsStyles, setDomMinimalDetailsStyles] = useState({ width: 0, positionY: 100, positionX: 0 });
   const [domLeanDetails, setDomLeanDetails] = useState({ elId: "", elClassNames: [], domType: "" });
@@ -45,7 +45,7 @@ const index = () => {
   return (      
     <div className="search-panel">
       {showSearchDialog &&
-       <SearchPanel
+       <SearchPanelDialogBox
         onCancelSearch={onCancelSearch}
         onSelectedElement={onSelectedElement}
        />}
@@ -65,5 +65,5 @@ const index = () => {
     </div>
   );
 };
-
-export default index;
+ 
+export default SearchPanel;
