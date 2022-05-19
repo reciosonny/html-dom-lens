@@ -3,7 +3,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import * as domUtils from "../../utils/domUtils";
 import SearchResults from './SearchResults';
 
-const SearchPanel = ({onCancelSearch, onSelectedElement}) => {
+const SearchPanelDialogBox = ({ onCancelSearch, onSelectedElement }) => {
   const [txtInput, setTxtInput] = useState("");
   const [generatedEl, setGeneratedEl] = useState([]);
 
@@ -68,4 +68,4 @@ const SearchPanel = ({onCancelSearch, onSelectedElement}) => {
   )
 }
 
-export default SearchPanel
+export default SearchPanelDialogBox

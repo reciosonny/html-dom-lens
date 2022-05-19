@@ -2,7 +2,7 @@ import React from "react";
 import * as domUtils from "../../utils/domUtils";
 
 const SearchResults = ({ results, onSelectedElement }) => {
-  const handleFindSearchedElement = async(e) =>{
+  const handleFindSearchedElement = async(e) => {
     const selectedIndex = e.currentTarget.getAttribute("idx");
     const selectedType = e.currentTarget.children[0].innerText;
     const retrievedElement = domUtils.getElementByTagAndIndex(selectedType, parseInt(selectedIndex));    
