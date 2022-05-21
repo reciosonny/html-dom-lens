@@ -1,4 +1,6 @@
-// @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,500;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,500;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
 
 /* latin */
 // @font-face {
@@ -96,18 +98,40 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   height: auto;
   width: auto;
   background-color: #ede7f6;
+  border: 3px solid #673ab7;
   color: #455a64;
-  border: 3px ;
   position: fixed;
   border-radius: 8px;
-  top: 0px;
-  right: 0px;
+  top: 20px;
+  right: 20px;
   cursor: pointer;
   padding: 15px 15px 15px 15px;
-  font-family: Roboto monospace;
-  font: 10px;
+  font-family: 'Roboto Mono', sans-serif;
+  font-size: 14px;
   z-index: 99999;
+
+  &:hover {
+    animation: pulse-red 1s forwards;
+  }
 }
+
+@keyframes pulse-red {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+  }
+  
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+  }
+}
+
 
 .dom-info-details-lean {
   position: absolute;
@@ -123,7 +147,7 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   box-sizing: unset !important;
   font-size: 12px !important;
   font-weight: 500 !important;
-  font-family: "Roboto Mono", monospace !important;
+  font-family: "Roboto Mono", sans-serif !important;
 }
 
 .dom-info-lean {
@@ -144,17 +168,5 @@ $DialogDetailPadding: 10px 0px 0px 0px;
   overflow: initial !important;
 
   &::before {
-  }
-  &::after {
-    // content: "";
-    // height: 100%;
-    // width: 100%;
-    // border: 3px solid #000;
-    // position: absolute;
-    // // background: rgba(0, 0, 0, 0.3);
-    // background: transparent !important;
-    // z-index: -10;
-    // top: 0;
-    // left: 0;
   }
 }

@@ -126,12 +126,10 @@ function extractDomInfo(elTarget) {
   
   const dataAttributes = Object.entries(elTarget.dataset).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
     
-  const elComputedStyle = ["font-size", "color", "font-family"].reduce(
+  const elComputedStyle = ["font-size", "color", "background-color", "font-family"].reduce(
     (init, curr) => ({
       ...init,
-      [curr]: window
-        .getComputedStyle(elTarget, null)
-        .getPropertyValue(curr),
+      [curr]: window.getComputedStyle(elTarget, null).getPropertyValue(curr),
     }),
     {}
   );
@@ -141,10 +139,7 @@ function extractDomInfo(elTarget) {
     .slice(0, -1)
     .split(",");
 
-  const colorhex = rgbArr.reduce(
-    (init, curr) => (init += parseInt(curr).toString(16)),
-    "#"
-  );
+  const colorhex = rgbArr.reduce((init, curr) => (init += parseInt(curr).toString(16)), "#");
   
   const elParent = elTarget.parentElement;
   
@@ -168,6 +163,7 @@ function extractDomInfo(elTarget) {
     parent,
     size: elComputedStyle["font-size"],
     textcolor: colorhex,
+    backgroundColor: elComputedStyle['background-color'],
     family: elComputedStyle["font-family"].replaceAll('"', ''),
     bordercolor: colorselection[randomcolor],
     uniqueID: dataId,

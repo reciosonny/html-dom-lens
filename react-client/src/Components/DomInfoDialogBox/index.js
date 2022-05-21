@@ -10,23 +10,24 @@ import useDraggable from "../../hooks/useDraggable";
 import FocusedTargetedElement from "../FocusedTargetedElement";
 
 
-const FontColorDetails = ({ textcolor }) => {
+const ColorDetails = ({ color }) => {
 
   return (
     <React.Fragment>
       <div
         className="display-dot"
         style={{
-          background: textcolor,
+          background: color,
         }}
       ></div> {" "}
-      <span style={{ color: '#455A64' }}>{textcolor}</span>
+      <span style={{ color: '#455A64' }}>{color}</span>
     </React.Fragment>
   )
 }
+
+
 let domObserver;
-const DomInfoDialogBox = ({ id, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize,
-  fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit }) => {
+const DomInfoDialogBox = ({ elementId, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, backgroundColor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, onHover }) => {
 
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
   const [seeMoreAttr, setSeeMoreAttr] = useState(true);
@@ -167,7 +168,6 @@ const initializeDomObserver = async () => {
     }
   }
 
-
   const updateFocusedTargetedElementStyles = (elTarget) => {
     setFocusMode(!focusMode);
     
@@ -190,9 +190,9 @@ const initializeDomObserver = async () => {
   return (
     <React.Fragment>
       <FocusedTargetedElement {...focusedTargetedElementStyles} />
-
       <div
         className="dom-info-dialog-box"
+        onMouseEnter={onHover}
         style={{
           top: `${top}px`,
           left: `${left}px`,
@@ -200,7 +200,7 @@ const initializeDomObserver = async () => {
         }}
         ref = {dragRef}
       >
-        <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, id, uniqueID)}>
+        <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, elementId, uniqueID)}>
           x
         </button>
 
@@ -215,7 +215,7 @@ const initializeDomObserver = async () => {
         <div>
           <div className="dom-header">           
             <span className="dom-header-tag">{tag}</span>
-            {id && <span className="dom-header-details">{id}</span>}                                     
+            {elementId && <span className="dom-header-details">{elementId}</span>}                                     
               {domInfo.classNames.map((val) => (  
               <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
             ))}            
@@ -227,9 +227,15 @@ const initializeDomObserver = async () => {
             </div>
             <div className="flex-column">
               <div className="dom-styles-details">
-                <FontColorDetails textcolor={textcolor} />
+                <ColorDetails color={textcolor} />
               </div>
-              <div className="dom-styles">Color</div>
+              <div className="dom-styles">Text-Color</div>
+            </div>
+            <div className="flex-column">
+              <div className="dom-styles-details">
+                <ColorDetails color={backgroundColor} />
+              </div>
+              <div className="dom-styles">Background-Color</div>
             </div>
           </div>
           <div className="dom-styles-details">{fontfamily}</div>
@@ -264,23 +270,25 @@ const initializeDomObserver = async () => {
           )}
           <ChildrenDetails children={domInfo.children} />         
         </div>       
-            {showAddBookmarkPanel && 
-              <AddBookmarkPanel 
-                domType={tag}
-                elClassNames={classNamesString}
-                domId={uniqueID}
-                onSaveBookmark={() => setShowAddBookmarkPanel(false)}
-                onClose={() => setShowAddBookmarkPanel(false)}  
-                targetElement={domElement} 
-              />
-            }
-            {showAddAnnotationsPanel && 
-              <AddAnnotationPanel 
-                onRemoveAnnotation={onRemoveAnnotation} 
-                targetElement={domElement} 
-                onUpdatedAnnotation={onUpdatedAnnotation}
-              />
-            }        
+        {showAddBookmarkPanel && 
+          <AddBookmarkPanel 
+            domType={tag}
+            elClassNames={classNamesString}
+            domId={uniqueID}
+            elementId={elementId}
+            onSaveBookmark={() => setShowAddBookmarkPanel(false)}
+            onClose={() => setShowAddBookmarkPanel(false)}  
+            targetElement={domElement} 
+          />
+        }
+        {showAddAnnotationsPanel && 
+          <AddAnnotationPanel 
+            onRemoveAnnotation={onRemoveAnnotation} 
+            targetElement={domElement} 
+            onUpdatedAnnotation={onUpdatedAnnotation}
+          />
+        }
+
       </div>
     </React.Fragment>
   );

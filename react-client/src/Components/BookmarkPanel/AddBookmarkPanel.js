@@ -9,7 +9,7 @@ import * as domUtils from "../../utils/domUtils";
 
 
 // Note: I used React memo to avoid the expensive "re-rendering" components
-const AddBookmarkPanel = React.memo(({ domType, elClassNames, onSaveBookmark, onClose, domId, targetElement }) => {
+const AddBookmarkPanel = React.memo(({ domType, elClassNames, onSaveBookmark, onClose, domId, elementId, targetElement }) => {
   const [txtInput, setTxtInput] = useState("");
   const [capturedSelectedDom, setCapturedSelectedDom] = useState(null);
 
@@ -63,7 +63,7 @@ const AddBookmarkPanel = React.memo(({ domType, elClassNames, onSaveBookmark, on
       <div className='add-bookmark-panel__header'>
         Save Bookmark     
         <button  type='button' onClick={onClose}>
-          <AiOutlineClose size={14} color="#546E7A" />
+          <AiOutlineClose size={15} color="#546E7A" />
         </button>
       </div>
       <form className='frm-panel' data-id={domId} onSubmit={onSubmitBookmark}>
@@ -72,13 +72,14 @@ const AddBookmarkPanel = React.memo(({ domType, elClassNames, onSaveBookmark, on
           value={txtInput}
           onChange={(e) => setTxtInput(e.target.value)}
           type='text'
-          className='txt__bookmark-name'
+          className='add-bookmark-panel__input txt__bookmark-name'
           placeholder='Bookmark Name'
           autoFocus
         />
       </form>
       <div className='element-description'>
         <label className='lbl-element'>{domType}</label>
+        <label className='lbl-element-id'>{elementId}</label>
         <label className='lbl-classes'>{elClassNames}</label>
       </div>
     </div>
