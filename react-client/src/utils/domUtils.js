@@ -71,6 +71,34 @@ function customWidgetFilter(toFilter) {
     return toFilter;
   }
 }
+
+// Clears Array used in searching removes duplicate data and removes data that are from htmldominfo app
+  const clearSearchArray = (array) => {
+    var finalArr = [];
+    var arr = array.concat();
+    for (var i = 0; i < arr.length; ++i) {
+      for (var j = i + 1; j < arr.length; ++j) {
+        if (arr[i].value === arr[j].value) arr.splice(j--, 1);
+      }
+    }
+
+    arr.forEach(function (obj, idx) {           
+      if (!ancestorExistsByClassName(obj.value, 'search-panel') && !ancestorExistsByClassName(obj.value, 'bookmark-panel') && !ancestorExistsByClassName(obj.value, 'annotation-panel'))
+      finalArr.push(obj);
+    });       
+
+    return finalArr;
+  };
+
+  const getElementParameters =(elTarget) => {
+    const elBoundingRect = elTarget.getBoundingClientRect();
+    return {
+      width: `${Math.round(elBoundingRect.width-30)}px`,
+      positionY: Math.round(window.scrollY+(elBoundingRect.top-30)), 
+      positionX: Math.round(window.scrollX+elBoundingRect.left) 
+    }
+  }
+
  
 // Check if Annotation is existing on Element
 function hasAnnotations(annotationStore, captureElement){
@@ -84,7 +112,7 @@ const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "
 
 
 function extractDomInfo(elTarget) {
-  const classNames = [...elTarget.classList].map((name) => `.${name}`).filter((val, idx) => val !== ".focused-dom" && val !== ".focused-element");
+  const classNames = [...elTarget.classList].map((name) => `.${name}`).filter((val, idx) => val !== ".focused-dom" && val !== ".focused-element" && val !== ".focused-targeted-element");
   const classNamesString = classNames.reduce((init, curr) => init+curr, '');  
   
   const children = [...elTarget.children].map((child) => {
@@ -126,7 +154,7 @@ function extractDomInfo(elTarget) {
   const dataId = uuidv4();     
 
   return {
-    id: elTarget.id !== "" && `#${elTarget.id.trim()}`,
+    id: elTarget.id !== "" ? `#${elTarget.id.trim()}` : "",
     domElement: elTarget,
     tag: elTarget.localName,
     classNames,
@@ -144,13 +172,14 @@ function extractDomInfo(elTarget) {
   };
 }
 
-
-
 export {
   ancestorExistsByClassName,
   extractDomInfo,
   getElementByTagAndIndex,
   getUniqueElementIdentifierByTagAndIndex,    
   customWidgetFilter,
-  hasAnnotations  
+  clearSearchArray,
+  hasAnnotations,
+  getElementParameters
+    
 }
