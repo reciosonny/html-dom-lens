@@ -26,7 +26,7 @@ window.store = {
     children: [],
     classList: [],
   },
-  elementFilter: ''
+  elementFilter: '',
 };
 
 function App() {
@@ -88,7 +88,8 @@ function App() {
       //   "https://web.archive.org/web/20131014212210/http://stackoverflow.com/"
       // );
       getPageContent(
-        "https://www.thefreedictionary.com/"
+        // "https://www.thefreedictionary.com/"
+        "https://duckduckgo.com/?q=test&atb=v311-1&ia=web"
       );
     } else {
       injectDOMEventInBody();
@@ -145,9 +146,9 @@ function App() {
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (!domUtils.isTrueTarget(e.target)) return;
       let strClassList = '';
-      if (!window.store.switchExtensionFunctionality || e.target.className.includes('custom-css')) return;
-
       if(!containsBookmarkModule(e) ) {
         
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
@@ -169,7 +170,7 @@ function App() {
 
         e.target.classList.remove('focused-dom'); //Note: We removed focused-dom class after click so that domUtils can extract the background color from the element, not the color from focused-dom class
     
-        //get the least properties for bookmark module
+        //get the least properties for bookmark module        
         setSelectedElem({
           elClassNames: strClassList,
           domType: e.target.nodeName?.toLowerCase(),
@@ -183,7 +184,6 @@ function App() {
         const elTarget = e.target;
   
         if (elTarget.id !== "closeDom") {
-          e.preventDefault();
 
           if (document.getElementsByClassName("focused-element").length > 0)
           return;
@@ -239,7 +239,6 @@ function App() {
           
         }
       }
-      
     });
 
     document.addEventListener("mouseover", async (e) => {    

@@ -72,6 +72,12 @@ function customWidgetFilter(toFilter) {
   }
 }
 
+// special function for certain cases where unncessary targets appear this function is only for html-dom-lens 
+function isTrueTarget(elTarget)
+{
+  return elTarget.className.split(' ').some((customFilter) => customFilter.includes("focused-dom"));
+}
+
 // Clears Array used in searching removes duplicate data and removes data that are from htmldominfo app
   const clearSearchArray = (array) => {
     var finalArr = [];
@@ -180,6 +186,7 @@ export {
   customWidgetFilter,
   clearSearchArray,
   hasAnnotations,
-  getElementParameters
+  getElementParameters,
+  isTrueTarget
     
 }
