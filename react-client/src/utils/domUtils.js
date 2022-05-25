@@ -71,6 +71,12 @@ function customWidgetFilter(toFilter) {
     return toFilter;
   }
 }
+
+	// special function for certain cases where unncessary targets appear this function is only for html-dom-lens 
+  function isTrueTarget(elTarget)
+  {
+    return elTarget.className.split(' ').some((customFilter) => customFilter.includes("focused-dom"));
+  }
  
 // Check if Annotation is existing on Element
 function hasAnnotations(annotationStore, captureElement){
@@ -152,5 +158,6 @@ export {
   getElementByTagAndIndex,
   getUniqueElementIdentifierByTagAndIndex,    
   customWidgetFilter,
-  hasAnnotations  
+  hasAnnotations,
+  isTrueTarget  
 }
