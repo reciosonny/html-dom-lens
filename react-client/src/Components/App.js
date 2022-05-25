@@ -238,6 +238,8 @@ function App() {
 
     document.addEventListener("mouseover", async (e) => {    
       if (!containsBookmarkModule(e)) { 
+        e.target.classList.remove("focused-dom");
+
         if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
         if (focusMode) return;
 
@@ -312,6 +314,7 @@ function App() {
       }
     } else {     
       currentEl.classList.remove(currDomInfo.cssClassesAssigned);
+      currentEl.classList.remove("focused-dom");
       dialogboxList[selectedIdx].style.visibility = "hidden";
     }
 
