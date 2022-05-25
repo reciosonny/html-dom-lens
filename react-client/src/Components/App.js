@@ -142,6 +142,9 @@ function App() {
 
   const injectDOMEventInBody = async () => {
     document.addEventListener("click", async (e) => {
+      e.preventDefault();
+      if (!domUtils.isTrueTarget(e.target)) return;
+
       let strClassList = '';
       if (!window.store.switchExtensionFunctionality || e.target.className.includes('custom-css')) return;
 
@@ -177,8 +180,6 @@ function App() {
         const elTarget = e.target;
   
         if (elTarget.id !== "closeDom") {
-          e.preventDefault();
-
           if (document.getElementsByClassName("focused-element").length > 0)
           return;
 
