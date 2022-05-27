@@ -307,23 +307,25 @@ function App() {
       const focusedEl = document.querySelector(".focused-element");
       if (focusedEl === currentEl) {
         if (currentEl)
-          currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-
-        dialogboxList[selectedIdx].style.visibility = "hidden";
-        document.querySelector(".focused-element").classList.remove("focused-element");        
-        setFocusMode(false);
+          implementRemoveDialogBox(currentEl, currDomInfo, dialogboxList, selectedIdx);
+          document.querySelector(".focused-element").classList.remove("focused-element");        
+          setFocusMode(false);
       }
     } else {     
-      currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-      currentEl.classList.remove("focused-dom");
-      dialogboxList[selectedIdx].style.visibility = "hidden";
+      implementRemoveDialogBox(currentEl, currDomInfo, dialogboxList, selectedIdx);
     }
-
 
     // This is causing a bug for some reason when there are dialogboxes overlapping with other dom (e.g. parent/child).....
     const filterDomInfosClicked = domInfo.filter((val, idx) => idx !== selectedIdx);
     setDomInfo(filterDomInfosClicked);
   }   
+
+  const implementRemoveDialogBox = (currentEl, currDomInfo, dialogboxList, selectedIdx) => {
+    currentEl.classList.remove(currDomInfo.cssClassesAssigned);
+    currentEl.classList.remove("focused-dom");
+    dialogboxList[selectedIdx].style.visibility = "hidden";
+
+  }
 
   const containsBookmarkModule = (e) => {
     
