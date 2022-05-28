@@ -180,8 +180,9 @@ function App() {
         const elTarget = e.target;
   
         if (elTarget.id !== "closeDom") {
+
           if (document.getElementsByClassName("focused-element").length > 0)
-          return;
+            return;
 
           const extractedDomInfo = domUtils.extractDomInfo(elTarget);
           const pageYcoordinate = e.pageY;
@@ -256,8 +257,13 @@ function App() {
             domType,
             elClassNames: [...e.target.classList],
             show: true
-          }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.         
-          e.target.classList.toggle("focused-dom");
+          }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+
+          const isDomLensInjected = e.target.getAttribute('data-dom-lens-injected') === 'true';
+
+          if (!isDomLensInjected) { //note: if dialogbox is injected in the element, don't toggle focused-dom CSS class as this will cause residues and background highlights after being hovered
+            e.target.classList.toggle("focused-dom");            
+          }
           
           const elBoundingRect = e.target.getBoundingClientRect();
 
@@ -277,8 +283,10 @@ function App() {
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
         const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
+
+        const isDomLensInjected = e.target.getAttribute('data-dom-lens-injected') === 'true'; //note: if dialogbox is injected in the element, don't toggle focused-dom CSS class as this will cause residues and background highlights after being hovered
   
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark) {
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !isDomLensInjected) {
           e.target.classList.toggle("focused-dom");
         }
       }
