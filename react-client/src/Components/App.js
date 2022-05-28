@@ -311,6 +311,8 @@ function App() {
     const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
     const dialogboxList = document.getElementsByClassName('dom-info-dialog-box');
 
+    currentEl.removeAttribute('data-dom-lens-injected'); //remove this attribute since this is being used in identifying the toggling of .focused-dom CSS class.
+
     if (focusMode) {
       const focusedEl = document.querySelector(".focused-element");
       if (focusedEl === currentEl) {
@@ -318,7 +320,7 @@ function App() {
           currentEl.classList.remove(currDomInfo.cssClassesAssigned);
 
         dialogboxList[selectedIdx].style.visibility = "hidden";
-        document.querySelector(".focused-element").classList.remove("focused-element");        
+        document.querySelector(".focused-element").classList.remove("focused-element");
         setFocusMode(false);
       }
     } else {     
