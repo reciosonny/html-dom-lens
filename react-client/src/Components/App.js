@@ -69,8 +69,6 @@ function App() {
     setDomInfo([]); //if DOM extension is turned off, empty the DOM info state array
     setExtensionFunctionality(false);
   };
-  const refDomHighlight = React.useRef(null);
-
 
   //#region Effects hook
 
@@ -242,7 +240,7 @@ function App() {
       if (!containsBookmarkModule(e)) { 
         e.target.classList.remove("focused-dom");
 
-        if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
+        if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
         if (focusMode) return;
 
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
@@ -309,7 +307,6 @@ function App() {
   const handleRemoveDialogBox = (selectedIdx, id, uniqueID) => {        
     const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === selectedIdx);
     const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
-    const dialogboxList = document.getElementsByClassName('dom-info-dialog-box');
 
     currentEl.removeAttribute('data-dom-lens-injected'); //remove this attribute since this is being used in identifying the toggling of .focused-dom CSS class.
 
@@ -318,15 +315,11 @@ function App() {
       if (focusedEl === currentEl) {
         if (currentEl)
           currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-
-        dialogboxList[selectedIdx].style.visibility = "hidden";
-        document.querySelector(".focused-element").classList.remove("focused-element");
         setFocusMode(false);
       }
     } else {     
       currentEl.classList.remove(currDomInfo.cssClassesAssigned);
       currentEl.classList.remove("focused-dom");
-      dialogboxList[selectedIdx].style.visibility = "hidden";
     }
 
 
@@ -374,10 +367,6 @@ function App() {
       <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
       {switchExtensionFunctionality && (
         <div>
-          {/* TODO:
-                1. Toggle bookmark as enabled once the DomInfoDialogbox instance is saved in bookmarks list (We can do this by comparing HTML elements saved in bookmarks against dialogbox element) - DONE
-                2. Change the behavior of toggle bookmark when an existing bookmark is already saved for the same DOM element clicked. Remove the bookmark instead if it exists in bookmark list
-          */}
           {domInfo.map((domInfo, idx) => {
 
             const elBookmarks = bookmarksStore.map(({ elem, domIndex }) => domUtils.getElementByTagAndIndex(elem, domIndex));

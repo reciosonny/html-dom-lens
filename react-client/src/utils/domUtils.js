@@ -73,9 +73,14 @@ function customWidgetFilter(toFilter) {
 }
 
 	// special function for certain cases where unncessary targets appear this function is only for html-dom-lens 
-  function isTrueTarget(elTarget)
-  {
-    return elTarget.className.split(' ').some((customFilter) => customFilter.includes("focused-dom"));
+  function isTrueTarget(elTarget) {
+    if (!(typeof elTarget.className === 'string')) { //catches className which returns object since this function is only responsible in parsing string
+      return false;
+    }
+
+    const result = elTarget.className.split(' ').some((customFilter) => customFilter.includes("focused-dom"));
+
+    return result;    
   }
  
 // Check if Annotation is existing on Element
