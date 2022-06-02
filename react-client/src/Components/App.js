@@ -139,8 +139,9 @@ function App() {
 
 
   const injectDOMEventInBody = async () => {
-    document.addEventListener("click", async (e) => {
+    document.addEventListener("click", async (e) => { 
       e.preventDefault();
+
       if (!domUtils.isTrueTarget(e.target)) return;
 
       let strClassList = '';
@@ -236,9 +237,13 @@ function App() {
       
     });
 
-    document.addEventListener("mouseover", async (e) => {    
+    document.addEventListener("mouseover", async (e) => {  
+      e.target.setAttribute('data-dom-lens-target', true);   // data attribute to use as reference in domUtils.isTrueTarget to prevent unnecessary additional e.target          
+      document.querySelectorAll(".focused-dom").forEach((elTarget, idx) => {
+        elTarget.classList.remove("focused-dom");
+      });
+
       if (!containsBookmarkModule(e)) { 
-        e.target.classList.remove("focused-dom");
 
         if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
         if (focusMode) return;
@@ -275,6 +280,8 @@ function App() {
     });
 
     document.addEventListener("mouseout", e => {
+      e.target.removeAttribute('data-dom-lens-target');  
+
       if(!containsBookmarkModule(e)) {
         if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
   
@@ -307,25 +314,27 @@ function App() {
   const handleRemoveDialogBox = (selectedIdx, id, uniqueID) => {        
     const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === selectedIdx);
     const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
+    const focusedEl = document.querySelector(".focused-element");
 
     currentEl.removeAttribute('data-dom-lens-injected'); //remove this attribute since this is being used in identifying the toggling of .focused-dom CSS class.
 
-    if (focusMode) {
-      const focusedEl = document.querySelector(".focused-element");
+    if (focusMode) {         
       if (focusedEl === currentEl) {
         if (currentEl)
           currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-        setFocusMode(false);
+          currentEl.classList.remove("focused-element");
+          setFocusMode(false);
       }
     } else {     
       currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-      currentEl.classList.remove("focused-dom");
     }
 
-
     // This is causing a bug for some reason when there are dialogboxes overlapping with other dom (e.g. parent/child).....
-    const filterDomInfosClicked = domInfo.filter((val, idx) => idx !== selectedIdx);
-    setDomInfo(filterDomInfosClicked);
+    if (!focusMode || focusedEl === currentEl) {
+      const filterDomInfosClicked = domInfo.filter((val, idx) => idx !== selectedIdx);
+      setDomInfo(filterDomInfosClicked);
+    }
+
   }   
 
   const containsBookmarkModule = (e) => {
@@ -362,7 +371,6 @@ function App() {
 
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
-      <div className="focused-targeted-element"></div>
 
       <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
       {switchExtensionFunctionality && (

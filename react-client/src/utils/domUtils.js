@@ -78,9 +78,7 @@ function customWidgetFilter(toFilter) {
       return false;
     }
 
-    const result = elTarget.className.split(' ').some((customFilter) => customFilter.includes("focused-dom"));
-
-    return result;    
+    return elTarget.dataset.domLensTarget
   }
  
 // Check if Annotation is existing on Element
@@ -151,7 +149,7 @@ function extractDomInfo(elTarget) {
     bordercolor: colorselection[randomcolor],
     uniqueID: dataId,
     dataId: dataId,
-    attributes: dataAttributes.filter( obj => !obj.key.includes('domLensInjected') ).filter( obj => !obj.key.includes('id') )                         
+    attributes: dataAttributes.filter( obj => !obj.key.includes('domLensInjected') ).filter( obj => !obj.key.includes('domLensTarget') ).filter( obj => !obj.key.includes('id') )                         
   };
 }
 
