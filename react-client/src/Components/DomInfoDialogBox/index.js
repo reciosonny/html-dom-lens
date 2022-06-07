@@ -150,7 +150,7 @@ const initializeDomObserver = async () => {
 
   const onClickCloseDialogBox = () => {    
     const focusedEl = document.querySelectorAll(".focused-element");    
-    if ( focusedEl.length > 0 && domElement !== focusedEl[0] ) return;
+    if (focusedEl.length > 0 && domElement !== focusedEl[0]) return;
     
     domElement.classList.remove(domElement.className.split(' ').filter(cls => cls.includes('custom-css')).toString());
     domElement.classList.remove("focused-element");
@@ -219,7 +219,6 @@ const initializeDomObserver = async () => {
         }}
         ref = {dragRef}
       >
-        {/* <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, elementId, uniqueID)}> */}
         <button id="closeDom" className="close-btn-style" onClick={onClickCloseDialogBox}>
           x
         </button>
