@@ -137,15 +137,34 @@ const initializeDomObserver = async () => {
     setShowAddBookmarkPanel(false);  
   };
 
-  function onRemoveAnnotation() {
+  const onRemoveAnnotation = () => {
     getAnnotationStoreUpdates(); 
     setStateHasExistingAnnotation(false);
     setShowAddAnnotationsPanel(false);
   }
 
-  function onUpdatedAnnotation() {    
+  const onUpdatedAnnotation = () => {    
     getAnnotationStoreUpdates(); 
     setStateHasExistingAnnotation(true);
+  }
+
+  const onClickCloseDialogBox = () => {    
+    const focusedEl = document.querySelectorAll(".focused-element");    
+    if ( focusedEl.length > 0 && domElement !== focusedEl[0] ) return;
+    
+    domElement.classList.remove(domElement.className.split(' ').filter(cls => cls.includes('custom-css')).toString());
+    domElement.classList.remove("focused-element");
+    setFocusMode(false)
+
+    setFocusedTargetedElementStyles({ 
+      ...focusedTargetedElementStyles,
+      leftPosition: `0px`, 
+      topPosition: `0px`,
+      height: `0px`,
+      width: `0px`,
+      opacity: 0
+    });
+    onClose(idx, elementId, uniqueID);
   }
 
   const onClickFocus = (elTarget) => {
@@ -200,7 +219,8 @@ const initializeDomObserver = async () => {
         }}
         ref = {dragRef}
       >
-        <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, elementId, uniqueID)}>
+        {/* <button id="closeDom" className="close-btn-style" onClick={() => onClose(idx, elementId, uniqueID)}> */}
+        <button id="closeDom" className="close-btn-style" onClick={onClickCloseDialogBox}>
           x
         </button>
 
