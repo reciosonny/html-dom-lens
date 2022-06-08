@@ -244,7 +244,6 @@ function App() {
       });
 
       if (!containsBookmarkModule(e)) { 
-
         if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
         if (focusMode) return;
 
@@ -262,11 +261,7 @@ function App() {
             show: true
           }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
 
-          const isDomLensInjected = e.target.getAttribute('data-dom-lens-injected') === 'true';
-
-          if (!isDomLensInjected) { //note: if dialogbox is injected in the element, don't toggle focused-dom CSS class as this will cause residues and background highlights after being hovered
-            e.target.classList.toggle("focused-dom");            
-          }
+          e.target.classList.toggle("focused-dom");            
           
           const elBoundingRect = e.target.getBoundingClientRect();
 
@@ -311,30 +306,10 @@ function App() {
     injectDOMEventInBody();
   };
 
-  const handleRemoveDialogBox = (selectedIdx, id, uniqueID) => {        
-    const currDomInfo = domInfo.find((x, currentIdx) => currentIdx === selectedIdx);
-    const currentEl = document.querySelector(`[data-id="${uniqueID}"]`);
-    const focusedEl = document.querySelector(".focused-element");
-
-    currentEl.removeAttribute('data-dom-lens-injected'); //remove this attribute since this is being used in identifying the toggling of .focused-dom CSS class.
-
-    if (focusMode) {         
-      if (focusedEl === currentEl) {
-        if (currentEl)
-          currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-          currentEl.classList.remove("focused-element");
-          setFocusMode(false);
-      }
-    } else {     
-      currentEl.classList.remove(currDomInfo.cssClassesAssigned);
-    }
-
-    // This is causing a bug for some reason when there are dialogboxes overlapping with other dom (e.g. parent/child).....
-    if (!focusMode || focusedEl === currentEl) {
+  const handleRemoveDialogBox = (selectedIdx, id, uniqueID) => {            
+      setFocusMode(false);
       const filterDomInfosClicked = domInfo.filter((val, idx) => idx !== selectedIdx);
-      setDomInfo(filterDomInfosClicked);
-    }
-
+      setDomInfo(filterDomInfosClicked);    
   }   
 
   const containsBookmarkModule = (e) => {
