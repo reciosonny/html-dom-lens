@@ -86,12 +86,15 @@ function App() {
         "https://www.thefreedictionary.com/"
       );
     } else {
+      if (window.location.href.includes("localhost")) {
+        document.getElementById("samplePage").innerHTML = localStorage.getItem("webpage");
+      }
       injectDOMEventInBody();
 
       chromeExtensionUtils.onMessageEvent(function (msg, sender, sendResponse) {
         setExtensionFunctionality(true);
 
-        if (msg.text === 'are_you_there_content_script?') {
+        if (msg.text === "are_you_there_content_script?") {
           sendResponse({ status: "yes" });
         }
       });
@@ -145,7 +148,8 @@ function App() {
       if (!domUtils.isTrueTarget(e.target)) return;
 
       let strClassList = '';
-      if (!window.store.switchExtensionFunctionality || e.target.className.includes('custom-css')) return;
+      if (!window.store.switchExtensionFunctionality) return;
+      if (domUtils.hasDialogBox(e.target.dataset.id)) return;
 
       if(!containsBookmarkModule(e)) {
         
@@ -180,7 +184,7 @@ function App() {
   
         if (elTarget.id !== "closeDom") {
 
-          if (document.getElementsByClassName("focused-element").length > 0)
+          if (document.getElementsByClassName("focused-element").length > 0 )
             return;
 
           const extractedDomInfo = domUtils.extractDomInfo(elTarget);
@@ -214,7 +218,6 @@ function App() {
             }
             ]
           });
-
           // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
           (function (pageYcoordinate) {
             setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
@@ -234,7 +237,6 @@ function App() {
           
         }
       }
-      
     });
 
     document.addEventListener("mouseover", async (e) => {  
@@ -345,8 +347,7 @@ function App() {
     <GlobalContext.Provider value={{ selectedDom: selectedElem.domTarget, onChangeBookmarks }}>
 
       {/* website page renders here... */}
-      {!PRODUCTION_MODE && <div id="samplePage"></div>}
-
+      <div id="samplePage"></div>
       <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
       {switchExtensionFunctionality && (
         <div>
