@@ -210,6 +210,7 @@ const initializeDomObserver = async () => {
     <React.Fragment>
       <FocusedTargetedElement {...focusedTargetedElementStyles} />
       <div
+        id={uniqueID}
         className="dom-info-dialog-box"
         onMouseEnter={onHover}
         style={{

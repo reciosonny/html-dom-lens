@@ -85,13 +85,13 @@ function App() {
       getPageContent(
         "https://www.thefreedictionary.com/"
       );
-    } else {
+    } else {      
       injectDOMEventInBody();
 
       chromeExtensionUtils.onMessageEvent(function (msg, sender, sendResponse) {
         setExtensionFunctionality(true);
 
-        if (msg.text === 'are_you_there_content_script?') {
+        if (msg.text === "are_you_there_content_script?") {
           sendResponse({ status: "yes" });
         }
       });
@@ -145,7 +145,8 @@ function App() {
       if (!domUtils.isTrueTarget(e.target)) return;
 
       let strClassList = '';
-      if (!window.store.switchExtensionFunctionality || e.target.className.includes('custom-css')) return;
+      if (!window.store.switchExtensionFunctionality) return;
+      if (domUtils.hasDialogBox(e.target.dataset.id)) return;
 
       if(!containsBookmarkModule(e)) {
         
@@ -214,7 +215,6 @@ function App() {
             }
             ]
           });
-
           // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
           (function (pageYcoordinate) {
             setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
@@ -234,7 +234,6 @@ function App() {
           
         }
       }
-      
     });
 
     document.addEventListener("mouseover", async (e) => {  
@@ -346,7 +345,6 @@ function App() {
 
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
-
       <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
       {switchExtensionFunctionality && (
         <div>
