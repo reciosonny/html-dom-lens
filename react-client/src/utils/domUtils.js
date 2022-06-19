@@ -92,11 +92,7 @@ function hasAnnotations(annotationStore, captureElement){
 // to check if the element has already an existing dialog box
 function hasDialogBox(dataId) {
   const existingDialog = document.getElementById(`${dataId}`)
-  if (existingDialog !== null) {
-    return true;
-  } else {
-    return false;
-  }
+  return existingDialog !== null
 }
 
 const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "#7E57C2", "#9575CD", "#B39DDB", "#D1C4E9", "#EDE7F6", "#E91E63", "#D81B60", "#C2185B", "#AD1457", "#880E4F", "#EC407A", "#F06292", "#F48FB1", "#F8BBD0", "#FCE4EC", "#263238", "#37474F", "#455A64", "#546E7A", "#607D8B", "#78909C", "#90A4AE", "#B0BEC5", "#CFD8DC", "#ECEFF1"];
