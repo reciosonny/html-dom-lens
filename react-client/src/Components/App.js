@@ -85,10 +85,7 @@ function App() {
       getPageContent(
         "https://www.thefreedictionary.com/"
       );
-    } else {
-      if (window.location.href.includes("localhost")) {
-        document.getElementById("samplePage").innerHTML = localStorage.getItem("webpage");
-      }
+    } else {      
       injectDOMEventInBody();
 
       chromeExtensionUtils.onMessageEvent(function (msg, sender, sendResponse) {
@@ -184,7 +181,7 @@ function App() {
   
         if (elTarget.id !== "closeDom") {
 
-          if (document.getElementsByClassName("focused-element").length > 0 )
+          if (document.getElementsByClassName("focused-element").length > 0)
             return;
 
           const extractedDomInfo = domUtils.extractDomInfo(elTarget);
@@ -347,7 +344,7 @@ function App() {
     <GlobalContext.Provider value={{ selectedDom: selectedElem.domTarget, onChangeBookmarks }}>
 
       {/* website page renders here... */}
-      <div id="samplePage"></div>
+      {!PRODUCTION_MODE && <div id="samplePage"></div>}
       <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
       {switchExtensionFunctionality && (
         <div>

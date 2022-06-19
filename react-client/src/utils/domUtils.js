@@ -103,7 +103,7 @@ const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "
 
 
 function extractDomInfo(elTarget) {
-  const classNames = [...elTarget.classList].map((name) => `.${name}`).filter((val, idx) => val !== ".focused-dom" && val !== ".focused-element").filter(customFilter => !customFilter.includes('custom-css'));
+  const classNames = [...elTarget.classList].map((name) => `.${name}`).filter((val, idx) => val !== ".focused-dom" && val !== ".focused-element" && !val.includes('custom-css'));
   const classNamesString = classNames.reduce((init, curr) => init+curr, '');  
   
   const children = [...elTarget.children].map((child) => {
