@@ -34,6 +34,33 @@ function ancestorExistsByClassNames(element, classNames) {
   return true;
 }
 
+function ancestorExistsByID(element, idName) {
+  
+  if(!element) return false;
+  if(!element.parentElement) return false;
+
+  if(element.parentElement.id === idName) return true;
+
+  if(element.id === idName) return true;
+
+  if (element.parentElement.id !== idName) {
+    return ancestorExistsByID(element.parentElement, idName);
+  }
+
+  return true;
+}
+
+//This function only works well on a live implementation of dom lens extension due to the website structure
+function arrRemoveDomInfo(arr) {
+  const resultArray = [];  
+  arr.map((obj) => {    
+    if (!ancestorExistsByID( obj.value,'htmlDomInfoRoot')) {      
+      resultArray.push(obj);
+    }
+  });  
+  return resultArray;
+}
+
 // This algorithm gets the unique element identifier by using element tag(e.g. p, div, span, input), and the index where that particular element is located
 function getUniqueElementIdentifierByTagAndIndex(elTarget) {
   const result = [...document.querySelectorAll(elTarget.tagName.toLowerCase())]
@@ -169,5 +196,6 @@ export {
   customWidgetFilter,
   hasAnnotations,
   isTrueTarget,
-  hasDialogBox  
+  hasDialogBox,
+  arrRemoveDomInfo  
 }
