@@ -252,7 +252,7 @@ function App() {
         
         if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && isNotSelectedFromSearch && !focusMode) {
           const domType = e.target.nodeName?.toLowerCase();
-           setDomLeanDetails({
+          await setDomLeanDetails({
             ...domLeanDetails,
             elId: e.target.id,
             domType,
