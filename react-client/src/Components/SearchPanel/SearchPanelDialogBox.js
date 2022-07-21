@@ -13,7 +13,7 @@ const SearchPanelDialogBox = ({ onCancelSearch, onSelectedElement }) => {
 
   const searchElements = (input) => {       
     if (input.trim() === "" || input.trim() === window.store.elementFilter) return;  
-    debugger     
+         
     if (input.codePointAt(0) <= 95 || input.codePointAt(0) >= 122)  return; //to prevent bug if first character is not from a-z
     
     window.store.elementFilter = input.trim();
@@ -25,8 +25,6 @@ const SearchPanelDialogBox = ({ onCancelSearch, onSelectedElement }) => {
     const filteredElementsbyClass = Object.entries([...document.querySelectorAll(`body [class^=${input} i]`)]).reduce((arr, [key, value]) => arr.concat([{ key, value }]), []);
 
     const filteredElements = [...generalFilter, ...filteredElementsbyID, ...filteredElementsbyClass];
-
-    const arrValues = filteredElements.map(obj => obj.value);
 
     const filteredValues = domUtils.arrRemoveDomInfo(filteredElements.filter(({value}, index) => !arrValues.includes(value, index + 1))); // use this on live only 
     // const filteredValues = (filteredElements.filter(({value}, index) => !arrValues.includes(value, index + 1))); //preserving this code for use in local host testing

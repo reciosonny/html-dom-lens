@@ -24,7 +24,6 @@ const SearchPanel = () => {
   }
 
   const onSelectedElement = ( elSelected ) => {
-
     const elBoundingRect = elSelected.getBoundingClientRect();
     const leanDetails = domUtils.extractDomInfo(elSelected);
     
@@ -44,7 +43,6 @@ const SearchPanel = () => {
       positionY: Math.round(window.scrollY+(elBoundingRect.top-30)), 
       positionX: Math.round(window.scrollX+elBoundingRect.left)       
     });
-
     
     elSelected.classList.add("focused-dom");
     elSelected.scrollIntoView({ block: "center" });
