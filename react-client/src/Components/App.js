@@ -11,6 +11,7 @@ import ErrorBoundary from "./ErrorBoundaryComponent";
 
 import * as domUtils from "../utils/domUtils";
 import BookmarkPanel from "./BookmarkPanel";
+import SearchPanel from "./SearchPanel"
 import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 
 import useLocalStorageStore from "../hooks/useLocalStorageStore";
@@ -148,15 +149,15 @@ function App() {
       if (!window.store.switchExtensionFunctionality) return;
       if (domUtils.hasDialogBox(e.target.dataset.id)) return;
 
-      if(!containsBookmarkModule(e)) {
-        
+      if(!containsBookmarkModule(e) && !containsSearchModule(e)) {        
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
-        const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");        
-        
-        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || e.target.localName === 'path')
+        const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");   
+        const isNotSearchPanelDiaglog = !domUtils.ancestorExistsByClassName(e.target, "search-panel__dialogbox");
+             
+        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || e.target.localName === 'path' || !isNotSearchPanelDiaglog)
           return;
-
+                    
         //capture all classes of the dom for bookmark module
         for (let domClass of e.target.classList.values()) {
           if(domClass !== 'focused-dom') {
@@ -237,26 +238,25 @@ function App() {
     });
 
     document.addEventListener("mouseover", async (e) => {  
-      e.target.setAttribute('data-dom-lens-target', true);   // data attribute to use as reference in domUtils.isTrueTarget to prevent unnecessary additional e.target          
-      document.querySelectorAll(".focused-dom").forEach((elTarget, idx) => {
-        elTarget.classList.remove("focused-dom");
-      });
-
-      if (!containsBookmarkModule(e)) { 
+      e.target.setAttribute('data-dom-lens-target', true);   // data attribute to use as reference in domUtils.isTrueTarget to prevent unnecessary additional e.target               
+      if (!containsBookmarkModule(e) && !containsSearchModule(e)) { 
+        
         if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
         if (focusMode) return;
 
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
         const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
+        const isNotSelectedFromSearch = !domUtils.ancestorExistsByClassName(e.target, 'search-panel');
+
         
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode) {
+        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && isNotSelectedFromSearch && !focusMode) {
           const domType = e.target.nodeName?.toLowerCase();
           await setDomLeanDetails({
             ...domLeanDetails,
             elId: e.target.id,
             domType,
-            elClassNames: [...e.target.classList],
+            elClassNames: [...e.target.classList].filter(customFilter => !customFilter.includes('focused-dom')),
             show: true
           }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
 
@@ -276,7 +276,7 @@ function App() {
     document.addEventListener("mouseout", e => {
       e.target.removeAttribute('data-dom-lens-target');  
 
-      if(!containsBookmarkModule(e)) {
+      if(!containsBookmarkModule(e) && !containsSearchModule(e)) {
         if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
   
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
@@ -285,9 +285,10 @@ function App() {
 
         const isDomLensInjected = e.target.getAttribute('data-dom-lens-injected') === 'true'; //note: if dialogbox is injected in the element, don't toggle focused-dom CSS class as this will cause residues and background highlights after being hovered
   
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !isDomLensInjected) {
-          e.target.classList.toggle("focused-dom");
+        if (isNotDomInfoComponent || isNotBtnDisable || e.target.nodeName !== "HTML" || isNotSelectedDomFromBookmark || !isDomLensInjected ) {
+          e.target.classList.remove("focused-dom");
         }
+     
       }
     });
   };
@@ -316,6 +317,13 @@ function App() {
     const isBookmarkPanel = domUtils.ancestorExistsByClassName(e.target, 'bookmark-panel');
 
     return isBookmarkPanel;
+  }
+
+  const containsSearchModule = (e) => {
+    
+    const isSearchPanel = domUtils.ancestorExistsByClassName(e.target, 'search-panel');
+
+    return isSearchPanel;
   }
 
   const onClickOption = (e) => {
@@ -405,7 +413,9 @@ function App() {
           <BookmarkPanel
             bookmarks={stateBookmarks}
             onRemoveBookmarkEmit={onChangeBookmarks}
-          />
+          />        
+          
+          <SearchPanel />
         </div> 
       )}
 

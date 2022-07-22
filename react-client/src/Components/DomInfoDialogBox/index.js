@@ -154,6 +154,8 @@ const initializeDomObserver = async () => {
     
     domElement.classList.remove(domElement.className.split(' ').filter(cls => cls.includes('custom-css')).toString());
     domElement.classList.remove("focused-element");
+    domElement.classList.remove("focused-dom");
+
     setFocusMode(false)
 
     setFocusedTargetedElementStyles({ 
