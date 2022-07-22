@@ -27,8 +27,7 @@ const SearchPanelDialogBox = ({ onCancelSearch, onSelectedElement }) => {
     const filteredElements = [...generalFilter, ...filteredElementsbyID, ...filteredElementsbyClass];
 
     const arrValues = filteredElements.map(obj => obj.value); //use in assisting the filtering of duplicates in filteredElements
-    const filteredValues = domUtils.arrRemoveDomInfo(filteredElements.filter(({value}, index) => !arrValues.includes(value, index + 1))); // use this on live only 
-    // const filteredValues = (filteredElements.filter(({value}, index) => !arrValues.includes(value, index + 1))); //preserving this code for use in local host testing
+    const filteredValues = domUtils.arrRemoveDomInfo(filteredElements.filter(({value}, index) => !arrValues.includes(value, index + 1))); 
   
     setGeneratedEl(filteredValues);
 
