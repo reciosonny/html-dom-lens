@@ -50,11 +50,10 @@ function ancestorExistsByID(element, idName) {
   return true;
 }
 
-//This function only works well on a live implementation of dom lens extension due to the website structure
 function arrRemoveDomInfo(arr) {
   const resultArray = [];  
   arr.map((obj) => {    
-    if (!ancestorExistsByID( obj.value,'htmlDomInfoRoot')) {      
+    if (!ancestorExistsByID( obj.value,'domlensApp')) {      
       resultArray.push(obj);
     }
   });  
