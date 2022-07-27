@@ -355,7 +355,7 @@ function App() {
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
       <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
       {switchExtensionFunctionality && (
-        <div>
+        <div id="domlensApp">
           {domInfo.map((domInfo, idx) => {
 
             const elBookmarks = bookmarksStore.map(({ elem, domIndex }) => domUtils.getElementByTagAndIndex(elem, domIndex));
