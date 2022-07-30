@@ -2,29 +2,16 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import DomOptions from "../DomOptions";
 import ChildrenDetails from "./ChildrenDetails";
 import ParentDetails from "./ParentDetails";
+import ParentDialogBox from "../ParentDialogBox/index";
 import * as domUtils from "../../utils/domUtils";
 import AddBookmarkPanel from "../BookmarkPanel/AddBookmarkPanel";
 import AddAnnotationPanel from "../AnnotationPanel/AddAnnotationPanel";
 import useLocalStorageStore from "../../hooks/useLocalStorageStore";
 import useDraggable from "../../hooks/useDraggable";
 import FocusedTargetedElement from "../FocusedTargetedElement";
-
-
-const ColorDetails = ({ color }) => {
-
-  return (
-    <React.Fragment>
-      <div
-        className="display-dot"
-        style={{
-          background: color,
-        }}
-      ></div> {" "}
-      <span style={{ color: '#455A64' }}>{color}</span>
-    </React.Fragment>
-  )
-}
-
+import ColorDetails from "../ColorDetails";
+import { FaMaxcdn } from "react-icons/fa";
+import ChildDialogBox from "../ChildDialogBox";
 
 let domObserver;
 const DomInfoDialogBox = ({ elementId, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, backgroundColor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, onHover }) => {
@@ -32,7 +19,10 @@ const DomInfoDialogBox = ({ elementId, idx, tag, classNames, classNamesString, p
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
   const [seeMoreAttr, setSeeMoreAttr] = useState(true);
   const [focusMode, setFocusMode] = useState(false);  
-
+  const [extendBox, setExtendBox] = useState(false);
+  const [displayParentBox, setDisplayParentBox] = useState(false);
+  const [displayChildBox, setDisplayChildBox] = useState(false);
+  const [selectedChildEl, setSelectedChildEl] = useState();
 
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
   const [stateHasExistingBookmark, setStateHasExistingBookmark] = useState(false);
@@ -115,6 +105,27 @@ const initializeDomObserver = async () => {
     return () => {      
     }
   }, [hasExistingAnnotations]);  
+
+  React.useEffect(() => {
+    if (displayParentBox || displayChildBox) {
+      setExtendBox(true);      
+    } else {
+      setExtendBox(false);     
+    }
+    return () => {      
+    }
+  }, [displayParentBox, displayChildBox]); 
+  
+  const dialogStyle = !extendBox ? {
+    top: `${top}px`,
+    left: `${left}px`,
+    border: `3px solid ${borderclr}`,
+    maxWidth: `400px`,
+  }: {
+    top: `${top}px`,
+    left: `${left}px`,
+    border: `3px solid ${borderclr}`,
+  };
   
   const removeExistingBookmark = () => {
     const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(domElement);
@@ -189,6 +200,25 @@ const initializeDomObserver = async () => {
     }
   }
 
+  const onClickParent = () => {
+    setDisplayParentBox(!displayParentBox)
+  }
+
+  const onClickChild = (childIdx) => {
+    if (window.store.selectedChildIndex === null)
+     setDisplayChildBox(!displayChildBox);
+    else {
+      if (window.store.selectedChildIndex === childIdx) {
+        setDisplayChildBox(!displayChildBox);
+      } else {
+        setDisplayChildBox(true);
+      }
+    }
+
+    window.store.selectedChildIndex = childIdx
+    setSelectedChildEl(domElement.children[childIdx])    
+  }
+
   const updateFocusedTargetedElementStyles = (elTarget) => {
     setFocusMode(!focusMode);
     
@@ -207,111 +237,130 @@ const initializeDomObserver = async () => {
 
   const dragRef = useRef(null);
   useDraggable(dragRef);
-  
+
   return (
     <React.Fragment>
       <FocusedTargetedElement {...focusedTargetedElementStyles} />
-      <div
-        id={uniqueID}
-        className="dom-info-dialog-box"
-        onMouseEnter={onHover}
-        style={{
-          top: `${top}px`,
-          left: `${left}px`,
-          border: `3px solid ${borderclr}`,
-        }}
-        ref = {dragRef}
-      >
-        <button id="closeDom" className="close-btn-style" onClick={onClickCloseDialogBox}>
-          x
-        </button>
+          <div
+            id={uniqueID}
+            className="dom-info-dialog-box"
+            onMouseEnter={onHover}      
+            style={dialogStyle}
+            ref = {dragRef}
+          >
+            <button id="closeDom" className="close-btn-style" onClick={onClickCloseDialogBox}>
+              x
+            </button>
 
-        <DomOptions 
-          focusMode={focusMode} 
-          onClickFocus={() => onClickFocus(domElement)} 
-          onClickBookmark={onClickAddBookmark} 
-          onClickAnnotation={onClickAddAnnotation}
-          showAddBookmarkIcon={stateHasExistingBookmark} 
-          showAddAnnotationIcon={stateHasExistingAnnotation} 
-        />          
-        <div>
-          <div className="dom-header">           
-            <span className="dom-header-tag">{tag}</span>
-            {elementId && <span className="dom-header-details">{elementId}</span>}                                     
-              {domInfo.classNames.map((val) => (  
-              <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
-            ))}            
-          </div>
-          <div className="flex-row">
-            <div className="flex-column">
-              <div className="dom-styles-details"> {fontsize}</div>
-              <div className="dom-styles">Size</div>
-            </div>
-            <div className="flex-column">
-              <div className="dom-styles-details">
-                <ColorDetails color={textcolor} />
-              </div>
-              <div className="dom-styles">Text-Color</div>
-            </div>
-            <div className="flex-column">
-              <div className="dom-styles-details">
-                <ColorDetails color={backgroundColor} />
-              </div>
-              <div className="dom-styles">Background-Color</div>
-            </div>
-          </div>
-          <div className="dom-styles-details">{fontfamily}</div>
-          <div className="dom-styles">Font Family</div>
-          
-          <ParentDetails 
-            tag={parent.tag}
-            id={parent.id}            
-            classes={parent.classes}
-          />
-          <div className="dom-dialog">data-* attributes </div>             
-          <div className="dom-dialog-child-details">   
-            {dataAttributes.slice(0, numAttibToDisplay).map((val) => (
-              <div className="attributecontainer">              
-                <div className="attributeitems">                 
-                  {val.key}                
+            <DomOptions 
+              focusMode={focusMode} 
+              onClickFocus={() => onClickFocus(domElement)} 
+              onClickBookmark={onClickAddBookmark} 
+              onClickAnnotation={onClickAddAnnotation}
+              showAddBookmarkIcon={stateHasExistingBookmark} 
+              showAddAnnotationIcon={stateHasExistingAnnotation} 
+            />  
+            <div className="flex-row">
+              <div classname="flex-column">
+                <div className="dom-header">           
+                  <span className="dom-header-tag">{tag}</span>
+                  {elementId && <span className="dom-header-details">{elementId}</span>}                                     
+                    {domInfo.classNames.map((val) => (  
+                    <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
+                  ))}            
                 </div>
-                <div className="attributeitems">
-                  {val.value}
+                <div className="flex-row">
+                  <div className="flex-column">
+                    <div className="dom-styles-details"> {fontsize}</div>
+                    <div className="dom-styles">Size</div>
+                  </div>
+                  <div className="flex-column">
+                    <div className="dom-styles-details">
+                      <ColorDetails color={textcolor} />
+                    </div>
+                    <div className="dom-styles">Text-Color</div>
+                  </div>
+                  <div className="flex-column">
+                    <div className="dom-styles-details">
+                      <ColorDetails color={backgroundColor} />
+                    </div>
+                    <div className="dom-styles">Background-Color</div>
+                  </div>
                 </div>
+                <div className="dom-styles-details">{fontfamily}</div>
+                <div className="dom-styles">Font Family</div>         
+                <ParentDetails 
+                  tag={parent.tag}
+                  id={parent.id}            
+                  classes={parent.classes}
+                  displayDetails={onClickParent}
+                />
+                <div className="dom-dialog">data-* attributes </div>             
+                <div className="dom-dialog-child-details">   
+                  {dataAttributes.slice(0, numAttibToDisplay).map((val) => (
+                    <div className="attributecontainer">              
+                      <div className="attributeitems">                 
+                        {val.key}                
+                      </div>
+                      <div className="attributeitems">
+                        {val.value}
+                      </div>
+                    </div>
+                  ))}                             
+                </div>
+                {dataAttributes.length > 2 &&(            
+                  <div
+                    id="closeDom"
+                    className="see-more"
+                    onClick={handleSeeMoreAttr}
+                  >
+                    {seeMoreAttr  ? `... ${attrleftover} more` : `... see less`}
+                  </div>
+                )}
+                <ChildrenDetails 
+                  children={domInfo.children}
+                  selectedChildIdx={onClickChild}
+                  />         
+              </div>               
+              <div className="flex-column">
+                {displayParentBox && (
+                  <ParentDialogBox
+                    domParent={domElement.parentElement}
+                    parentAttributes={domUtils.extractDomInfo(domElement.parentElement).attributes}
+                  />
+                )}
               </div>
-            ))}                             
-          </div>
-          {dataAttributes.length > 2 &&(            
-            <div
-              id="closeDom"
-              className="see-more"
-              onClick={handleSeeMoreAttr}
-            >
-              {seeMoreAttr  ? `... ${attrleftover} more` : `... see less`}
-            </div>
-          )}
-          <ChildrenDetails children={domInfo.children} />         
-        </div>       
-        {showAddBookmarkPanel && 
-          <AddBookmarkPanel 
-            domType={tag}
-            elClassNames={classNamesString}
-            domId={uniqueID}
-            elementId={elementId}
-            onSaveBookmark={() => setShowAddBookmarkPanel(false)}
-            onClose={() => setShowAddBookmarkPanel(false)}  
-            targetElement={domElement} 
-          />
-        }
-        {showAddAnnotationsPanel && 
-          <AddAnnotationPanel 
-            onRemoveAnnotation={onRemoveAnnotation} 
-            targetElement={domElement} 
-            onUpdatedAnnotation={onUpdatedAnnotation}
-          />
-        }
+              <div className="flex-column">
+                {displayChildBox && (
+                  <ChildDialogBox
+                    domChild={selectedChildEl}
+                    childAttributes={domUtils.extractDomInfo(selectedChildEl).attributes}
 
-      </div>
+                  />
+                )}
+              </div>
+            </div>    
+            {showAddBookmarkPanel && 
+              <AddBookmarkPanel 
+                domType={tag}
+                elClassNames={classNamesString}
+                domId={uniqueID}
+                elementId={elementId}
+                onSaveBookmark={() => setShowAddBookmarkPanel(false)}
+                onClose={() => setShowAddBookmarkPanel(false)}  
+                targetElement={domElement} 
+              />
+            }
+            {showAddAnnotationsPanel && 
+              <AddAnnotationPanel 
+                onRemoveAnnotation={onRemoveAnnotation} 
+                targetElement={domElement} 
+                onUpdatedAnnotation={onUpdatedAnnotation}
+              />
+            }
+              
+          </div>
+      
     </React.Fragment>
   );
 };

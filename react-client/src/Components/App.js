@@ -24,7 +24,8 @@ window.store = {
   DomInfoDialogBox: {
     children: [],
     classList: [],
-  }
+  },
+  selectedChildIndex: null
 };
 
 function App() {
@@ -413,8 +414,8 @@ function App() {
           <BookmarkPanel
             bookmarks={stateBookmarks}
             onRemoveBookmarkEmit={onChangeBookmarks}
-          />        
-          
+          />     
+            
           <SearchPanel />
         </div> 
       )}

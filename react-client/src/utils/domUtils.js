@@ -1,5 +1,6 @@
 import uuidv4 from 'uuid/dist/v4';
 
+
 // Recursion algorithm. Performance may be slower so let's improve the tail-recursion algorithm later
 // TODO: Offer another function for this one which checks for multiple classNames needed checking
 function ancestorExistsByClassName(element, className) {
@@ -99,13 +100,12 @@ function customWidgetFilter(toFilter) {
 }
 
 	// special function for certain cases where unncessary targets appear this function is only for html-dom-lens 
-  function isTrueTarget(elTarget) {
-    if (!(typeof elTarget.className === 'string')) { //catches className which returns object since this function is only responsible in parsing string
+function isTrueTarget(elTarget) {
+  if (!(typeof elTarget.className === 'string')) { //catches className which returns object since this function is only responsible in parsing string
       return false;
-    }
-
-    return elTarget.dataset.domLensTarget
   }
+  return elTarget.dataset.domLensTarget
+}
  
 // Check if Annotation is existing on Element
 function hasAnnotations(annotationStore, captureElement){
@@ -119,6 +119,11 @@ function hasAnnotations(annotationStore, captureElement){
 function hasDialogBox(dataId) {
   const existingDialog = document.getElementById(`${dataId}`)
   return existingDialog !== null
+}
+
+//Additional Filter for className in child Details
+function childCLassFilter(childClassName) {
+  return childClassName.split(" ").filter((customFilter) => !customFilter.includes("custom-css") && !customFilter.includes("focused-dom")).toString();
 }
 
 const colorselection = ["#311B92", "#4527A0", "#512DA8", "#5E35B1", "#673AB7", "#7E57C2", "#9575CD", "#B39DDB", "#D1C4E9", "#EDE7F6", "#E91E63", "#D81B60", "#C2185B", "#AD1457", "#880E4F", "#EC407A", "#F06292", "#F48FB1", "#F8BBD0", "#FCE4EC", "#263238", "#37474F", "#455A64", "#546E7A", "#607D8B", "#78909C", "#90A4AE", "#B0BEC5", "#CFD8DC", "#ECEFF1"];
@@ -196,5 +201,6 @@ export {
   hasAnnotations,
   isTrueTarget,
   hasDialogBox,
-  arrRemoveDomInfo  
+  arrRemoveDomInfo,
+  childCLassFilter  
 }
