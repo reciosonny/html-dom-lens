@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import DomOptions from "../DomOptions";
 import ChildrenDetails from "./ChildrenDetails";
 import ParentDetails from "./ParentDetails";
-import ParentDialogBox from "../ParentDialogBox/index";
 import * as domUtils from "../../utils/domUtils";
 import AddBookmarkPanel from "../BookmarkPanel/AddBookmarkPanel";
 import AddAnnotationPanel from "../AnnotationPanel/AddAnnotationPanel";
@@ -10,8 +9,7 @@ import useLocalStorageStore from "../../hooks/useLocalStorageStore";
 import useDraggable from "../../hooks/useDraggable";
 import FocusedTargetedElement from "../FocusedTargetedElement";
 import ColorDetails from "../ColorDetails";
-import { FaMaxcdn } from "react-icons/fa";
-import ChildDialogBox from "../ChildDialogBox";
+import DomInfoExtension from "../DomInfoExtension"
 
 let domObserver;
 const DomInfoDialogBox = ({ elementId, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, backgroundColor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, onHover }) => {
@@ -323,20 +321,21 @@ const initializeDomObserver = async () => {
                   />         
               </div>               
               <div className="flex-column">
-                {displayParentBox && (
-                  <ParentDialogBox
-                    domParent={domElement.parentElement}
-                    parentAttributes={domUtils.extractDomInfo(domElement.parentElement).attributes}
-                  />
+                {displayParentBox && (              
+                  <DomInfoExtension
+                  extendedDom={domElement.parentElement}
+                  extendedAttributes={domUtils.extractDomInfo(domElement.parentElement).attributes}
+                  showParent={false}
+                />
                 )}
               </div>
               <div className="flex-column">
-                {displayChildBox && (
-                  <ChildDialogBox
-                    domChild={selectedChildEl}
-                    childAttributes={domUtils.extractDomInfo(selectedChildEl).attributes}
-
-                  />
+                {displayChildBox && (                
+                  <DomInfoExtension
+                  extendedDom={selectedChildEl}
+                  extendedAttributes={domUtils.extractDomInfo(selectedChildEl).attributes}
+                  showParent={true}
+                />
                 )}
               </div>
             </div>    

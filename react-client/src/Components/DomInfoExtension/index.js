@@ -1,28 +1,26 @@
 import React, { useState } from "react";
 import * as domUtils from "../../utils/domUtils";
 import ColorDetails from "../ColorDetails";
-import ParentDetails from "../DomInfoDialogBox/ParentDetails";
 import ChildrenDetails from "../DomInfoDialogBox/ChildrenDetails";
+import ParentDetails from "../DomInfoDialogBox/ParentDetails";
 
-const ParentDialogBox = ({domParent, parentAttributes}) => {
+export default function DomInfoExtension({extendedDom, extendedAttributes, showParent}) {
   const [seeMoreAttr, setSeeMoreAttr] = useState(true);
-  const numAttibToDisplay = !seeMoreAttr ? parentAttributes.length : 2;
-  const attrleftover = parentAttributes.length - 2;
+  const numAttibToDisplay = !seeMoreAttr ? extendedAttributes.length : 2;
+  const attrleftover = extendedAttributes.length - 2;
 
   const handleSeeMoreAttr = () => {
     setSeeMoreAttr(!seeMoreAttr);
   };
 
   return (
-    <div
-      className="extended-dialog-box"    
-    >
+    <div className="extended-dialog-box">
       <span className="dom-header-tag">
-        {domUtils.extractDomInfo(domParent).tag}
+        {domUtils.extractDomInfo(extendedDom).tag}
       </span>
       <span className="dom-header-details">
-        {domUtils.extractDomInfo(domParent).id}
-        {domUtils.extractDomInfo(domParent).classNames.map((val) => (
+        {domUtils.extractDomInfo(extendedDom).id}
+        {domUtils.extractDomInfo(extendedDom).classNames.map((val) => (
           <span>{val}</span>
         ))}
       </span>
@@ -30,14 +28,14 @@ const ParentDialogBox = ({domParent, parentAttributes}) => {
         <div className="flex-column">
           <div className="dom-styles-details">
             {" "}
-            {domUtils.extractDomInfo(domParent).size}
+            {domUtils.extractDomInfo(extendedDom).size}
           </div>
           <div className="dom-styles">Size</div>
         </div>
         <div className="flex-column">
           <div className="dom-styles-details">
             <ColorDetails
-              color={domUtils.extractDomInfo(domParent).textcolor}
+              color={domUtils.extractDomInfo(extendedDom).textcolor}
             />
           </div>
           <div className="dom-styles">Text-Color</div>
@@ -45,38 +43,43 @@ const ParentDialogBox = ({domParent, parentAttributes}) => {
         <div className="flex-column">
           <div className="dom-styles-details">
             <ColorDetails
-              color={domUtils.extractDomInfo(domParent).backgroundColor}
+              color={domUtils.extractDomInfo(extendedDom).backgroundColor}
             />
           </div>
           <div className="dom-styles">Background-Color</div>
         </div>
       </div>
       <div className="dom-styles-details">
-        {domUtils.extractDomInfo(domParent).family}
+        {domUtils.extractDomInfo(extendedDom).family}
       </div>
       <div className="dom-styles">Font Family</div>
-      <ParentDetails
-        tag={domUtils.extractDomInfo(domParent.parentElement).tag}
-        id={domUtils.extractDomInfo(domParent.parentElement).id}
-        classes={domUtils.extractDomInfo(domParent.parentElement).classNames}
-      />
+      {showParent && (
+        <ParentDetails
+          tag={domUtils.extractDomInfo(extendedDom.parentElement).tag}
+          id={domUtils.extractDomInfo(extendedDom.parentElement).id}
+          classes={
+            domUtils.extractDomInfo(extendedDom.parentElement).classNames
+          }
+        />
+      )}
       <div className="dom-dialog">data-* attributes </div>
       <div className="dom-dialog-child-details">
-        {parentAttributes.slice(0, numAttibToDisplay).map((val) => (
+        {extendedAttributes.slice(0, numAttibToDisplay).map((val) => (
           <div className="attributecontainer">
             <div className="attributeitems">{val.key}</div>
             <div className="attributeitems">{val.value}</div>
           </div>
         ))}
       </div>
-      {parentAttributes.length > 2 && (
+      {extendedAttributes.length > 2 && (
         <div id="closeDom" className="see-more" onClick={handleSeeMoreAttr}>
           {seeMoreAttr ? `... ${attrleftover} more` : `... see less`}
         </div>
       )}
-      <ChildrenDetails children={domUtils.extractDomInfo(domParent).children} />
+      <ChildrenDetails
+        children={domUtils.extractDomInfo(extendedDom).children}
+      />
     </div>
   );
-};
+}
 
-export default ParentDialogBox;
