@@ -153,8 +153,10 @@ function App() {
         const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
         const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
         const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");        
+        const isAddAnnotationPanel = domUtils.ancestorExistsByClassName(e.target, "add-annotation-panel");        
+        const isAddAnnotationPanelForm = domUtils.ancestorExistsByClassName(e.target, "add-annotation-panel__form");        
         
-        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || e.target.localName === 'path')
+        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || isAddAnnotationPanel || isAddAnnotationPanelForm || e.target.localName === 'path')
           return;
 
         //capture all classes of the dom for bookmark module

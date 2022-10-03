@@ -11,6 +11,7 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
   const [textAreaHeight, setTextAreaHeight] = useState('');
 
   const txtInputRef = useRef(null);
+  const txtInputSubmitRef = useRef(null);
   
   useEffect(() => {
     setTimeout(() => {
@@ -35,6 +36,8 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
   }, [annotationStore]);  
 
   const onSubmitAnnotation = async (e) => {    
+    e.preventDefault();
+
     const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(targetElement);
     const elId = targetElement.id;
     const randomCode = uuidv4();   
@@ -103,7 +106,7 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
         <label className='add-annotation-panel__header' onClick={onClickAnnotation}>
           {txtInput}          
         </label> :      
-        <form className='add-annotation-panel__form' onSubmit={onSubmitAnnotation}>
+        <form id="formSubmitAnnotation" className='add-annotation-panel__form'>
           <div style={{ height: textAreaHeight, minHeight: '90px' }}>
             <textarea
               ref={txtInputRef}
@@ -115,7 +118,7 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
               autoFocus
             />
           </div>
-          <button>Submit</button>
+          <button type="submit" onClick={onSubmitAnnotation}>Submit</button>
         </form>     
       }
     </div>
