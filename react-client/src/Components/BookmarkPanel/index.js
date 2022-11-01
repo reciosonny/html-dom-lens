@@ -10,6 +10,8 @@ import SelectedDomFromBookmark from "./SelectedDomFromBookmark";
 
 import useLocalStorageStore from "../../hooks/useLocalStorageStore";
 import GlobalContext from "../../store/global-context";
+import { AiOutlineClose } from "react-icons/ai";
+import BookmarkItem from "./BookmarkItem";
 
 const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
   const [bookmarkHidden, setBookmarkHidden] = useState(true);
@@ -55,8 +57,12 @@ const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
     setBookmarksStore(bookmarksStore);
   };
 
-  const onClickBookmarkList = async (e) => {
-    
+  const onClickBookmark = async (e) => {
+    // alert('clicking bookmark');
+  };
+
+  // bookmark navigation happens here...
+  const onHoverBookmark = async (e) => {
     const selectedBookmark = bookmarksStore.find((data) => e.currentTarget.getAttribute("data-bookmark-id") === data.id);
 
     const elType = selectedBookmark.elem;
@@ -74,7 +80,7 @@ const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
     retrievedElement.scrollIntoView({ block: "center", behavior: 'smooth' });
 
     await setRetrievedElNode(retrievedElement);
-  };
+  }
 
   useEffect(() => {
     if (bookmarksStore.length !== 0 && bookmarkHidden) {
@@ -96,7 +102,26 @@ const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
     <div className="bookmark-panel">
       <SelectedDomFromBookmark ref={refSelectedDom} selectedDom={retrievedEl} />
 
-      <BookmarkInfo bookmarkHidden={bookmarkHidden} onCloseBookmark={onCloseBookmark} bookmarks={bookmarksStore} onRemove={onRemoveBookmark} onClickBookmarkList={onClickBookmarkList} onEdit={onEditBookmark} />
+      <div className='card-bookmark' hidden={bookmarkHidden}>
+        <span className='bookmark-header'>
+          <label className='header-text'>Bookmarks from this page</label>
+          <button id='btnClose' className='header__close-btn' type='button' onClick={onCloseBookmark}>
+            <AiOutlineClose size={14} color="#263238" />
+          </button>
+        </span>
+        <div className='bookmark-body'>
+          {bookmarks.map((data, index) => (
+            <BookmarkItem
+              data={data}
+              index={index}
+              onEdit={onEditBookmark}
+              onRemove={onRemoveBookmark}
+              onClick={onClickBookmark}
+              onHover={onHoverBookmark}
+            />
+          ))}
+        </div>
+      </div>
 
       <button className="bookmark-btn" onClick={onOpenBookmark} hidden={btnBookmarkHidden}>
         <BsFillBookmarkFill /> &nbsp; Bookmarks
