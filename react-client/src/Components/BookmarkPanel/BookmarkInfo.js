@@ -41,7 +41,7 @@ const BookmarkItem = ({ data, index, onRemove, onClickBookmarkList, onEdit }) =>
   } 
 
   return (
-    <li className='bookmark__list-item' key={index} data-bookmark-id={data.id} onClick={onClickBookmarkList}>
+    <li className='bookmark__list-item' key={index} data-bookmark-id={data.id} onMouseOver={onClickBookmarkList} onClick={onClickBookmarkList}>
       <div className='list__item-details' >
       {displayInput ? 
           <label className="lbl-title">{data.title}</label> : 

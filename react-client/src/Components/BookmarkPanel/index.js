@@ -56,30 +56,22 @@ const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
   };
 
   const onClickBookmarkList = async (e) => {
-    // note: We should remove the child first before querying the element in `retrievedElement` variable. Otherwise the query will go wrong because of indexing
-    if (savedElNode && savedElNode.contains(refSelectedDom.current)) {
-      savedElNode.removeChild(refSelectedDom.current);
-    }
-
+    
     const selectedBookmark = bookmarksStore.find((data) => e.currentTarget.getAttribute("data-bookmark-id") === data.id);
 
     const elType = selectedBookmark.elem;
 
     const retrievedElement = domUtils.getElementByTagAndIndex(elType, selectedBookmark.domIndex);
 
-    const focusedDomLength = document.querySelectorAll(".selected-dom").length;
+    const focusedDomLength = document.querySelectorAll(".focused-dom").length;
     for (let i = 0; i < focusedDomLength; i++) {
-      document.querySelectorAll(".selected-dom")[i].classList.remove("selected-dom");
+      document.querySelectorAll(".focused-dom")[i].classList.remove("focused-dom");
     }
 
     await setRetrievedEl({ elClassNames: selectedBookmark.classes, elem: selectedBookmark.elem, elId: selectedBookmark.elId });
 
-    retrievedElement.classList.add("selected-dom");
-    retrievedElement.scrollIntoView({ block: "center" });
-
-    if (retrievedElement.parentElement !== refSelectedDom.current) {
-      retrievedElement.appendChild(refSelectedDom.current);
-    }
+    retrievedElement.classList.add("focused-dom");
+    retrievedElement.scrollIntoView({ block: "center", behavior: 'smooth' });
 
     await setRetrievedElNode(retrievedElement);
   };
@@ -101,7 +93,7 @@ const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
   }, [bookmarks]);
 
   return (
-    <div class="bookmark-panel">
+    <div className="bookmark-panel">
       <SelectedDomFromBookmark ref={refSelectedDom} selectedDom={retrievedEl} />
 
       <BookmarkInfo bookmarkHidden={bookmarkHidden} onCloseBookmark={onCloseBookmark} bookmarks={bookmarksStore} onRemove={onRemoveBookmark} onClickBookmarkList={onClickBookmarkList} onEdit={onEditBookmark} />
