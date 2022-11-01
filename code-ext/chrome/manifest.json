@@ -1,23 +1,21 @@
 {
-    "name": "Chrome Extension Manifest V3",
-    "description": "Building a chrome Extension MV3",
+    "name": "html-dom-lens extension",
+    "description": "extension for checking DOM element information on the screen",
     "version": "1.0.0",
     "manifest_version": 3,
     "icons":{
-        "128": "./images/Icon_128.png",
-        "19": "./images/Icon.png"
-
+        "128": "./images/default.png",
+        "19": "./images/default.png"
     },
-    "background":{
+    "background": {
         "service_worker" : "./background.js"
     },
     "content_scripts": [
 
     ],
     "action":{
-       
         "default_icons":{
-            "128": "./images/Icon_128.png"
+            "128": "./images/default.png"
         } 
     },
     "options_page": "./options.html",
