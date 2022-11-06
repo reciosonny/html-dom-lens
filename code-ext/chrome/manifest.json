@@ -22,13 +22,9 @@
     "permissions":[
         "activeTab",
         "tabs",
-        "storage",
         "scripting"  
     ],
     "host_permissions":[
         "*://*/*"
-    ],
-    "optional_permissions": [
-        "unlimitedStorage"
     ]
 }

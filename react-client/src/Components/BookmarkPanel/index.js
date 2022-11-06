@@ -122,7 +122,7 @@ const BookmarkPanel = ({ bookmarks, onRemoveBookmarkEmit }) => {
           ))}
         </div>
       </div>
-
+            
       <button className="bookmark-btn" onClick={onOpenBookmark} hidden={btnBookmarkHidden}>
         <BsFillBookmarkFill /> &nbsp; Bookmarks
       </button>
