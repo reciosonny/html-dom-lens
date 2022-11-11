@@ -1,5 +1,5 @@
 {
-    "name": "html-dom-lens extension",
+    "name": "Html Dom Lens",
     "description": "extension for checking DOM element information on the screen",
     "version": "1.0.0",
     "manifest_version": 3,
