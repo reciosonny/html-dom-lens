@@ -50,6 +50,13 @@ function App() {
 
   const onTurnOffExtension = () => {
 
+    // unbind event listeners from document
+    console.log('removing event listeners...');
+    document.removeEventListener('click', documentOnClick, true);
+    document.removeEventListener('mouseover', documentMouseOver, true);
+    document.removeEventListener('mouseout', documentMouseOut, true);
+    // END
+
     // removes border highlights added in DOM elements when it's clicked
     domInfo.forEach(val => {
       const currEl = document.querySelector(`[data-id="${val.dataId}"]`);
@@ -135,163 +142,169 @@ function App() {
     }
   }, [domInfo]);
 
-  //#endregion
+  //#endregion Injectable event listeners
+  const documentOnClick = async (e) => {
+    e.preventDefault();
+
+    if (!domUtils.isTrueTarget(e.target)) return;
+
+    let strClassList = '';
+    if (!window.store.switchExtensionFunctionality) return;
+    if (domUtils.hasDialogBox(e.target.dataset.id)) return;
+
+    if(!containsBookmarkModule(e)) {
+      
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
+      const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");        
+      const isAddAnnotationPanel = domUtils.ancestorExistsByClassName(e.target, "add-annotation-panel");        
+      const isAddAnnotationPanelForm = domUtils.ancestorExistsByClassName(e.target, "add-annotation-panel__form");        
+      
+      if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || isAddAnnotationPanel || isAddAnnotationPanelForm || e.target.localName === 'path')
+        return;
+
+      //capture all classes of the dom for bookmark module
+      for (let domClass of e.target.classList.values()) {
+        if(domClass !== 'focused-dom') {
+          strClassList += `.${domClass}`
+        }
+      }
+
+      e.target.classList.remove('focused-dom'); //Note: We removed focused-dom class after click so that domUtils can extract the background color from the element, not the color from focused-dom class
+  
+      //get the least properties for bookmark module
+      setSelectedElem({
+        elClassNames: strClassList,
+        domType: e.target.nodeName?.toLowerCase(),
+        domId: e.target.getAttribute('data-id'),
+        x: e.pageX,
+        y: e.pageY,
+        domTarget: e.target,
+        domLeanDetails
+      });
+      
+      const elTarget = e.target;
+
+      if (elTarget.id !== "closeDom") {
+
+        if (document.getElementsByClassName("focused-element").length > 0)
+          return;
+
+        const extractedDomInfo = domUtils.extractDomInfo(elTarget);
+        const pageYcoordinate = e.pageY;
+
+        const sheet = jss
+          .createStyleSheet(
+            {
+              domBorder: {
+                border: `3px solid ${extractedDomInfo.bordercolor}`,
+                'border-radius': '8px',                  
+              }               
+            },
+            {classNamePrefix :'custom-css'}
+          )
+          .attach();
+
+        //for modifying style directly...
+        e.target.classList.add(sheet.classes.domBorder);
+        //sets data-id to the DOM
+        e.target.setAttribute('data-id', extractedDomInfo.dataId);
+        e.target.setAttribute('data-dom-lens-injected', true);         
+
+        await setDomInfo(value => {
+          return [...value,
+          {
+            ...extractedDomInfo,
+            cssClassesAssigned: sheet.classes.domBorder,
+            x: e.pageX,
+            y: pageYcoordinate + 100
+          }
+          ]
+        });
+        // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
+        (function (pageYcoordinate) {
+          setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
+            setDomInfo(values => {
+
+              const mappedValues = values.map((val, idx) => {
+                if (idx === values.length - 1) {
+                  val.y = pageYcoordinate
+                }
+                return val;
+              });
+
+              return mappedValues;
+            });
+          }, 10);
+        }(pageYcoordinate));
+        
+      }
+    }
+  }
+
+  const documentMouseOver = async (e) => {  
+    e.target.setAttribute('data-dom-lens-target', true);   // data attribute to use as reference in domUtils.isTrueTarget to prevent unnecessary additional e.target          
+    document.querySelectorAll(".focused-dom").forEach((elTarget, idx) => {
+      elTarget.classList.remove("focused-dom");
+    });
+
+    if (!containsBookmarkModule(e)) { 
+      if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
+      if (focusMode) return;
+
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
+      const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
+      
+      if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode) {
+        const domType = e.target.nodeName?.toLowerCase();
+        await setDomLeanDetails({
+          ...domLeanDetails,
+          elId: e.target.id,
+          domType,
+          elClassNames: [...e.target.classList],
+          show: true
+        }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
+
+        e.target.classList.toggle("focused-dom");            
+        
+        const elBoundingRect = e.target.getBoundingClientRect();
+
+        setDomMinimalDetailsStyles({ 
+          width: `${Math.round(elBoundingRect.width-30)}px`,
+          positionY: Math.round(window.scrollY+(elBoundingRect.top-30)), 
+          positionX: Math.round(window.scrollX+elBoundingRect.left) 
+        });
+      }
+    }
+  }
+  const documentMouseOut = e => {
+    e.target.removeAttribute('data-dom-lens-target');
+
+    if (!containsBookmarkModule(e)) {
+      if (!window.store.switchExtensionFunctionality || window.store.focusMode)
+        return;
+
+      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
+      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
+      const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
+
+      const isDomLensInjected = e.target.getAttribute('data-dom-lens-injected') === 'true'; //note: if dialogbox is injected in the element, don't toggle focused-dom CSS class as this will cause residues and background highlights after being hovered
+
+      if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !isDomLensInjected) {
+        e.target.classList.toggle("focused-dom");
+      }
+    }
+  };
+  
+  //#region 
 
 
   const injectDOMEventInBody = async () => {
-    document.addEventListener("click", async (e) => { 
-      e.preventDefault();
-
-      if (!domUtils.isTrueTarget(e.target)) return;
-
-      let strClassList = '';
-      if (!window.store.switchExtensionFunctionality) return;
-      if (domUtils.hasDialogBox(e.target.dataset.id)) return;
-
-      if(!containsBookmarkModule(e)) {
-        
-        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
-        const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");        
-        const isAddAnnotationPanel = domUtils.ancestorExistsByClassName(e.target, "add-annotation-panel");        
-        const isAddAnnotationPanelForm = domUtils.ancestorExistsByClassName(e.target, "add-annotation-panel__form");        
-        
-        if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || isAddAnnotationPanel || isAddAnnotationPanelForm || e.target.localName === 'path')
-          return;
-
-        //capture all classes of the dom for bookmark module
-        for (let domClass of e.target.classList.values()) {
-          if(domClass !== 'focused-dom') {
-            strClassList += `.${domClass}`
-          }
-        }
-
-        e.target.classList.remove('focused-dom'); //Note: We removed focused-dom class after click so that domUtils can extract the background color from the element, not the color from focused-dom class
     
-        //get the least properties for bookmark module
-        setSelectedElem({
-          elClassNames: strClassList,
-          domType: e.target.nodeName?.toLowerCase(),
-          domId: e.target.getAttribute('data-id'),
-          x: e.pageX,
-          y: e.pageY,
-          domTarget: e.target,
-          domLeanDetails
-        });
-        
-        const elTarget = e.target;
-  
-        if (elTarget.id !== "closeDom") {
-
-          if (document.getElementsByClassName("focused-element").length > 0)
-            return;
-
-          const extractedDomInfo = domUtils.extractDomInfo(elTarget);
-          const pageYcoordinate = e.pageY;
-  
-          const sheet = jss
-            .createStyleSheet(
-              {
-                domBorder: {
-                  border: `3px solid ${extractedDomInfo.bordercolor}`,
-                  'border-radius': '8px',                  
-                }               
-              },
-              {classNamePrefix :'custom-css'}
-            )
-            .attach();
-
-          //for modifying style directly...
-          e.target.classList.add(sheet.classes.domBorder);
-          //sets data-id to the DOM
-          e.target.setAttribute('data-id', extractedDomInfo.dataId);
-          e.target.setAttribute('data-dom-lens-injected', true);         
-
-          await setDomInfo(value => {
-            return [...value,
-            {
-              ...extractedDomInfo,
-              cssClassesAssigned: sheet.classes.domBorder,
-              x: e.pageX,
-              y: pageYcoordinate + 100
-            }
-            ]
-          });
-          // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
-          (function (pageYcoordinate) {
-            setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
-              setDomInfo(values => {
-  
-                const mappedValues = values.map((val, idx) => {
-                  if (idx === values.length - 1) {
-                    val.y = pageYcoordinate
-                  }
-                  return val;
-                });
-  
-                return mappedValues;
-              });
-            }, 10);
-          }(pageYcoordinate));
-          
-        }
-      }
-    });
-
-    document.addEventListener("mouseover", async (e) => {  
-      e.target.setAttribute('data-dom-lens-target', true);   // data attribute to use as reference in domUtils.isTrueTarget to prevent unnecessary additional e.target          
-      document.querySelectorAll(".focused-dom").forEach((elTarget, idx) => {
-        elTarget.classList.remove("focused-dom");
-      });
-
-      if (!containsBookmarkModule(e)) { 
-        if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
-        if (focusMode) return;
-
-        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
-        const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
-        
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode) {
-          const domType = e.target.nodeName?.toLowerCase();
-          await setDomLeanDetails({
-            ...domLeanDetails,
-            elId: e.target.id,
-            domType,
-            elClassNames: [...e.target.classList],
-            show: true
-          }); //note: we used `await` implementation to wait for setState to finish setting the state before we append the React component to DOM. Not doing this would result in a bug and the DOM details we set in state won't be captured in the DOM.
-
-          e.target.classList.toggle("focused-dom");            
-          
-          const elBoundingRect = e.target.getBoundingClientRect();
-
-          setDomMinimalDetailsStyles({ 
-            width: `${Math.round(elBoundingRect.width-30)}px`,
-            positionY: Math.round(window.scrollY+(elBoundingRect.top-30)), 
-            positionX: Math.round(window.scrollX+elBoundingRect.left) 
-          });
-        }
-      }
-    });
-
-    document.addEventListener("mouseout", e => {
-      e.target.removeAttribute('data-dom-lens-target');  
-
-      if(!containsBookmarkModule(e)) {
-        if (!window.store.switchExtensionFunctionality || window.store.focusMode ) return;
-  
-        const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-        const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
-        const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
-
-        const isDomLensInjected = e.target.getAttribute('data-dom-lens-injected') === 'true'; //note: if dialogbox is injected in the element, don't toggle focused-dom CSS class as this will cause residues and background highlights after being hovered
-  
-        if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !isDomLensInjected) {
-          e.target.classList.toggle("focused-dom");
-        }
-      }
-    });
+    document.addEventListener("click", documentOnClick, true);
+    document.addEventListener("mouseover", documentMouseOver, true);
+    document.addEventListener("mouseout", documentMouseOut, true);
   };
 
   const getPageContent = async (url) => {

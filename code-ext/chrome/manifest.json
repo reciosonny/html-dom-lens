@@ -1,7 +1,7 @@
 {
     "name": "Html Dom Lens",
     "description": "extension for checking DOM element information on the screen",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "manifest_version": 3,
     "icons":{
         "128": "./images/default.png",

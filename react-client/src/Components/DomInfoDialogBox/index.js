@@ -150,7 +150,13 @@ const initializeDomObserver = async () => {
 
   const onClickCloseDialogBox = () => {    
     const focusedEl = document.querySelectorAll(".focused-element");    
-    if (focusedEl.length > 0 && domElement !== focusedEl[0]) return;
+    console.log('on close dialogbox...');
+    if (focusedEl.length > 0 && domElement !== focusedEl[0]) {
+      console.log('no focused element found...');
+      return;
+    }
+
+    console.log('dom element: ', domElement);
     
     domElement.classList.remove(domElement.className.split(' ').filter(cls => cls.includes('custom-css')).toString());
     domElement.classList.remove("focused-element");
