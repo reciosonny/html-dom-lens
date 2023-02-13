@@ -34,6 +34,22 @@ function ancestorExistsByClassNames(element, classNames) {
   return true;
 }
 
+function ancestorExistsByID(element, idName) {
+  
+  if(!element) return false;
+  if(!element.parentElement) return false;
+
+  if(element.parentElement.id === idName) return true;
+
+  if(element.id === idName) return true;
+
+  if (element.parentElement.id !== idName) {
+    return ancestorExistsByID(element.parentElement, idName);
+  }
+
+  return true;
+}
+
 // This algorithm gets the unique element identifier by using element tag(e.g. p, div, span, input), and the index where that particular element is located
 function getUniqueElementIdentifierByTagAndIndex(elTarget) {
   const result = [...document.querySelectorAll(elTarget.tagName.toLowerCase())]
@@ -159,6 +175,10 @@ function extractDomInfo(elTarget) {
   };
 }
 
+function isDOMDevTools(target) {
+  return (ancestorExistsByID(target, "domLensApp") || ancestorExistsByClassName(target, "switch-button"))  
+}
+
 
 
 export {
@@ -169,5 +189,7 @@ export {
   customWidgetFilter,
   hasAnnotations,
   isTrueTarget,
-  hasDialogBox  
+  hasDialogBox,
+  ancestorExistsByID,
+  isDOMDevTools
 }

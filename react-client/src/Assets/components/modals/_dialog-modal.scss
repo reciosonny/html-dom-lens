@@ -1,0 +1,32 @@
+@use 'main-modal' ;
+
+.dialog-modal {
+  @include main-modal;
+  padding: $dialog-padding;  
+}
+
+
+.dom-info-dialog-box {
+  height: fit-content;
+  width: fit-content;
+  max-width: 400px;
+  z-index: 99999;
+  background-color: $primary-color;
+  color: $secondary-text-color;
+  position: absolute;
+  border-radius: 8px;
+  top: 0px;
+  right: 0px;
+  text-align: left;
+  padding: $dialog-padding;
+  font-family: $primary-font;
+  font-size: 10px;
+  
+  transition: top .2s;
+  animation: animShow .5s forwards;
+
+  &:active:hover, &:hover:active {
+    cursor: grab;
+  }
+
+}

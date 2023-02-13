@@ -1,0 +1,46 @@
+$standard-radius: 0.5rem;
+$dialog-padding: 19px 17px 21px 17px;
+$panel-padding: 20px;
+
+@mixin display-text {
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+}
+
+.flex-row {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+form {
+  height: 100%;
+  width: 100%;
+}
+
+button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+
+  &:focus {
+    border: none;
+  }
+}
+
+input {
+  @include display-text();
+  border: none !important;  
+  &:focus {
+    outline: none !important;
+  }
+}
+
+label {
+  @include display-text()
+}
+

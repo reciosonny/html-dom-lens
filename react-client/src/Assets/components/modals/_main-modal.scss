@@ -1,0 +1,17 @@
+@mixin main-modal {
+  border-radius: $standard-radius;
+  background-color: $primary-color;
+  color: $primary-text-color;
+}
+
+@mixin modal-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;  
+  font-size: 14px;
+  line-height: 12px;
+  white-space: pre-wrap;
+  color: $tertiary-color;
+  margin: 10px 0px 5px 0px;
+}
+

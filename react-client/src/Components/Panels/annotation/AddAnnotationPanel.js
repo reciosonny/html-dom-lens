@@ -1,25 +1,16 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, memo } from 'react'
+import MainModal from '../../Elements/modals/MainModal'
+import SubmitButton from '../../Elements/buttons/SubmitButton';
 import { v4 as uuidv4 } from "uuid";
-import useLocalStorageStore from "../../hooks/useLocalStorageStore";
-import * as domUtils from "../../utils/domUtils";
+import useLocalStorageStore from "../../../hooks/useLocalStorageStore";
+import * as domUtils from "../../../utils/domUtils";
+import TextInput from '../../Elements/inputs/TextInput';
 
-
-const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation, targetElement}) => {  
+const AnnotationPanel = memo (({onRemoveAnnotation, onUpdatedAnnotation, targetElement}) => {
   const [txtInput, setTxtInput] = useState("");
-  const [displayInput, setDisplayInput] = useState(false);
   const [annotationStore, setAnnotationStore] = useLocalStorageStore('annotation', []);
-  const [textAreaHeight, setTextAreaHeight] = useState('');
+  const [displayInput, setDisplayInput] = useState(false);
 
-  const txtInputRef = useRef(null);
-  const txtInputSubmitRef = useRef(null);
-  
-  useEffect(() => {
-    setTimeout(() => {
-      txtInputRef.current.focus();
-    }, 300);
-    return () => {};
-  }, []);
-  
   useEffect(() => {      
     const hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, targetElement);
     if (hasExistingAnnotations) {
@@ -33,17 +24,17 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
     }
 
     return () => {};
-  }, [annotationStore]);  
+  }, [annotationStore]); 
+
 
   const onSubmitAnnotation = async (e) => {    
-    e.preventDefault();
-
+    e.preventDefault();        
     const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(targetElement);
     const elId = targetElement.id;
     const randomCode = uuidv4();   
     const duplicateIndex =  annotationStore.findIndex((obj) => obj.domIndex === domIdentifier.index && obj.elem === domIdentifier.elType);
 
-    setTextAreaHeight('auto');
+    // setTextAreaHeight('auto');
 
     if (duplicateIndex !== -1) {
       if (txtInput.trim() !== "") {
@@ -54,7 +45,7 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
     } else {
       addAnnotation(domIdentifier, randomCode, elId, e);
     }
-    setDisplayInput(true)       
+    if (txtInput.trim() !== "")setDisplayInput(true)       
   };
 
   const addAnnotation = async (domIdentifier, randomCode, elId, e) => {
@@ -65,7 +56,7 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
       elem: domIdentifier.elType,
       elId,
       domIndex: domIdentifier.index,
-      link: window.location.href,
+      // link: window.location.href,
     };
     
     const newAnnotation = [...annotationStore, annotationObj];
@@ -92,39 +83,27 @@ const AddAnnotationPanel = React.memo(({onRemoveAnnotation, onUpdatedAnnotation,
 
   const onClickAnnotation = () => {
     setDisplayInput(false);
-    setTextAreaHeight(`${txtInputRef.current.scrollHeight}px`);
+    // setTextAreaHeight(`${txtInputRef.current.scrollHeight}px`);
   }
-
-  const onChangeTextarea = (e) => {
+  
+  const onChangeText = (e) => {
     setTxtInput(e.target.value);
-    setTextAreaHeight(`${txtInputRef.current.scrollHeight}px`);
+    // setTextAreaHeight(`${txtInputRef.current.scrollHeight}px`);
   }
 
   return (
-    <div className='add-annotation-panel'>   
+    <MainModal type= 'annotation'>
       {displayInput ? 
-        <label className='add-annotation-panel__header' onClick={onClickAnnotation}>
+        <label className='annotation-header' onClick={onClickAnnotation}>
           {txtInput}          
-        </label> :      
-        <form id="formSubmitAnnotation" className='add-annotation-panel__form'>
-          <div style={{ height: textAreaHeight, minHeight: '90px' }}>
-            <textarea
-              ref={txtInputRef}
-              value={txtInput}          
-              onChange={onChangeTextarea}
-              type='text'
-              className='add-annotation-panel__input'
-              placeholder='The comment goes here'
-              autoFocus
-            />
-          </div>
-          <button type="submit" onClick={onSubmitAnnotation}>Submit</button>
-        </form>     
+        </label> :       
+        <form >
+          <TextInput userInput={txtInput} onChangeText={onChangeText}/>
+          <SubmitButton display='Submit' onClickSubmit={onSubmitAnnotation}/>      
+        </form>
       }
-    </div>
-  );
-});
+    </MainModal>
+  )
+})
 
-AddAnnotationPanel.displayName = 'AddAnnotationPanel';
-
-export default AddAnnotationPanel;
+export default AnnotationPanel

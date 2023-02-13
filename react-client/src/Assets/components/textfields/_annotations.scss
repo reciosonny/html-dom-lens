@@ -1,0 +1,8 @@
+@forward '../modals/main-modal';
+
+.annotation-header { 
+  @include modal-header;
+  font-family: $tertiary-font;
+  font-weight: 600;
+  justify-content: space-between;
+}

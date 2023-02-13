@@ -1,0 +1,59 @@
+@forward '../modals/main-modal';
+
+.dialog-header { 
+  @include modal-header;
+  font-family: $primary-font;
+}
+
+.label-tag {
+  color: $tertiary-text-color;
+ }
+ .label-id {
+   color: #b5184c;
+ }
+
+
+.dialog-label {
+  font-family: $primary-font;
+  color: #78909C ;
+  font-size: 10px;
+  padding: 0;
+}
+
+.dialog-details {
+  font-family: $primary-font;
+  color: $secondary-text-color;
+  font-size: 12px;
+  padding: 10px 10px 0 0;
+}
+
+.dialog-list {
+  color: $primary-text-color;
+  font-size: 12px;
+  word-wrap: break-word;
+  padding: 10px 0px 0px 0px;
+
+  .list-container {
+    display: flex;
+    justify-content: space-between;
+  
+    .list-items {  
+      padding: 0px 10px 0px 0px;
+    }  
+  }
+}
+
+.dialog-parent-details {
+  font-size: 12px;
+  color: $tertiary-color;
+  // align: left;
+  padding: 0px 0px 10px 0px;
+}
+
+.dom-details-tag {
+  font-size: 12px;
+  color: $tertiary-text-color;
+  float: left;
+  width: fit-content;
+  padding: 0px 5px 0px 0px;
+}
