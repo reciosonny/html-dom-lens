@@ -1,6 +1,5 @@
 import React from "react";
-import { TransparentCloseButton } from "../../Elements/buttons/CloseButton";
-
+import { TransparentCloseButton } from "../../Shared/buttons/CloseButton";
 
 const MainModal = ({ children = React.FC, type = "",  headerText="", onClose }) => {
   return (

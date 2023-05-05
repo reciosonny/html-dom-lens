@@ -3,7 +3,6 @@ import React from "react";
 const ChildDetails = ({ childElements }) => {
   const [filteredChildren, setFilteredChildren] = React.useState([]);
   const [seeMoreChild, setSeeMoreChild] = React.useState(true);
-
   const numChildrenToDisplay = !seeMoreChild ? filteredChildren.length : 2;
   const leftover = filteredChildren.length - 2;
 

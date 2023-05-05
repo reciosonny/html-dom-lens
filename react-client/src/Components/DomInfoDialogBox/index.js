@@ -4,11 +4,11 @@ import useLocalStorageStore from "../../hooks/useLocalStorageStore";
 import useDraggable from "../../hooks/useDraggable";
 import FocusedTargetedElement from "../FocusedTargetedElement";
 
-import { RoundedCloseButton } from "../Elements/buttons/CloseButton";
+import { RoundedCloseButton } from "../Shared/buttons/CloseButton";
 import DOMOptions from "../Widgets/DOMOptions";
 import DomHeader from "../DomInfo/DomHeader";
 import DomDetails from "../DomInfo/DomDetails";
-import ParentDetailss from "../DomInfo/ParentDetails";
+import ParentDetails from "../DomInfo/ParentDetails";
 import ChildDetails from "../DomInfo/ChildDetails";
 import AttributeDetails from "../DomInfo/AttributeDetails";
 import AnnotationPanel from "../Panels/annotation/AddAnnotationPanel";
@@ -217,7 +217,7 @@ const initializeDomObserver = async () => {
         backgroundColor={backgroundColor}
         fontfamily={fontfamily}          
       />  
-      <ParentDetailss 
+      <ParentDetails 
         tag={parentElement.tag}
         id={parentElement.id}            
         classes={parentElement.classes}

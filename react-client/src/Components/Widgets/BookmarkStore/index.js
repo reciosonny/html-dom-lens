@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
-import BookmarkStoreButton from "../../Elements/buttons/BookmarkStoreButton";
+import BookmarkStoreButton from "./BookmarkStoreButton";
 import useLocalStorageStore from "../../../hooks/useLocalStorageStore";
-import { TransparentCloseButton } from "../../Elements/buttons/CloseButton";
+import { TransparentCloseButton } from "../../Shared/buttons/CloseButton";
 import BookmarkItemList from "./BookmarkItemList";
 import GlobalContext from "../../../store/global-context";
 import * as domUtils from "../../../utils/domUtils"
@@ -88,8 +88,7 @@ const BookmarkStore = ({bookmarks}) => {
               data={data}
               index={index}
               onEdit={onEditBookmark}
-              onRemove={onRemoveBookmark}
-              // onClick={onClickBookmark}
+              onRemove={onRemoveBookmark}              
               onHover={onHoverBookmark}
             />
           ))}          

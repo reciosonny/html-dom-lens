@@ -1,6 +1,6 @@
 import React from "react";
-import EditButton from "../../Elements/buttons/EditButton";
-import DeleteButton from "../../Elements/buttons/DeleteButton";
+import EditButton from "../../Shared/buttons/EditButton";
+import DeleteButton from "../../Shared/buttons/DeleteButton";
 
 const BookmarkItemList = ({ data, index, onEdit, onRemove, onHover }) => {
   const [displayInput, setDisplayInput] = React.useState(true)

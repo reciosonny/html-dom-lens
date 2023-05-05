@@ -2,7 +2,7 @@ import React from "react";
 import { MdCenterFocusStrong, MdCenterFocusWeak, MdOutlineCommentBank, MdCommentBank} from "react-icons/md";
 import { BsBookmark, BsFillBookmarkFill } from "react-icons/bs";
 import { GrTree } from "react-icons/gr";
-import OptionsButton from "../Elements/buttons/OptionsButton";
+import OptionsButton from "../Shared/buttons/OptionsButton";
 
 const DOMOptions = ({ onClickBookmark, onClickAnnotation, onClickFocus, showAddBookmarkIcon, showAddAnnotationIcon, focusMode }) => {
   return (

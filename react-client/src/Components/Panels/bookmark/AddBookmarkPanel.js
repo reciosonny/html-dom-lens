@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useContext, memo } from "react";
 import { v4 as uuidv4 } from "uuid";
-import MainModal from '../../Elements/modals/MainModal';
+import MainModal from '../../Shared/modals/MainModal';
 import GlobalContext from "../../../store/global-context";
 import useLocalStorageStore from "../../../hooks/useLocalStorageStore";
 import * as domUtils from "../../../utils/domUtils";
-import Input from "../../Elements/inputs/Input";
+import Input from "../../Shared/inputs/Input";
 
 const BookmarkPanelz = memo(({ domType, elClassNames, onSaveBookmark, onClose, domId, elementId, targetElement }) => {
   const [txtInput, setTxtInput] = useState("");
@@ -13,20 +13,16 @@ const BookmarkPanelz = memo(({ domType, elClassNames, onSaveBookmark, onClose, d
   const GlobalContextData = useContext(GlobalContext); //We use Context API to avoid prop drilling
 
   useEffect(() => {
-  
-    setCapturedSelectedDom(GlobalContextData.selectedDom);
-    
+    setCapturedSelectedDom(GlobalContextData.selectedDom);  
     return () => {};
   }, []);
 
 
   const onSubmitBookmark = async (e) => {
-    e.preventDefault();
-    // alert('test')
+    e.preventDefault();    
+
     const domIdentifier = domUtils.getUniqueElementIdentifierByTagAndIndex(targetElement);
-
     const elId = targetElement.id;
-
     const randomCode = uuidv4();
 
     let bookmarkObj = {
@@ -50,13 +46,12 @@ const BookmarkPanelz = memo(({ domType, elClassNames, onSaveBookmark, onClose, d
   };
 
   const onChangeText = (e) => {
-    setTxtInput(e.target.value);
-    // setTextAreaHeight(`${txtInputRef.current.scrollHeight}px`);
+    setTxtInput(e.target.value);    
   }
   return (
     <MainModal type='bookmark'  headerText='Save Bookmark' onClose={onClose}>
       <form  className='frm-panel' data-id={domId} onSubmit={onSubmitBookmark}>
-        <Input userInput={txtInput} onChangeText={onChangeText}/>  
+        <Input userInput={txtInput} onChangeText={onChangeText} placeHolder="Bookmark Name"/>  
         <label className='label-tag'>{domType}</label>
         <label className='label-id'>{elementId}</label>
         <label>{elClassNames}</label>

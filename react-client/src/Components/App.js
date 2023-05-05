@@ -9,8 +9,8 @@ import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
 import useLocalStorageStore from "../hooks/useLocalStorageStore";
 import GlobalContext from "../store/global-context";
 
-import SwitchButton from "./Elements/buttons/SwitchButton";
-import BookmarkStore from "./Widgets/BookmarkStore/BookmarkStore";
+import SwitchButton from "./Shared/buttons/SwitchButton";
+import BookmarkStore from "./Widgets/BookmarkStore";
 import DomMinimalDetailsWidget from "./Widgets/DOMMinimalDetailsWidget";
 
 
