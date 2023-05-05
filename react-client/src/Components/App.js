@@ -1,20 +1,18 @@
-import React, { Component, useEffect, useState, useContext } from "react";
+import React, { useState } from "react";
 import { hot } from "react-hot-loader";
 import jss from 'jss';
-
-
 import DomInfoDialogBox from "./DomInfoDialogBox";
 import { PRODUCTION_MODE } from "../keys";
-import DomMinimalDetailsWidget from "./DomMinimalDetailsWidget";
-import DomSwitch from "./DomSwitch";
 import ErrorBoundary from "./ErrorBoundaryComponent";
-
 import * as domUtils from "../utils/domUtils";
-import BookmarkPanel from "./BookmarkPanel";
 import * as chromeExtensionUtils from "../utils/chromeExtensionUtils";
-
 import useLocalStorageStore from "../hooks/useLocalStorageStore";
 import GlobalContext from "../store/global-context";
+
+import SwitchButton from "./Shared/buttons/SwitchButton";
+import BookmarkStore from "./Widgets/BookmarkStore";
+import DomMinimalDetailsWidget from "./Widgets/DOMMinimalDetailsWidget";
+
 
 window.store = {
   focusMode: false,
@@ -22,7 +20,7 @@ window.store = {
   bookmarkBtnClicked: false, //we can use this to set a guard to `onClick` event we wired up using plain javascript to prevent those logic from getting mixed up
   DomInfoDialogBox: {
     children: [],
-    classList: [],
+    classList: [], 
   }
 };
 
@@ -145,102 +143,85 @@ function App() {
   //#endregion Injectable event listeners
   const documentOnClick = async (e) => {
     e.preventDefault();
-
     if (!domUtils.isTrueTarget(e.target)) return;
-
-    let strClassList = '';
+    debugger
+    if (window.store.focusMode) return;
+    let strClassList = "";
     if (!window.store.switchExtensionFunctionality) return;
     if (domUtils.hasDialogBox(e.target.dataset.id)) return;
 
-    if(!containsBookmarkModule(e)) {
-      
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
-      const isDomOptionsSelection = domUtils.ancestorExistsByClassName(e.target, "dom-options");        
-      const isAddAnnotationPanel = domUtils.ancestorExistsByClassName(e.target, "add-annotation-panel");        
-      const isAddAnnotationPanelForm = domUtils.ancestorExistsByClassName(e.target, "add-annotation-panel__form");        
-      
-      if (!isNotBtnDisable || !isNotDomInfoComponent || isDomOptionsSelection || window.store.bookmarkBtnClicked || isAddAnnotationPanel || isAddAnnotationPanelForm || e.target.localName === 'path')
-        return;
-
-      //capture all classes of the dom for bookmark module
-      for (let domClass of e.target.classList.values()) {
-        if(domClass !== 'focused-dom') {
-          strClassList += `.${domClass}`
-        }
-      }
-
-      e.target.classList.remove('focused-dom'); //Note: We removed focused-dom class after click so that domUtils can extract the background color from the element, not the color from focused-dom class
-  
-      //get the least properties for bookmark module
-      setSelectedElem({
-        elClassNames: strClassList,
-        domType: e.target.nodeName?.toLowerCase(),
-        domId: e.target.getAttribute('data-id'),
-        x: e.pageX,
-        y: e.pageY,
-        domTarget: e.target,
-        domLeanDetails
-      });
-      
-      const elTarget = e.target;
-
-      if (elTarget.id !== "closeDom") {
-
-        if (document.getElementsByClassName("focused-element").length > 0)
-          return;
-
-        const extractedDomInfo = domUtils.extractDomInfo(elTarget);
-        const pageYcoordinate = e.pageY;
-
-        const sheet = jss
-          .createStyleSheet(
-            {
-              domBorder: {
-                border: `3px solid ${extractedDomInfo.bordercolor}`,
-                'border-radius': '8px',                  
-              }               
-            },
-            {classNamePrefix :'custom-css'}
-          )
-          .attach();
-
-        //for modifying style directly...
-        e.target.classList.add(sheet.classes.domBorder);
-        //sets data-id to the DOM
-        e.target.setAttribute('data-id', extractedDomInfo.dataId);
-        e.target.setAttribute('data-dom-lens-injected', true);         
-
-        await setDomInfo(value => {
-          return [...value,
-          {
-            ...extractedDomInfo,
-            cssClassesAssigned: sheet.classes.domBorder,
-            x: e.pageX,
-            y: pageYcoordinate + 100
-          }
-          ]
-        });
-        // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
-        (function (pageYcoordinate) {
-          setTimeout(async () => { //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
-            setDomInfo(values => {
-
-              const mappedValues = values.map((val, idx) => {
-                if (idx === values.length - 1) {
-                  val.y = pageYcoordinate
-                }
-                return val;
-              });
-
-              return mappedValues;
-            });
-          }, 10);
-        }(pageYcoordinate));
-        
+    if (domUtils.isDOMDevTools(e.target)) return;
+    //capture all classes of the dom for bookmark module
+    for (let domClass of e.target.classList.values()) {
+      if (domClass !== "focused-dom") {
+        strClassList += `.${domClass}`;
       }
     }
-  }
+
+    e.target.classList.remove("focused-dom"); //Note: We removed focused-dom class after click so that domUtils can extract the background color from the element, not the color from focused-dom class
+
+    //get the least properties for bookmark module
+    setSelectedElem({
+      elClassNames: strClassList,
+      domType: e.target.nodeName?.toLowerCase(),
+      domId: e.target.getAttribute("data-id"),
+      x: e.pageX,
+      y: e.pageY,
+      domTarget: e.target,
+      domLeanDetails,
+    });
+
+    const elTarget = e.target;
+
+    const extractedDomInfo = domUtils.extractDomInfo(elTarget);
+    const pageYcoordinate = e.pageY;
+
+    const sheet = jss
+      .createStyleSheet(
+        {
+          domBorder: {
+            border: `3px solid ${extractedDomInfo.bordercolor}`,
+            "border-radius": "8px",
+          },
+        },
+        { classNamePrefix: "custom-css" }
+      )
+      .attach();
+
+    //for modifying style directly...
+    e.target.classList.add(sheet.classes.domBorder);
+    //sets data-id to the DOM
+    e.target.setAttribute("data-id", extractedDomInfo.dataId);
+    e.target.setAttribute("data-dom-lens-injected", true);
+
+    await setDomInfo((value) => {
+      return [
+        ...value,
+        {
+          ...extractedDomInfo,
+          cssClassesAssigned: sheet.classes.domBorder,
+          x: e.pageX,
+          y: pageYcoordinate + 100,
+        },
+      ];
+    });
+    // Immediately-Invoked Function Expression algorithm to preserve y-coordinate value once the execution context is already finished.
+    (function (pageYcoordinate) {
+      setTimeout(async () => {
+        //delay the y-coordinate change in microseconds to trigger the y-axis animation of dialog box
+        setDomInfo((values) => {
+          const mappedValues = values.map((val, idx) => {
+            if (idx === values.length - 1) {
+              val.y = pageYcoordinate;
+            }
+            return val;
+          });
+
+          return mappedValues;
+        });
+      }, 10);
+    })(pageYcoordinate);
+  };
 
   const documentMouseOver = async (e) => {  
     e.target.setAttribute('data-dom-lens-target', true);   // data attribute to use as reference in domUtils.isTrueTarget to prevent unnecessary additional e.target          
@@ -250,13 +231,13 @@ function App() {
 
     if (!containsBookmarkModule(e)) { 
       if (!window.store.switchExtensionFunctionality || window.store.focusMode) return;
-      if (focusMode) return;
+      if (window.store.focusMode) return;
 
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
       const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
-      
-      if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !focusMode) {
+      if(domUtils.isDOMDevTools(e.target)) return
+      if (e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark 
+      // && !focusMode
+       ) {
         const domType = e.target.nodeName?.toLowerCase();
         await setDomLeanDetails({
           ...domLeanDetails,
@@ -284,14 +265,11 @@ function App() {
     if (!containsBookmarkModule(e)) {
       if (!window.store.switchExtensionFunctionality || window.store.focusMode)
         return;
-
-      const isNotDomInfoComponent = !domUtils.ancestorExistsByClassName(e.target, "dom-info-dialog-box");
-      const isNotBtnDisable = !domUtils.ancestorExistsByClassName(e.target, "dom-switch");
       const isNotSelectedDomFromBookmark = !domUtils.ancestorExistsByClassName(e.target, 'selected-dom');
 
       const isDomLensInjected = e.target.getAttribute('data-dom-lens-injected') === 'true'; //note: if dialogbox is injected in the element, don't toggle focused-dom CSS class as this will cause residues and background highlights after being hovered
 
-      if (isNotDomInfoComponent && isNotBtnDisable && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !isDomLensInjected) {
+      if (!domUtils.isDOMDevTools && e.target.nodeName !== "HTML" && isNotSelectedDomFromBookmark && !isDomLensInjected) {
         e.target.classList.toggle("focused-dom");
       }
     }
@@ -300,8 +278,7 @@ function App() {
   //#region 
 
 
-  const injectDOMEventInBody = async () => {
-    
+  const injectDOMEventInBody = async () => {    
     document.addEventListener("click", documentOnClick, true);
     document.addEventListener("mouseover", documentMouseOver, true);
     document.addEventListener("mouseout", documentMouseOut, true);
@@ -326,15 +303,9 @@ function App() {
       setDomInfo(filterDomInfosClicked);    
   }   
 
-  const containsBookmarkModule = (e) => {
-    
+  const containsBookmarkModule = (e) => {    
     const isBookmarkPanel = domUtils.ancestorExistsByClassName(e.target, 'bookmark-panel');
-
     return isBookmarkPanel;
-  }
-
-  const onClickOption = (e) => {
-    setShowAddBookmarkPanel(true)
   }
 
   const onClickAddBookmark = (idx) => {
@@ -343,12 +314,12 @@ function App() {
     setShowAddBookmarkPanel(!showAddBookmarkPanel);
   }
 
-  const onClickFocus = (focusedState) => {
-   setFocusMode(focusedState)
+  const onClickFocus = (isFocus) => {       
+   setFocusMode(isFocus)  
   }
 
   // Re-render bookmarks list state here to update the bookmarks list
-  const onChangeBookmarks = () => {
+  const onChangeBookmarks = () => {    
     setTimeout(() => {
       updateBookmarksStore(); //needs to be called so that bookmarksStore will get the latest update from localStorage
       setStateBookmarks(bookmarksStore);
@@ -360,14 +331,15 @@ function App() {
 
       {/* website page renders here... */}
       {!PRODUCTION_MODE && <div id="samplePage"></div>}
-      <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div>
+      {/* <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <DomSwitch />}</div> */}
+      <div onClick={onTurnOffExtension}>{switchExtensionFunctionality && <SwitchButton display = "Disable DOM Lens"/>}</div>
+
       {switchExtensionFunctionality && (
-        <div>
+        <div id="domLensApp">
           {domInfo.map((domInfo, idx) => {
 
             const elBookmarks = bookmarksStore.map(({ elem, domIndex }) => domUtils.getElementByTagAndIndex(elem, domIndex));
-            const hasExistingBookmark = elBookmarks.some(el => el === domInfo.domElement);
-            
+            const hasExistingBookmark = elBookmarks.some(el => el === domInfo.domElement);            
             const hasExistingAnnotations = domUtils.hasAnnotations(annotationStore, domInfo.domElement);
 
             return (
@@ -379,8 +351,8 @@ function App() {
                   tag={domInfo.tag}
                   classNames={domInfo.classNames}
                   classNamesString={domInfo.classNamesString}
-                  parent={domInfo.parent}
-                  children={domInfo.children}
+                  parentElement={domInfo.parent}
+                  childElements={domInfo.children}
                   top={domInfo.y}
                   left={domInfo.x}                          
                   onClose={handleRemoveDialogBox}
@@ -392,10 +364,7 @@ function App() {
                   domElement={domInfo.domElement}
                   uniqueID={domInfo.uniqueID}
                   dataAttributes={domInfo.attributes}
-                  onClickOption={onClickOption}
-                  focusedState={onClickFocus}
-                  focusMode={focusMode}
-                  onClickBookmarkEmit={onClickAddBookmark}
+                  focusedState={onClickFocus}           
                   hasExistingBookmark={selectedAddBookmarkDomElIdx === idx || hasExistingBookmark} 
                   hasExistingAnnotations={hasExistingAnnotations}
                   onRemoveBookmarkEmit={onClickAddBookmark}
@@ -416,10 +385,8 @@ function App() {
               positionY={domMinimalDetailsStyles.positionY}
             />
           )}
-
-          <BookmarkPanel
-            bookmarks={stateBookmarks}
-            onRemoveBookmarkEmit={onChangeBookmarks}
+          <BookmarkStore 
+            bookmarks={stateBookmarks}           
           />
         </div> 
       )}

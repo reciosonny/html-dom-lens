@@ -1,0 +1,39 @@
+.switch-button {    
+  font-family: $primary-font;
+  z-index: 99999 !important;
+  position: fixed;
+  height: auto;
+  width: auto;
+  background-color: $primary-color;
+  border: 0.19rem solid $secondary-color;
+  color: $secondary-text-color;
+  position: fixed;
+  border-radius:  $standard-radius;
+  top: 1.25rem;
+  right: 1.25rem;
+  cursor: pointer;
+  padding: 0.93rem;
+  font-size: 14px;
+  z-index: 99999;
+
+  &:hover {
+    animation: pulse-red 1s forwards;
+  }
+}
+
+@keyframes pulse-red {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+  }
+  
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+  }
+}

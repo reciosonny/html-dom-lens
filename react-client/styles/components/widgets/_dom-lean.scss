@@ -1,0 +1,24 @@
+.dom-info-details-lean {
+  position: absolute;
+  display: block !important;
+  height: 20px;
+  z-index: 9999 !important;
+  top: -30px;
+  background: #673ab7 !important;
+  right: 20px;
+  border-radius: 5px 5px 0 0;
+  padding: 5px 15px;
+  color: #fff;
+  box-sizing: unset !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  font-family: "Roboto Mono", sans-serif !important;
+}
+.dom-info-lean {
+  &--domtype {
+    color: #f48fb1 !important;
+  }
+  &--dom-id {
+    color: #ec407a !important;
+  }
+}

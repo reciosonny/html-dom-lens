@@ -1,53 +1,31 @@
 import React, { useEffect, useState, useContext, useRef } from "react";
-import DomOptions from "../DomOptions";
-import ChildrenDetails from "./ChildrenDetails";
-import ParentDetails from "./ParentDetails";
 import * as domUtils from "../../utils/domUtils";
-import AddBookmarkPanel from "../BookmarkPanel/AddBookmarkPanel";
-import AddAnnotationPanel from "../AnnotationPanel/AddAnnotationPanel";
 import useLocalStorageStore from "../../hooks/useLocalStorageStore";
 import useDraggable from "../../hooks/useDraggable";
 import FocusedTargetedElement from "../FocusedTargetedElement";
 
-
-const ColorDetails = ({ color }) => {
-
-  return (
-    <React.Fragment>
-      <div
-        className="display-dot"
-        style={{
-          background: color,
-        }}
-      ></div> {" "}
-      <span style={{ color: '#455A64' }}>{color}</span>
-    </React.Fragment>
-  )
-}
-
+import { RoundedCloseButton } from "../Shared/buttons/CloseButton";
+import DOMOptions from "../Widgets/DOMOptions";
+import DomHeader from "../DomInfo/DomHeader";
+import DomDetails from "../DomInfo/DomDetails";
+import ParentDetails from "../DomInfo/ParentDetails";
+import ChildDetails from "../DomInfo/ChildDetails";
+import AttributeDetails from "../DomInfo/AttributeDetails";
+import AnnotationPanel from "../Panels/annotation/AddAnnotationPanel";
+import BookmarkPanel from "../Panels/bookmark/AddBookmarkPanel";
 
 let domObserver;
-const DomInfoDialogBox = ({ elementId, idx, tag, classNames, classNamesString, parent, children, top, left, onClose, fontsize, fontfamily, textcolor, backgroundColor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, onHover }) => {
+const DomInfoDialogBox = ({key, elementId, idx, tag, classNames, classNamesString, parentElement, childElements, top, left, onClose, fontsize, fontfamily, textcolor, backgroundColor, borderclr, uniqueID, dataAttributes, domElement, focusedState, hasExistingBookmark, hasExistingAnnotations, onRemoveBookmarkEmit, onHover }) => {
 
   const [domInfo, setDomInfo] = useState({ tag: '', classNames: [], parent: '', children: [], fontsize: '', fontfamily: '', textcolor: '', borderclr: '', uniqueID: '', dataAttributes: '', domElement: '' });
-  const [seeMoreAttr, setSeeMoreAttr] = useState(true);
   const [focusMode, setFocusMode] = useState(false);  
-
-
   const [showAddBookmarkPanel, setShowAddBookmarkPanel] = useState(false);
   const [stateHasExistingBookmark, setStateHasExistingBookmark] = useState(false);
   const [stateHasExistingAnnotation, setStateHasExistingAnnotation] = useState(false);
   const [showAddAnnotationsPanel, setShowAddAnnotationsPanel] = useState(false);
-
   const [bookmarksStore, setBookmarksStore, updateBookmarksStore] = useLocalStorageStore('bookmarks', []);
   const [annotationStore, setAnnotationStore, getAnnotationStoreUpdates] = useLocalStorageStore('annotation', []);
-
   const [focusedTargetedElementStyles, setFocusedTargetedElementStyles] = useState({ leftPosition: '', topPosition: '', height: '', width: '', opacity: 0 });
-
-  const handleSeeMoreAttr = () => {   
-    setSeeMoreAttr(!seeMoreAttr);
-  };
-
 
 const initializeDomObserver = async () => {
   const targetNode = domElement
@@ -68,7 +46,7 @@ const initializeDomObserver = async () => {
           );            
           const newChildren = [...mutation.target.children].map((child) => {  
             // If it doesn't exist in existing children the first time dialogbox shows up, then it's a new child
-            const updated = !children.some(val => val.element === child);            
+            const updated = !childElements.some(val => val.element === child);            
             return {
               id: child.id ? "#" + child.id : null,
               class: child.className ? "." + child.className : null,
@@ -84,24 +62,20 @@ const initializeDomObserver = async () => {
   domObserver = new MutationObserver(callback);
   domObserver.observe(targetNode, config);
 }  
-  
-  const numAttibToDisplay = !seeMoreAttr ? dataAttributes.length : 2 ;
-  const attrleftover = dataAttributes.length - 2;
-
   React.useEffect(() => {
     const classNamesWithStatus = classNames.map(name => ({ name, updated: false, removed: false }));
-    const childrenWithStatus = children.map(child => ({ ...child, updated: false, removed: false }));
+    const childrenWithStatus = childElements.map(child => ({ ...child, updated: false, removed: false }));
 
     window.store.DomInfoDialogBox.children = childrenWithStatus;
     window.store.DomInfoDialogBox.classList = classNamesWithStatus;
 
     setDomInfo({ ...domInfo, tag, classNames:  classNamesWithStatus, parent, children: childrenWithStatus, fontsize, fontfamily, textcolor, borderclr, uniqueID, dataAttributes, domElement }) //set DOM info here...
-    initializeDomObserver();
+    // initializeDomObserver();
 
     return () => {
-      domObserver.disconnect();
+      // domObserver.disconnect(); 
     }
-  }, [classNames,children]);
+  }, [classNames,childElements]);
 
   React.useEffect(() => {
     // if the DOM has existing bookmark, enable it by default.
@@ -176,18 +150,15 @@ const initializeDomObserver = async () => {
   const onClickFocus = (elTarget) => {
     const existingFocus = document.getElementsByClassName("focused-element");
     const cutoutTarget = document.querySelector(".focused-targeted-element");
-
+   
     if (existingFocus[0] === elTarget) {      
       existingFocus[0].classList.remove("focused-element");
-
       setFocusedTargetedElementStyles({ ...focusedTargetedElementStyles, opacity: 0 });
-
       focusedState(false);
       setFocusMode(false);
     } else {
       if (existingFocus.length === 0) {
-        updateFocusedTargetedElementStyles(elTarget, cutoutTarget);
-    
+        updateFocusedTargetedElementStyles(elTarget, cutoutTarget);    
         focusedState(true);
       }
     }
@@ -213,7 +184,7 @@ const initializeDomObserver = async () => {
   useDraggable(dragRef);
   
   return (
-    <React.Fragment>
+    <>
       <FocusedTargetedElement {...focusedTargetedElementStyles} />
       <div
         id={uniqueID}
@@ -226,78 +197,35 @@ const initializeDomObserver = async () => {
         }}
         ref = {dragRef}
       >
-        <button id="closeDom" className="close-btn-style" onClick={onClickCloseDialogBox}>
-          x
-        </button>
-
-        <DomOptions 
-          focusMode={focusMode} 
-          onClickFocus={() => onClickFocus(domElement)} 
-          onClickBookmark={onClickAddBookmark} 
-          onClickAnnotation={onClickAddAnnotation}
-          showAddBookmarkIcon={stateHasExistingBookmark} 
-          showAddAnnotationIcon={stateHasExistingAnnotation} 
-        />          
-        <div>
-          <div className="dom-header">           
-            <span className="dom-header-tag">{tag}</span>
-            {elementId && <span className="dom-header-details">{elementId}</span>}                                     
-              {domInfo.classNames.map((val) => (  
-              <span className={`dom-header-details ${val.updated ? 'highlight-div' : ''}`}>{val.name}</span>
-            ))}            
-          </div>
-          <div className="flex-row">
-            <div className="flex-column">
-              <div className="dom-styles-details"> {fontsize}</div>
-              <div className="dom-styles">Size</div>
-            </div>
-            <div className="flex-column">
-              <div className="dom-styles-details">
-                <ColorDetails color={textcolor} />
-              </div>
-              <div className="dom-styles">Text-Color</div>
-            </div>
-            <div className="flex-column">
-              <div className="dom-styles-details">
-                <ColorDetails color={backgroundColor} />
-              </div>
-              <div className="dom-styles">Background-Color</div>
-            </div>
-          </div>
-          <div className="dom-styles-details">{fontfamily}</div>
-          <div className="dom-styles">Font Family</div>
-          
-          <ParentDetails 
-            tag={parent.tag}
-            id={parent.id}            
-            classes={parent.classes}
-          />
-          <div className="dom-dialog">data-* attributes </div>             
-          <div className="dom-dialog-child-details">   
-            {dataAttributes.slice(0, numAttibToDisplay).map((val) => (
-              <div className="attributecontainer">              
-                <div className="attributeitems">                 
-                  {val.key}                
-                </div>
-                <div className="attributeitems">
-                  {val.value}
-                </div>
-              </div>
-            ))}                             
-          </div>
-          {dataAttributes.length > 2 &&(            
-            <div
-              id="closeDom"
-              className="see-more"
-              onClick={handleSeeMoreAttr}
-            >
-              {seeMoreAttr  ? `... ${attrleftover} more` : `... see less`}
-            </div>
-          )}
-          <ChildrenDetails children={domInfo.children} />         
-        </div>       
-        {showAddBookmarkPanel && 
-          <AddBookmarkPanel 
+      <RoundedCloseButton onClickClose={onClickCloseDialogBox}/>
+      <DOMOptions 
+        focusMode={focusMode} 
+        onClickFocus={() => onClickFocus(domElement)} 
+        onClickBookmark={onClickAddBookmark} 
+        onClickAnnotation={onClickAddAnnotation}
+        showAddBookmarkIcon={stateHasExistingBookmark} 
+        showAddAnnotationIcon={stateHasExistingAnnotation} 
+      />     
+      <DomHeader 
+        tag={tag}
+        elementId={elementId}
+        classNames={domInfo.classNames}
+      />
+      <DomDetails
+        fontsize={fontsize}
+        textcolor={textcolor}
+        backgroundColor={backgroundColor}
+        fontfamily={fontfamily}          
+      />  
+      <ParentDetails 
+        tag={parentElement.tag}
+        id={parentElement.id}            
+        classes={parentElement.classes}
+      />
+      <AttributeDetails dataAttributes={dataAttributes} />
+      <ChildDetails childElements={domInfo.children} />                      
+        {showAddBookmarkPanel &&           
+          <BookmarkPanel
             domType={tag}
             elClassNames={classNamesString}
             domId={uniqueID}
@@ -307,16 +235,15 @@ const initializeDomObserver = async () => {
             targetElement={domElement} 
           />
         }
-        {showAddAnnotationsPanel && 
-          <AddAnnotationPanel 
+        {showAddAnnotationsPanel &&           
+          <AnnotationPanel 
             onRemoveAnnotation={onRemoveAnnotation} 
             targetElement={domElement} 
             onUpdatedAnnotation={onUpdatedAnnotation}
           />
         }
-
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
