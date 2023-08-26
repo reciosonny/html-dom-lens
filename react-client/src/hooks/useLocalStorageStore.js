@@ -1,70 +1,58 @@
-import React from 'react'
-
+import React from "react";
 
 const useLocalStorageStore = (storeName, defaultValue, isNotJSON) => {
-  
-  const [state, setState] = React.useState(defaultValue);
+    const [state, setState] = React.useState(defaultValue);
 
-  
-  React.useEffect(() => {
-    
-    let finalValue = getFinalValue();
+    React.useEffect(() => {
+        let finalValue = getFinalValue();
 
-    if (finalValue) {
-      setState(finalValue);      
-    }
+        if (finalValue) {
+            setState(finalValue);
+        }
 
-    return () => {
-      
-    }
-  }, []);
+        return () => {};
+    }, []);
 
+    const getFinalValue = () => {
+        const storedValue = localStorage.getItem(storeName);
 
-  const getFinalValue = () => {
-    const storedValue = localStorage.getItem(storeName);
-    
-    let finalValue;
+        let finalValue;
 
-    if (isNotJSON) {
-      finalValue = storedValue;
-    } else {
+        if (isNotJSON) {
+            finalValue = storedValue;
+        } else {
+            if (storedValue) {
+                finalValue = JSON.parse(storedValue) ?? [];
+            }
+        }
 
-      if (storedValue) {
-        finalValue = JSON.parse(storedValue) ?? [];
-      }
-    }
+        return finalValue;
+    };
 
-    return finalValue;
-  }
+    const setLocalStorage = (value) => {
+        if (!value) {
+            localStorage.removeItem(storeName);
+            setState(defaultValue);
 
+            return;
+        }
 
-  const setLocalStorage = (value) => {
-    
-    if (!value) {
-      localStorage.removeItem(storeName);
-      setState(defaultValue);
+        let finalValue = isNotJSON ? value : JSON.stringify(value);
+        localStorage.setItem(storeName, finalValue); //if state changes, sync it on localStorage
 
-      return;
-    }
+        setState(value);
+    };
 
-    let finalValue = isNotJSON ? value : JSON.stringify(value);    
-    localStorage.setItem(storeName, finalValue); //if state changes, sync it on localStorage
+    // we can use this to update the hooks state coming from localstorage
+    const getLocalStorageData = () => {
+        let finalValue = getFinalValue();
 
-    setState(value);
-    
-  }
+        if (finalValue) {
+            setState(finalValue);
+        }
+    };
 
-  // we can use this to update the hooks state coming from localstorage
-  const getLocalStorageData = () => {
-    
-    let finalValue = getFinalValue();
+    return [state, setLocalStorage, getLocalStorageData];
+};
 
-    if (finalValue) {
-      setState(finalValue);      
-    }
-  }
-
-  return [state, setLocalStorage, getLocalStorageData];
-}
-
-export default useLocalStorageStore
+export default useLocalStorageStore;
