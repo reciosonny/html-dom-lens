@@ -1,3 +1,5 @@
+@import "../../variables";
+
 @mixin main-modal {
   border-radius: $standard-radius;
   background-color: $primary-color;

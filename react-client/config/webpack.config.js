@@ -50,7 +50,13 @@ module.exports = (env, { mode, presets } = { mode: "", presets: [] }) => {
                         "css-hot-loader",
                         MiniCssExtractPlugin.loader,
                         "css-loader", // translates CSS into CommonJS
-                        "sass-loader", // compiles Sass to CSS, using Node Sass by default
+                        {
+                            // compiles Sass to CSS
+                            loader: "sass-loader",
+                            options: {
+                                implementation: require("sass")
+                            },
+                        },
                     ]
                 },
                 {
