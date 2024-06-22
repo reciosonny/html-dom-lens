@@ -1,14 +1,32 @@
-# html-dom-lens
+# html-dom-lens extension
 
-## Function
-This Application is used to preview necessary information of any user selected Element and can provide minimal information on hovered element
+A chrome extension to view element information without Developer Tools.
 
-## Implementation
-Chrome Store Link : https://chrome.google.com/webstore/detail/html-dom-lens-extension/kgdineinlghhbncabemgfaopoaggbmeg
+## Platforms
+Chrome Store: https://chrome.google.com/webstore/detail/html-dom-lens-extension/kgdineinlghhbncabemgfaopoaggbmeg
 
-# Folder Structure
+## Getting Started
 
-## Components
+### For Development 
+
+1. Go to `react-client` folder
+2. Once there, run the following command: `yarn`. This will install all the dependencies needed. Make sure your node version is at least 16 and above.
+3. Run the command: `yarn web:dev`. This will run the localhost and create a dummy environment to simulate the browser extension in localhost
+
+Note: If you encountered issues related to CORS during development, you may need a CORS extension to bypass the CORS API validation using this extension if you're using chrome: https://chromewebstore.google.com/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf
+
+### For Production / Chrome web store
+
+Follow these steps to push changes and upload the files needed for chrome extension:
+
+1. Go to `react-client` folder
+2. Run `yarn build:prod`. This will create a production build (Located in `code-ext/chrome/dist` folder) for you along with running the bundle analyzer
+3. You can now use the build files to upload the updates to your chrome extension!
+
+
+## Folder Structure
+
+### Components
 
 Contains all the components that are used for the application
 
@@ -45,7 +63,7 @@ Contains all the components that are used for the application
         iii. Modal folder contains the main standard modal for the application outside main dialog box to be reused when necessary to maintain uniformity currently being used on annotation panel and bookmark panel <br />
 </details>
 
-## Hooks 
+### Hooks 
 
 Contains custom hooks that are being could be used within the app when necessary
 
@@ -57,7 +75,7 @@ Contains custom hooks that are being could be used within the app when necessary
   2. useLocalStorage.js is used to store information into local storage
 </details>
 
-# Store 
+## Store 
 
 Stores all context or necessary global states
 <details><summary><b>Store Structure</b></summary>
@@ -66,6 +84,6 @@ Stores all context or necessary global states
 
 </details>
 
-# Utils
+## Utils
 
 This folder is intended for the helper functions that are constantly being used 
