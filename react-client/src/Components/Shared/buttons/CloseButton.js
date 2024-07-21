@@ -4,7 +4,7 @@ import { AiOutlineClose } from "react-icons/ai";
 const RoundedCloseButton = ({ onClickClose }) => {
   return (
     <div onClick={onClickClose} className="rounded-close-btn">
-      X
+      <AiOutlineClose size={15} />
     </div>
   );
 };
