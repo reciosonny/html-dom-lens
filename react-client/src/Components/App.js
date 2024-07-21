@@ -152,6 +152,14 @@ function App() {
     //#endregion Injectable event listeners
     const documentOnClick = async (e) => {
         e.preventDefault();
+
+        let siblings = e.target.querySelectorAll("a");
+        let childHref = [];
+        // Loop through each sibling
+        for (let sibling of siblings) {
+            childHref.push(sibling.href);
+        }
+
         if (!domUtils.isTrueTarget(e.target)) return;
         if (window.store.focusMode) return;
         let strClassList = "";
@@ -211,6 +219,7 @@ function App() {
                     x: e.pageX,
                     y: pageYcoordinate + 100,
                     href: e.target.href,
+                    childHref: childHref,
                 },
             ];
         });
@@ -400,6 +409,7 @@ function App() {
                                     top={domInfo.y}
                                     left={domInfo.x}
                                     href={domInfo.href}
+                                    childHref={domInfo.childHref}
                                     onClose={handleRemoveDialogBox}
                                     fontsize={domInfo.size}
                                     fontfamily={domInfo.family}
