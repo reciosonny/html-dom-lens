@@ -210,6 +210,7 @@ function App() {
                     cssClassesAssigned: sheet.classes.domBorder,
                     x: e.pageX,
                     y: pageYcoordinate + 100,
+                    href: e.target.href,
                 },
             ];
         });
@@ -398,6 +399,7 @@ function App() {
                                     childElements={domInfo.children}
                                     top={domInfo.y}
                                     left={domInfo.x}
+                                    href={domInfo.href}
                                     onClose={handleRemoveDialogBox}
                                     fontsize={domInfo.size}
                                     fontfamily={domInfo.family}

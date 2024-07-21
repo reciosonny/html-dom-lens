@@ -20,6 +20,7 @@ const DomInfoDialogBox = ({
     elementId,
     idx,
     tag,
+    href,
     classNames,
     classNamesString,
     parentElement,
@@ -319,6 +320,7 @@ const DomInfoDialogBox = ({
                     tag={tag}
                     elementId={elementId}
                     classNames={domInfo.classNames}
+                    href={href}
                 />
                 <DomDetails
                     fontsize={fontsize}
