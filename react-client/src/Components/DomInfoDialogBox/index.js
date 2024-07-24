@@ -8,7 +8,7 @@ import { RoundedCloseButton } from "../Shared/buttons/CloseButton";
 import DOMOptions from "../Widgets/DOMOptions";
 import DomHeader from "../DomInfo/DomHeader";
 import DomDetails from "../DomInfo/DomDetails";
-import ParentDetails from "../DomInfo/ParentDetails";
+import ParentDetails from "../DomInfo/ParentDetails.tsx";
 import ChildDetails from "../DomInfo/ChildDetails";
 import AttributeDetails from "../DomInfo/AttributeDetails";
 import AnnotationPanel from "../Panels/annotation/AddAnnotationPanel";
