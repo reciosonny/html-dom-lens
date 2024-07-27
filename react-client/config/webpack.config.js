@@ -35,7 +35,7 @@ module.exports = (env, { mode, presets } = { mode: "", presets: [] }) => {
                 rules: [
                     {
                         use: {
-                            loader: "babel-loader",
+                            loader: "ts-loader",
                         },
                         test: /\.(js|tsx|ts|jsx)$/,
                         exclude: /node_modules/, //excludes node_modules folder from being transpiled by babel. We do this because it's a waste of resources to do so.

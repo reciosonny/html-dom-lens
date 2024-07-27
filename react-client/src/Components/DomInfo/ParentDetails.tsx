@@ -7,6 +7,7 @@ interface Props {
 }
 
 const ParentDetails = ({ tag, id, classes }: Props) => {
+  // const x: number = "test"
   return (
     <>
       <div className="dialog-label" style={{ marginTop: "5px" }}>
