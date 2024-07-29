@@ -20,6 +20,17 @@
   padding: 0;
 }
 
+.dom-header-label {
+  font-family: $primary-font;
+  color: #78909C;
+  font-size: 10px;
+  padding-top: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 280px;
+}
+
 .dialog-details {
   font-family: $primary-font;
   color: $secondary-text-color;

@@ -20,6 +20,8 @@ const DomInfoDialogBox = ({
     elementId,
     idx,
     tag,
+    href,
+    childHref,
     classNames,
     classNamesString,
     parentElement,
@@ -319,6 +321,7 @@ const DomInfoDialogBox = ({
                     tag={tag}
                     elementId={elementId}
                     classNames={domInfo.classNames}
+                    href={href}
                 />
                 <DomDetails
                     fontsize={fontsize}
@@ -332,7 +335,7 @@ const DomInfoDialogBox = ({
                     classes={parentElement.classes}
                 />
                 <AttributeDetails dataAttributes={dataAttributes} />
-                <ChildDetails childElements={domInfo.children} />
+                <ChildDetails childElements={domInfo.children} childHref={childHref}/>
                 {showAddBookmarkPanel && (
                     <BookmarkPanel
                         domType={tag}
