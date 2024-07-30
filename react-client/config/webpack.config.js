@@ -29,7 +29,7 @@ module.exports = (env, { mode, presets } = { mode: "", presets: [] }) => {
                 //     'react': 'preact/compat',
                 //     'react-dom': 'preact/compat'
                 // }
-                extensions: [".jsx", "tsx", ".ts", ".js"],
+                extensions: [".tsx", ".ts", ".js"],
             },
             module: {
                 rules: [
@@ -37,7 +37,7 @@ module.exports = (env, { mode, presets } = { mode: "", presets: [] }) => {
                         use: {
                             loader: "ts-loader",
                         },
-                        test: /\.(js|tsx|ts|jsx)$/,
+                        test: /\.(js|tsx|ts)$/,
                         exclude: /node_modules/, //excludes node_modules folder from being transpiled by babel. We do this because it's a waste of resources to do so.
                     },
                     {
