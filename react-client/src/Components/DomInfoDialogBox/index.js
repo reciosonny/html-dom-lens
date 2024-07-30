@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
+import React, { useState, useRef } from "react";
 import * as domUtils from "../../utils/domUtils";
 import useLocalStorageStore from "../../hooks/useLocalStorageStore";
 import useDraggable from "../../hooks/useDraggable";
@@ -8,7 +8,7 @@ import { RoundedCloseButton } from "../Shared/buttons/CloseButton";
 import DOMOptions from "../Widgets/DOMOptions";
 import DomHeader from "../DomInfo/DomHeader";
 import DomDetails from "../DomInfo/DomDetails";
-import ParentDetails from "../DomInfo/ParentDetails.tsx";
+import ParentDetails from "../DomInfo/ParentDetails";
 import ChildDetails from "../DomInfo/ChildDetails";
 import AttributeDetails from "../DomInfo/AttributeDetails";
 import AnnotationPanel from "../Panels/annotation/AddAnnotationPanel";
