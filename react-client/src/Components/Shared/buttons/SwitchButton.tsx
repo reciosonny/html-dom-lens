@@ -1,9 +1,13 @@
 import React from "react";
 
-const SwitchButton = ({ display }) => {
+interface Props {
+  display: any
+}
+
+const SwitchButton = (props: Props) => {
   return (
     <button id="switchButton" className="switch-button" hidden={false}>
-      {display}
+      {props.display}
     </button>
   );
 };

@@ -1,6 +1,10 @@
 import React from "react";
 
-const ChildDetails = ({ childElements }) => {
+interface Props {
+  childElements: any,
+}
+
+const ChildDetails = (props: Props) => {
   const [filteredChildren, setFilteredChildren] = React.useState([]);
   const [seeMoreChild, setSeeMoreChild] = React.useState(true);
   const numChildrenToDisplay = !seeMoreChild ? filteredChildren.length : 2;
@@ -11,20 +15,20 @@ const ChildDetails = ({ childElements }) => {
   };
 
   React.useEffect(() => {
-    const filteredList = childElements.filter(
-      (clsname) => clsname.id !== "#domInfoHighlight"
+    const filteredList = props.childElements.filter(
+      (clsname: any) => clsname.id !== "#domInfoHighlight"
     );
 
     setFilteredChildren(filteredList);
 
-    return () => {};
-  }, [childElements]);
+    return () => { };
+  }, [props.childElements]);
 
   return (
     <>
       <div className="dialog-label">Children[{filteredChildren.length}]</div>
       <div className="dialog-list">
-        {filteredChildren.slice(0, numChildrenToDisplay).map((val) => (
+        {filteredChildren.slice(0, numChildrenToDisplay).map((val: any) => (
           <div className={val.updated && "highlight-div"}>
             <div className="dom-details-tag">{val.tag}</div>
             {val.id}

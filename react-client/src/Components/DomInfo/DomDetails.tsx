@@ -1,41 +1,52 @@
 import React from "react";
 
-const ColorDetails = ({ color }) => {
+interface ColorProps {
+  color: string
+}
+
+interface DomProps {
+  fontsize: string,
+  textcolor: string,
+  backgroundColor: string,
+  fontfamily: string,
+}
+
+const ColorDetails = (props: ColorProps) => {
   return (
     <>
       <div
         className="display-dot"
         style={{
-          background: color,
+          background: props.color,
         }}
       ></div>
-      <span style={{ color: "#455A64" }}>{color}</span>
+      <span style={{ color: "#455A64" }}>{props.color}</span>
     </>
   );
 };
 
-const DomDetails = ({ fontsize, textcolor, backgroundColor, fontfamily }) => {
+const DomDetails = (props: DomProps) => {
   return (
     <>
       <div className="flex-row">
         <div className="flex-column">
-          <div className="dialog-details"> {fontsize}</div>
+          <div className="dialog-details"> {props.fontsize}</div>
           <div className="dialog-label">Size</div>
         </div>
         <div className="flex-column">
           <div className="dialog-details">
-            <ColorDetails color={textcolor} />
+            <ColorDetails color={props.textcolor} />
           </div>
           <div className="dialog-label">Text-Color</div>
         </div>
         <div className="flex-column">
           <div className="dialog-details">
-            <ColorDetails color={backgroundColor} />
+            <ColorDetails color={props.backgroundColor} />
           </div>
           <div className="dialog-label">Background-Color</div>
         </div>
       </div>
-      <div className="dialog-details">{fontfamily}</div>
+      <div className="dialog-details">{props.fontfamily}</div>
       <div className="dialog-label">Font Family</div>
     </>
   );
