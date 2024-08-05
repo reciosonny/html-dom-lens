@@ -8,7 +8,7 @@ interface Props {
 const RoundedCloseButton = (props: Props) => {
   return (
     <div onClick={() => props.onClickClose()} className="rounded-close-btn">
-      X
+      <AiOutlineClose size={15} />
     </div>
   );
 };
