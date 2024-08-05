@@ -1,21 +1,19 @@
 import React from "react";
 import { AiOutlineClose } from "react-icons/ai";
+import { CloseButtonModel } from "../../../model/Shared";
 
-interface Props {
-  onClickClose: () => void,
-}
 
-const RoundedCloseButton = (props: Props) => {
+const RoundedCloseButton = ({ onClickClose }: CloseButtonModel) => {
   return (
-    <div onClick={() => props.onClickClose()} className="rounded-close-btn">
+    <div onClick={() => onClickClose()} className="rounded-close-btn">
       <AiOutlineClose size={15} />
     </div>
   );
 };
 
-const TransparentCloseButton = (props: Props) => {
+const TransparentCloseButton = ({ onClickClose }: CloseButtonModel) => {
   return (
-    <button type="button" className="transparent-button" onClick={() => props.onClickClose()}>
+    <button type="button" className="transparent-button" onClick={() => onClickClose()}>
       <AiOutlineClose size={15} color="#546E7A" />
     </button>
   );

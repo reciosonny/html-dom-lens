@@ -1,13 +1,10 @@
 import React from "react";
+import { SwitchButtonModal } from "../../../model/Shared";
 
-interface Props {
-  display: any
-}
-
-const SwitchButton = (props: Props) => {
+const SwitchButton = ({ display }: SwitchButtonModal) => {
   return (
     <button id="switchButton" className="switch-button" hidden={false}>
-      {props.display}
+      {display}
     </button>
   );
 };

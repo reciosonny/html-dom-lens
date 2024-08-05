@@ -1,14 +1,10 @@
 import React from "react";
+import { SubmitButtonModel } from "../../../model/Shared";
 
-interface Props {
-  display: any
-  onClickSubmit: () => void,
-}
-
-const SubmitButton = (props: Props) => {
+const SubmitButton = ({ display, onClickSubmit }: SubmitButtonModel) => {
   return (
-    <button id="submitButton" className="submit-button" onClick={() => props.onClickSubmit()}>
-      {props.display}
+    <button id="submitButton" className="submit-button" onClick={() => onClickSubmit()}>
+      {display}
     </button>
   );
 };

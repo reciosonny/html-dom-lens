@@ -1,15 +1,11 @@
 import React from 'react'
 import { FaTrash } from 'react-icons/fa';
+import { DeleteButtonModel } from '../../../model/Shared';
 
-interface Props {
-  dataID?: string
-  onClickDelete: () => void,
-}
-
-const DeleteButton = (props: Props) => {
+const DeleteButton = ({ dataID, onClickDelete }: DeleteButtonModel) => {
   return (
-    <button  data-id={props.dataID} onClick={() => props.onClickDelete()}>
-      <FaTrash color="#607D8B"/>
+    <button data-id={dataID} onClick={() => onClickDelete()}>
+      <FaTrash color="#607D8B" />
     </button>
   )
 }

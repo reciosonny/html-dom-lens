@@ -1,14 +1,10 @@
 import React from 'react'
+import { OptionsButtonModel } from '../../../model/Shared'
 
-interface Props {
-  children: any
-  onClick: () => void,
-}
-
-const OptionsButton = (props: Props) => {
+const OptionsButton = ({ children, onClick }: OptionsButtonModel) => {
   return (
-    <button style={{ fontSize: "20px" }} onClick={() => props.onClick()}>
-      {props.children}
+    <button style={{ fontSize: "20px" }} onClick={() => onClick()}>
+      {children}
     </button>
   )
 }
