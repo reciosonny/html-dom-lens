@@ -3,7 +3,6 @@ import * as domUtils from "../../utils/domUtils";
 import useLocalStorageStore from "../../hooks/useLocalStorageStore";
 import useDraggable from "../../hooks/useDraggable";
 import FocusedTargetedElement from "../FocusedTargetedElement";
-
 import { RoundedCloseButton } from "../Shared/buttons/CloseButton";
 import DOMOptions from "../Widgets/DOMOptions";
 import DomHeader from "../DomInfo/DomHeader";
@@ -15,6 +14,7 @@ import AnnotationPanel from "../Panels/annotation/AddAnnotationPanel";
 import BookmarkPanel from "../Panels/bookmark/AddBookmarkPanel";
 
 let domObserver;
+
 const DomInfoDialogBox = ({
     key,
     elementId,
@@ -40,8 +40,8 @@ const DomInfoDialogBox = ({
     hasExistingAnnotations,
     onRemoveBookmarkEmit,
     onHover,
-}) => {
-    const [domInfo, setDomInfo] = useState({
+}: DomInfo) => {
+    const [domInfo, setDomInfo] = useState<Dom>({
         tag: "",
         classNames: [],
         parent: "",
@@ -80,13 +80,13 @@ const DomInfoDialogBox = ({
         // Options for the observer (which mutations to observe)
         const config = { attributes: true, childList: true, subtree: true };
         // Callback function to execute when mutations are observed
-        const callback = (mutationsList, observer) => {
+        const callback = (mutationsList: any, observer: any) => {
             for (const mutation of mutationsList) {
                 if (domElement === mutation.target) {
                     const newClassList = [...mutation.target.classList]
                         .map((name) => {
                             const updated = !classNames.some(
-                                (existingClass) =>
+                                (existingClass: any) =>
                                     existingClass.slice(1) === name
                             ); //slice/remove the dot(.)
                             return {
@@ -104,7 +104,7 @@ const DomInfoDialogBox = ({
                         (child) => {
                             // If it doesn't exist in existing children the first time dialogbox shows up, then it's a new child
                             const updated = !childElements.some(
-                                (val) => val.element === child
+                                (val: any) => val.element === child
                             );
                             return {
                                 id: child.id ? "#" + child.id : null,
@@ -129,18 +129,20 @@ const DomInfoDialogBox = ({
         domObserver.observe(targetNode, config);
     };
     React.useEffect(() => {
-        const classNamesWithStatus = classNames.map((name) => ({
+        const classNamesWithStatus = classNames.map((name: any) => ({
             name,
             updated: false,
             removed: false,
         }));
-        const childrenWithStatus = childElements.map((child) => ({
+        const childrenWithStatus = childElements.map((child: any) => ({
             ...child,
             updated: false,
             removed: false,
         }));
-
+        
+        // @ts-ignore
         window.store.DomInfoDialogBox.children = childrenWithStatus;
+        // @ts-ignore
         window.store.DomInfoDialogBox.classList = classNamesWithStatus;
 
         setDomInfo({
@@ -167,24 +169,24 @@ const DomInfoDialogBox = ({
     React.useEffect(() => {
         // if the DOM has existing bookmark, enable it by default.
         setStateHasExistingBookmark(hasExistingBookmark);
-        return () => {};
+        return () => { };
     }, [hasExistingBookmark]);
 
     React.useEffect(() => {
         setStateHasExistingAnnotation(hasExistingAnnotations);
-        return () => {};
+        return () => { };
     }, [hasExistingAnnotations]);
 
     const removeExistingBookmark = () => {
         const domIdentifier =
             domUtils.getUniqueElementIdentifierByTagAndIndex(domElement);
         const duplicateIndex = bookmarksStore.findIndex(
-            (obj) =>
+            (obj: any) =>
                 obj.domIndex === domIdentifier.index &&
                 obj.elem === domIdentifier.elType
         );
         const filteredBookmark = bookmarksStore.filter(
-            (value, idx) => idx !== duplicateIndex
+            (idx: any) => idx !== duplicateIndex
         );
         setBookmarksStore(filteredBookmark);
         setShowAddBookmarkPanel(false);
@@ -203,8 +205,8 @@ const DomInfoDialogBox = ({
         !stateHasExistingAnnotation
             ? setStateHasExistingAnnotation(!stateHasExistingAnnotation)
             : setStateHasExistingAnnotation(
-                  domUtils.hasAnnotations(annotationStore, domElement)
-              );
+                domUtils.hasAnnotations(annotationStore, domElement)
+            );
         setShowAddAnnotationsPanel(!showAddAnnotationsPanel);
         setShowAddBookmarkPanel(false);
     };
@@ -233,7 +235,7 @@ const DomInfoDialogBox = ({
         domElement.classList.remove(
             domElement.className
                 .split(" ")
-                .filter((cls) => cls.includes("custom-css"))
+                .filter((cls: any) => cls.includes("custom-css"))
                 .toString()
         );
         domElement.classList.remove("focused-element");
@@ -250,7 +252,7 @@ const DomInfoDialogBox = ({
         onClose(idx, elementId, uniqueID);
     };
 
-    const onClickFocus = (elTarget) => {
+    const onClickFocus = (elTarget: any) => {
         const existingFocus =
             document.getElementsByClassName("focused-element");
         const cutoutTarget = document.querySelector(
@@ -273,7 +275,7 @@ const DomInfoDialogBox = ({
         }
     };
 
-    const updateFocusedTargetedElementStyles = (elTarget) => {
+    const updateFocusedTargetedElementStyles = (elTarget: any, cutoutTarget: Element | null) => {
         setFocusMode(!focusMode);
 
         const elProperties = elTarget.getBoundingClientRect();

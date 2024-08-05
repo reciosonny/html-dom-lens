@@ -15,7 +15,7 @@ const BookmarkPanel = memo(
         domId,
         elementId,
         targetElement,
-    }) => {
+    }: BookmarkPanel) => {
         const [txtInput, setTxtInput] = useState("");
         const [bookmarksStore, setBookmarksStore] = useLocalStorageStore(
             "bookmarks",
@@ -26,10 +26,10 @@ const BookmarkPanel = memo(
 
         useEffect(() => {
             setCapturedSelectedDom(GlobalContextData.selectedDom);
-            return () => {};
+            return () => { };
         }, []);
 
-        const onSubmitBookmark = async (e) => {
+        const onSubmitBookmark = async (e: any) => {
             e.preventDefault();
 
             const domIdentifier =
@@ -57,14 +57,14 @@ const BookmarkPanel = memo(
             await onSaveBookmark();
         };
 
-        const onChangeText = (e) => {
+        const onChangeText = (e: any) => {
             setTxtInput(e.target.value);
         };
         return (
             <MainModal
                 type="bookmark"
                 headerText="Save Bookmark"
-                onClose={onClose}
+                onClose={() => onClose()}
             >
                 <form
                     className="frm-panel"
