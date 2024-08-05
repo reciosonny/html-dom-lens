@@ -19,7 +19,7 @@ const useBookmarksStore = () => {
   }, []);
 
 
-  const setBookmarksStore = (value) => {
+  const setBookmarksStore = (value: any) => {
     
     localStorage.setItem('bookmarks', value);
   }

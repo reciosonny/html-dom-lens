@@ -1,6 +1,10 @@
 import React from "react";
 
-const useLocalStorageStore = (storeName, defaultValue, isNotJSON) => {
+const useLocalStorageStore = (
+    storeName: string,
+    defaultValue: any,
+    isNotJSON?: boolean
+) => {
     const [state, setState] = React.useState(defaultValue);
 
     React.useEffect(() => {
@@ -29,7 +33,7 @@ const useLocalStorageStore = (storeName, defaultValue, isNotJSON) => {
         return finalValue;
     };
 
-    const setLocalStorage = (value) => {
+    const setLocalStorage = (value: string) => {
         if (!value) {
             localStorage.removeItem(storeName);
             setState(defaultValue);

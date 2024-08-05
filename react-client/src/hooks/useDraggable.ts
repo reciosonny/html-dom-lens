@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 
-export default function useDraggable(el) {
+export default function useDraggable(el: any) {
   const [{ dx, dy }, setOffset] = useState({ dx: 0, dy: 0 });
 
   useEffect(() => {
-    const handleMouseDown = event => {
+    const handleMouseDown = (event: { pageX: number; pageY: number; }) => {
       const startX = event.pageX - dx;
       const startY = event.pageY - dy;
 
-      const handleMouseMove = event => {
+      const handleMouseMove = (event: { pageX: number; pageY: number; }) => {
         const newDx = event.pageX - startX;
         const newDy = event.pageY - startY;
         setOffset({ dx: newDx, dy: newDy });
