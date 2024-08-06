@@ -105,7 +105,7 @@ const AnnotationPanel = memo(({ onRemoveAnnotation, onUpdatedAnnotation, targetE
   };
 
   return (
-    <MainModal type="annotation" onClose={undefined}>
+    <MainModal type="annotation" >
       {displayInput ? (
         <label className="annotation-header" onClick={() => onClickAnnotation()}>
           {txtInput}
@@ -114,7 +114,7 @@ const AnnotationPanel = memo(({ onRemoveAnnotation, onUpdatedAnnotation, targetE
         <form>
           <TextInput
             userInput={txtInput}
-            onChangeText={onChangeText}
+            onChangeText={(e: any) => onChangeText(e)}
             placeHolder="The comment goes here"
           />
           <SubmitButton display="Submit" onClickSubmit={() => onSubmitAnnotation} />

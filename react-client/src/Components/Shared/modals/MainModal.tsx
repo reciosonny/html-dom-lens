@@ -1,18 +1,19 @@
 import React from "react";
-import { TransparentCloseButton } from "../../Shared/buttons/CloseButton";
+import { TransparentCloseButton } from "../buttons/CloseButton";
+import { MainModalModel } from "../../../model/Shared";
 
 const MainModal = ({
-    children = React.FC,
+    children,
     type = "",
     headerText = "",
     onClose,
-}) => {
+}: MainModalModel) => {
     return (
         <div className={`${type}-panel`}>
             {headerText.trim() !== "" && (
                 <div className={`${type}-header`}>
                     {headerText}
-                    <TransparentCloseButton onClickClose={onClose} />
+                    <TransparentCloseButton onClickClose={() => onClose} />
                 </div>
             )}
             {children}

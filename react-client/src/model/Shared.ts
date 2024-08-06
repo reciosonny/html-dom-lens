@@ -1,3 +1,4 @@
+//Buttons
 export interface CloseButtonModel {
     onClickClose: () => void;
 }
@@ -22,6 +23,27 @@ export interface SubmitButtonModel {
     onClickSubmit: () => void;
 }
 
-export interface SwitchButtonModal {
+export interface SwitchButtonModel {
     display: any;
+}
+
+//Inputs
+export interface InputModel {
+    userInput: string;
+    onChangeText: any;
+    placeHolder: string;
+}
+
+export interface TextInputModel {
+    userInput: string;
+    onChangeText: any;
+    placeHolder: string;
+}
+
+//Modals
+export interface MainModalModel {
+    children: any;
+    type?: string;
+    headerText?: string;
+    onClose?: () => void;
 }

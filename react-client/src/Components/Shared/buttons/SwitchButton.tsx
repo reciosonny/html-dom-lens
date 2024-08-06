@@ -1,7 +1,7 @@
 import React from "react";
-import { SwitchButtonModal } from "../../../model/Shared";
+import { SwitchButtonModel } from "../../../model/Shared";
 
-const SwitchButton = ({ display }: SwitchButtonModal) => {
+const SwitchButton = ({ display }: SwitchButtonModel) => {
   return (
     <button id="switchButton" className="switch-button" hidden={false}>
       {display}
