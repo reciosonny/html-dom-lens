@@ -1,4 +1,4 @@
-interface BookmarkPanel {
+interface BookmarkPanelModel {
     domType: string;
     elClassNames: string;
     onSaveBookmark: any;

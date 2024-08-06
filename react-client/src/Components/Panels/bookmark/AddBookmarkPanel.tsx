@@ -15,7 +15,7 @@ const BookmarkPanel = memo(
         domId,
         elementId,
         targetElement,
-    }: BookmarkPanel) => {
+    }: BookmarkPanelModel) => {
         const [txtInput, setTxtInput] = useState("");
         const [bookmarksStore, setBookmarksStore] = useLocalStorageStore(
             "bookmarks",

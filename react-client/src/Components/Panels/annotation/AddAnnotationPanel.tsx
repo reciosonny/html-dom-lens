@@ -6,7 +6,7 @@ import useLocalStorageStore from "../../../hooks/useLocalStorageStore";
 import * as domUtils from "../../../utils/domUtils";
 import TextInput from "../../Shared/inputs/TextInput";
 
-const AnnotationPanel = memo(({ onRemoveAnnotation, onUpdatedAnnotation, targetElement }: AnnotationPanel) => {
+const AnnotationPanel = memo(({ onRemoveAnnotation, onUpdatedAnnotation, targetElement }: AnnotationPanelModel) => {
   const [txtInput, setTxtInput] = useState("");
   const [annotationStore, setAnnotationStore] = useLocalStorageStore(
     "annotation",

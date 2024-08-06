@@ -1,4 +1,4 @@
-interface DomInfo {
+interface DomInfoModel {
     key: string;
     elementId: string;
     idx: string;

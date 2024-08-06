@@ -1,10 +1,7 @@
 import React from "react";
+import { ChildDetailsModel } from "../../model/DomDetails";
 
-interface Props {
-  childElements: any,
-}
-
-const ChildDetails = (props: Props) => {
+const ChildDetails = ({ childElements }: ChildDetailsModel) => {
   const [filteredChildren, setFilteredChildren] = React.useState([]);
   const [seeMoreChild, setSeeMoreChild] = React.useState(true);
   const numChildrenToDisplay = !seeMoreChild ? filteredChildren.length : 2;
@@ -15,14 +12,14 @@ const ChildDetails = (props: Props) => {
   };
 
   React.useEffect(() => {
-    const filteredList = props.childElements.filter(
+    const filteredList = childElements.filter(
       (clsname: any) => clsname.id !== "#domInfoHighlight"
     );
 
     setFilteredChildren(filteredList);
 
     return () => { };
-  }, [props.childElements]);
+  }, [childElements]);
 
   return (
     <>

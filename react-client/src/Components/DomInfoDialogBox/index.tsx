@@ -40,8 +40,8 @@ const DomInfoDialogBox = ({
     hasExistingAnnotations,
     onRemoveBookmarkEmit,
     onHover,
-}: DomInfo) => {
-    const [domInfo, setDomInfo] = useState<Dom>({
+}: DomInfoModel) => {
+    const [domInfo, setDomInfo] = useState<DomModel>({
         tag: "",
         classNames: [],
         parent: "",

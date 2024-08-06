@@ -1,4 +1,4 @@
-interface Dom {
+interface DomModel {
     tag: string;
     classNames: any;
     parent: any;
