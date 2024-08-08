@@ -5,7 +5,7 @@ export interface CloseButtonModel {
 
 export interface DeleteButtonModel {
     dataID?: string;
-    onClickDelete: () => void;
+    onClickDelete: (e: any) => void;
 }
 
 export interface EditButtonModel {
@@ -20,7 +20,7 @@ export interface OptionsButtonModel {
 
 export interface SubmitButtonModel {
     display: any;
-    onClickSubmit: () => void;
+    onClickSubmit: (e: any) => void;
 }
 
 export interface SwitchButtonModel {
@@ -45,5 +45,5 @@ export interface MainModalModel {
     children: any;
     type?: string;
     headerText?: string;
-    onClose?: () => void;
+    onClose: () => void;
 }

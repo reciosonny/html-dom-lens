@@ -1,6 +1,7 @@
 import React from 'react'
+import { BookmarkStoreSelectedModel } from '../../../model/BookmarkStore';
 
-const SelectedDomFromBookmark = React.forwardRef(({ selectedDom }, ref) => (
+const SelectedDomFromBookmark = React.forwardRef<HTMLDivElement, BookmarkStoreSelectedModel>(({ selectedDom }, ref) => (
   <React.Fragment>
     <div id="" className="selected__dom-bookmark" ref={ref}>
       <span className="dom-info-domtype">{selectedDom.elem}</span>

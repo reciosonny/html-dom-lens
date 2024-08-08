@@ -5,8 +5,9 @@ import { TransparentCloseButton } from "../../Shared/buttons/CloseButton";
 import BookmarkItemList from "./BookmarkItemList";
 import GlobalContext from "../../../store/global-context";
 import * as domUtils from "../../../utils/domUtils"
+import { BookmarkStoreModel } from "../../../model/BookmarkStore";
 
-const BookmarkStore = ({bookmarks}) => {  
+const BookmarkStore = ({ bookmarks }: BookmarkStoreModel) => {
   const [showBookmarkButton, setShowBookmarkButton] = useState(false);
   const [showBookmarkWidget, setShowBookmarkWidget] = useState(false);
   const [retrievedEl, setRetrievedEl] = useState({});
@@ -15,48 +16,48 @@ const BookmarkStore = ({bookmarks}) => {
   const GlobalContextData = useContext(GlobalContext); //We use Context API to avoid prop drilling
 
   useEffect(() => {
-    getBookmarksStoreUpdates();            
+    getBookmarksStoreUpdates();
     if (showBookmarkWidget) return
-    if (bookmarks.length !== 0 ) {
+    if (bookmarks.length !== 0) {
       setShowBookmarkButton(true);
     } else {
       setShowBookmarkButton(false);
-    }    
-    return () => {};
+    }
+    return () => { };
   }, [bookmarks]);
 
-  const onOpenBookmarkWidget = (e) => {
+  const onOpenBookmarkWidget = () => {
     setShowBookmarkButton(false);
     setShowBookmarkWidget(true);
   };
 
-  const onCloseBookmarkWidget = (e) => {
+  const onCloseBookmarkWidget = () => {
     setShowBookmarkButton(true);
     setShowBookmarkWidget(false);
   };
 
-  const onEditBookmark = (e, updatedTitle, bookmarkID) => {
-    const duplicateBookmark = bookmarks.find((obj) => obj.id === bookmarkID);
+  const onEditBookmark = (e: any, updatedTitle: string, bookmarkID: any) => {
+    const duplicateBookmark = bookmarks.find((obj: any) => obj.id === bookmarkID);
     duplicateBookmark.title = updatedTitle;
     setBookmarksStore(bookmarks);
   };
 
-  const onRemoveBookmark = (e) => {      
-    const selectedBookmarkIdx = bookmarksStore.findIndex((data) => data.id === e.currentTarget.getAttribute("data-id"));
+  const onRemoveBookmark = (e: any) => {
+    const selectedBookmarkIdx = bookmarksStore.findIndex((data: any) => data.id === e.currentTarget.getAttribute("data-id"));
     if (selectedBookmarkIdx !== -1) {
-      const newBookmarks = bookmarksStore.filter((x, idx) => idx !== selectedBookmarkIdx);
-      setBookmarksStore(newBookmarks);      
+      const newBookmarks = bookmarksStore.filter((idx: any) => idx !== selectedBookmarkIdx);
+      setBookmarksStore(newBookmarks);
       if (newBookmarks.length === 0) {
         setShowBookmarkButton(false);
         setShowBookmarkWidget(false);
         setBookmarksStore(null);
-      }      
+      }
       GlobalContextData.onChangeBookmarks();
     }
   };
 
-  const onHoverBookmark = async (e) => {    
-    const selectedBookmark = bookmarksStore.find((data) => e.currentTarget.getAttribute("data-bookmark-id") === data.id);
+  const onHoverBookmark = async (e: any) => {
+    const selectedBookmark = bookmarksStore.find((data: any) => e.currentTarget.getAttribute("data-bookmark-id") === data.id);
 
     const elType = selectedBookmark.elem;
 
@@ -80,18 +81,18 @@ const BookmarkStore = ({bookmarks}) => {
       <div className='bookmark-widget' hidden={!showBookmarkWidget}>
         <div className='widget-header'>
           <label>Bookmarks from this page</label>
-          <TransparentCloseButton  onClickClose={onCloseBookmarkWidget}/>        
+          <TransparentCloseButton onClickClose={onCloseBookmarkWidget} />
         </div>
         <div className='widget-body flex-column'>
-          {bookmarks.map((data, index) => (
+          {bookmarks.map((data: any, index: number) => (
             <BookmarkItemList
               data={data}
               index={index}
               onEdit={onEditBookmark}
-              onRemove={onRemoveBookmark}              
-              onHover={onHoverBookmark}
+              onRemove={(e: any) => onRemoveBookmark(e)}
+              onHover={(e:any) => onHoverBookmark(e)}
             />
-          ))}          
+          ))}
         </div>
       </div>
       {showBookmarkButton && <BookmarkStoreButton onOpenBookmark={onOpenBookmarkWidget} />}

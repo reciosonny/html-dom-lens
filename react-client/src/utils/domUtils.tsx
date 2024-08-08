@@ -1,8 +1,8 @@
-import uuidv4 from "uuid/dist/v4";
+import { v4 as uuidv4 } from 'uuid';
 
 // Recursion algorithm. Performance may be slower so let's improve the tail-recursion algorithm later
 // TODO: Offer another function for this one which checks for multiple classNames needed checking
-function ancestorExistsByClassName(element, className) {
+function ancestorExistsByClassName(element: any, className: any) {
     if (!element) return false;
     if (element.className === className) {
         return true;
@@ -16,21 +16,21 @@ function ancestorExistsByClassName(element, className) {
     return true;
 }
 
-function ancestorExistsByClassNames(element, classNames) {
+function ancestorExistsByClassNames(element: any, classNames: any) {
     if (!element) return false;
-    if (classNames.some((className) => className === element.className)) {
+    if (classNames.some((className: any) => className === element.className)) {
         return true;
     }
     if (!element.parentElement) return false;
 
-    if (element.parentElement.className !== className) {
-        return ancestorExistsByClassName(element.parentElement, className);
+    if (element.parentElement.className !== classNames) {
+        return ancestorExistsByClassName(element.parentElement, classNames);
     }
 
     return true;
 }
 
-function ancestorExistsByID(element, idName) {
+function ancestorExistsByID(element: any, idName: any) {
     if (!element) return false;
     if (!element.parentElement) return false;
 
@@ -46,8 +46,9 @@ function ancestorExistsByID(element, idName) {
 }
 
 // This algorithm gets the unique element identifier by using element tag(e.g. p, div, span, input), and the index where that particular element is located
-function getUniqueElementIdentifierByTagAndIndex(elTarget) {
+function getUniqueElementIdentifierByTagAndIndex(elTarget: any) {
     const result = [
+        // @ts-ignore
         ...document.querySelectorAll(elTarget.tagName.toLowerCase()),
     ].reduce(
         (acc, dom, idx) => {
@@ -65,7 +66,8 @@ function getUniqueElementIdentifierByTagAndIndex(elTarget) {
 }
 
 // gets element by element tag and index location
-function getElementByTagAndIndex(elType, idxToFind) {
+function getElementByTagAndIndex(elType: any, idxToFind: any) {
+    // @ts-ignore
     const retrievedElement = [...document.querySelectorAll(elType)].find(
         (dom, idx) => idx === idxToFind
     );
@@ -74,11 +76,11 @@ function getElementByTagAndIndex(elType, idxToFind) {
 }
 
 // removes all customed css from classnames in widget
-function customWidgetFilter(toFilter) {
+function customWidgetFilter(toFilter: any) {
     if (toFilter != "") {
         const isFiltered = toFilter
             .split(".")
-            .filter((customFilter) => !customFilter.includes("custom-css"))
+            .filter((customFilter: any) => !customFilter.includes("custom-css"))
             .toString();
 
         return isFiltered.replace(/,/g, ".");
@@ -88,7 +90,7 @@ function customWidgetFilter(toFilter) {
 }
 
 // special function for certain cases where unncessary targets appear this function is only for html-dom-lens
-function isTrueTarget(elTarget) {
+function isTrueTarget(elTarget: any) {
     if (!(typeof elTarget.className === "string")) {
         //catches className which returns object since this function is only responsible in parsing string
         return false;
@@ -98,19 +100,19 @@ function isTrueTarget(elTarget) {
 }
 
 // Check if Annotation is existing on Element
-function hasAnnotations(annotationStore, captureElement) {
-    const elAnnotation = annotationStore.map(({ elem, domIndex }) =>
+function hasAnnotations(annotationStore: any, captureElement: any) {
+    const elAnnotation = annotationStore.map(({ elem, domIndex }: any) =>
         getElementByTagAndIndex(elem, domIndex)
     );
     const hasExistingAnnotations = elAnnotation.some(
-        (el) => el === captureElement
+        (el: any) => el === captureElement
     );
 
     return hasExistingAnnotations;
 }
 
 // to check if the element has already an existing dialog box
-function hasDialogBox(dataId) {
+function hasDialogBox(dataId: any) {
     const existingDialog = document.getElementById(`${dataId}`);
     return existingDialog !== null;
 }
@@ -148,7 +150,7 @@ const colorselection = [
     "#ECEFF1",
 ];
 
-function extractDomInfo(elTarget) {
+function extractDomInfo(elTarget: any) {
     const classNames = [...elTarget.classList]
         .map((name) => `.${name}`)
         .filter(
@@ -169,11 +171,12 @@ function extractDomInfo(elTarget) {
     });
 
     const dataAttributes = Object.entries(elTarget.dataset).reduce(
+        // @ts-ignore
         (arr, [key, value]) => arr.concat([{ key, value }]),
         []
     );
 
-    const elComputedStyle = [
+    const elComputedStyle: any = [
         "font-size",
         "color",
         "background-color",
@@ -194,7 +197,7 @@ function extractDomInfo(elTarget) {
         .split(",");
 
     const colorhex = rgbArr.reduce(
-        (init, curr) => (init += parseInt(curr).toString(16)),
+        (init: any, curr: any) => (init += parseInt(curr).toString(16)),
         "#"
     );
 
@@ -207,7 +210,7 @@ function extractDomInfo(elTarget) {
         classes: [
             ...elParent.classList.value
                 .split(" ")
-                .filter((customFilter) => !customFilter.includes("custom-css")),
+                .filter((customFilter: any) => !customFilter.includes("custom-css")),
         ],
     };
 
@@ -230,13 +233,13 @@ function extractDomInfo(elTarget) {
         uniqueID: dataId,
         dataId: dataId,
         attributes: dataAttributes
-            .filter((obj) => !obj.key.includes("domLensInjected"))
-            .filter((obj) => !obj.key.includes("domLensTarget"))
-            .filter((obj) => !obj.key.includes("id")),
+            .filter((obj: any) => !obj.key.includes("domLensInjected"))
+            .filter((obj: any) => !obj.key.includes("domLensTarget"))
+            .filter((obj: any) => !obj.key.includes("id")),
     };
 }
 
-function isDOMDevTools(target) {
+function isDOMDevTools(target: any) {
     return (
         ancestorExistsByID(target, "domLensApp") ||
         ancestorExistsByClassName(target, "switch-button")

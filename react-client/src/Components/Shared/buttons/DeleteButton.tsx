@@ -4,7 +4,7 @@ import { DeleteButtonModel } from '../../../model/Shared';
 
 const DeleteButton = ({ dataID, onClickDelete }: DeleteButtonModel) => {
   return (
-    <button data-id={dataID} onClick={() => onClickDelete()}>
+    <button data-id={dataID} onClick={(e: any) => onClickDelete(e)}>
       <FaTrash color="#607D8B" />
     </button>
   )

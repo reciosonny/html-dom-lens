@@ -13,7 +13,7 @@ const MainModal = ({
             {headerText.trim() !== "" && (
                 <div className={`${type}-header`}>
                     {headerText}
-                    <TransparentCloseButton onClickClose={() => onClose} />
+                    <TransparentCloseButton onClickClose={() => onClose()} />
                 </div>
             )}
             {children}

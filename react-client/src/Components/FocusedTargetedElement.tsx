@@ -1,6 +1,6 @@
 import React from "react";
 
-const FocusedTargetedElement = ({ leftPosition, topPosition, height, width, opacity }) => {
+const FocusedTargetedElement = ({ leftPosition, topPosition, height, width, opacity }: FocusElementModel) => {
   return (
     <div
       className="focused-targeted-element"
